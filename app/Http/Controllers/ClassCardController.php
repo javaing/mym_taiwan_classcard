@@ -16,15 +16,21 @@ class ClassCardController extends Controller
         $this->classcardService = $classcardService;
     }
 
-    public function page()
+    public function page($index = 0)
     {
         //讀取該user狀態 from API
         //買新卡 call API
         //仍有剩餘格數 蓋過秀灰色，不可按
-        $url = $this->classcardService->getLoginBaseUrl('test_user');
+        $url = $this->classcardService->getLoginBaseUrl('test_user', $index);
         return view('classcard', [
             'url' => $url,
-            'used' => 1
+            'used' => $index
         ]);
+    }
+
+    public function registeclass($index)
+    {
+        Log::info('card registeclass index=' . $index);
+        return $this->page($index + 1);
     }
 }

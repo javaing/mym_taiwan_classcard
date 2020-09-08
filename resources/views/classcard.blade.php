@@ -10,6 +10,8 @@
 
     <!-- Custom styles for this template -->
     <link href="https://bootstrap.hexschool.com/docs/4.2/examples/floating-labels/floating-labels.css" rel="stylesheet">
+
+    <base href="{{env('APP_URL')}}">
 </head>
 
 <body>

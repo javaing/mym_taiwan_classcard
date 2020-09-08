@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\Log;
 
 class ClassCardService
 {
-    public function getLoginBaseUrl($user)
+    public function getLoginBaseUrl($user, $index)
     {
-        // 組成 Line Login Url
-        $url = 'api/registeclass' . '?';
-        $url .= 'user_id=' . $user;
+        $url = 'registeclass/' . $index;
         return $url;
     }
+
+
 
     public function getLineToken($code)
     {

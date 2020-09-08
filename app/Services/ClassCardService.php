@@ -7,16 +7,11 @@ use Illuminate\Support\Facades\Log;
 
 class ClassCardService
 {
-    public function getLoginBaseUrl()
+    public function getLoginBaseUrl($user)
     {
         // 組成 Line Login Url
-        $url = config('line.authorize_base_url') . '?';
-        $url .= 'response_type=code';
-        $url .= '&client_id=' . config('line.channel_id');
-        $url .= '&redirect_uri=' . config('app.url') . '/callback/login';
-        $url .= '&state=test'; // 暫時固定方便測試
-        $url .= '&scope=openid%20profile%20email'; //眉角在這裡，scope要加email
-
+        $url = 'api/registeclass' . '?';
+        $url .= 'user_id=' . $user;
         return $url;
     }
 

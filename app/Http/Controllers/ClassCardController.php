@@ -21,7 +21,7 @@ class ClassCardController extends Controller
         //讀取該user狀態 from API
         //買新卡 call API
         //仍有剩餘格數 蓋過秀灰色，不可按
-        $url = $this->classcardService->getLoginBaseUrl();
+        $url = $this->classcardService->getLoginBaseUrl('test_user');
         return view('classcard', [
             'url' => $url,
             'used' => 1

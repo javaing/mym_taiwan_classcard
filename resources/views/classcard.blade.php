@@ -15,9 +15,9 @@
 <body>
     <form class="form-signin">
         @for ($i = 0; $i < 4; $i++) <div style="display:inline;">
-            @if ($i< $used) <img style="width: 44;" src="/images/classcard/graylotus.png">
+            @if ($i< $used) <img style="width: 44px;margin: 5px;" src="/images/classcard/graylotus.png">
                 @else
-                <a href="{{ $url }}"><img style="width: 44;" src="/images/classcard/pinklotus.png"></a>
+                <a href="{{ $url }}"><img style="width: 44px;margin: 5px;" src="/images/classcard/pinklotus.png"></a>
                 @endif
                 </div>
                 @endfor

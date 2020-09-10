@@ -21,3 +21,4 @@ Route::get('/registeclass/{index}', 'ClassCardController@registeclass')->where('
 Route::get('/line', 'LoginController@pageLine');
 Route::get('/callback/login', 'LoginController@lineLoginCallBack');
 Route::get('line/reuse/', 'LoginController@askProfileReuse')->name('reuse.line');
+Route::get('/mongo', 'MongoController@allPurchase');

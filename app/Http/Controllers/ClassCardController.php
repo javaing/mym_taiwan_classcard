@@ -30,7 +30,6 @@ class ClassCardController extends Controller
 
     public function registeclass($index)
     {
-        Log::info('card registeclass index=' . $index);
         return $this->page($index + 1);
     }
 }

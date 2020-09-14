@@ -14,7 +14,8 @@
         "guzzlehttp/guzzle": "~6.0",
         "jenssegers/mongodb": "dev-develop",
         "laravel/framework": "^7.24",
-        "laravel/tinker": "^2.0"
+        "laravel/tinker": "^2.0",
+        "nesbot/carbon": "^2.39"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

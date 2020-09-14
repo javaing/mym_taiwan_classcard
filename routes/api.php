@@ -17,3 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('{postId}/update', 'api\PostController@update')->where('postId', '[0-9]+');
+Route::post('/createUser', 'api\PostController@createUser');
+Route::post('/showPoint', 'api\PostController@showPoint');

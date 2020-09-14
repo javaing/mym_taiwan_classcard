@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
-use Jenssegers\Mongodb\Eloquent\Builder;
 
 class MongoController extends Controller
 {
@@ -21,7 +20,8 @@ class MongoController extends Controller
 
     public function allPurchase()
     {
-        $res = DB::connection('mongodb')->collection('Consume')->get(); //查询所有数据
+        //$res = DB::connection('mongodb')->collection('Consume')->get(); //查询所有数据
+        $res = DB::connection('mongodb')->collection('Purchase')->get(); //查询所有数据
         dd($res); //打印数据
     }
 }

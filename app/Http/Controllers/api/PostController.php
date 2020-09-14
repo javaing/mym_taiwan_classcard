@@ -30,10 +30,17 @@ class PostController extends Controller
         $id = $request->userId;
         $dt = Carbon::now();
         Log::info('registerClass dt.' . $dt);
-        $card =  DB::connection('mongodb')->collection('Purchase')
+        return DB::connection('mongodb')->collection('Purchase')
             ->where('UserID', $id)
             ->where('Expired', '>', $dt)
+            ->where('Points', '>', 0)
             ->first();
+    }
+
+    private function getCardId()
+    {
+        $count = DB::collection('Purchase')->count() + 1;
+        return date("Ym") . str_pad($count, 3, '0', STR_PAD_LEFT);
     }
 
     public function createUser(Request $request)
@@ -108,25 +115,62 @@ class PostController extends Controller
 
     public function buyClassCard(Request $request)
     {
+
+        /*
+           "CardID" : "dddd",
+    "UserID" : "Jimmy",
+    "Points" : 4.0,
+    "Payment" : 1800.0,
+    "PaymentTime" : ISODate("2020-09-09T14:41:56.779Z"),
+    "Expired" : null,
+    "CardCreateTime" : null
+         */
+
         $status = 200;
         $content = "success";
+
+        if (!$this->getUser($request)) {
+            $content = "無此使用者，請先登入";
+            return response($content, $status);
+        }
+
+        //是否有舊卡
+        $card = $this->getValidCard($request);
+        if ($card) {
+            $card['message'] = "尚有點數可用";
+            $content = $card;
+            return response($content, $status);
+        }
 
         $amount = $request->amount;
         $id = $request->userId;
 
-        if (!$this->getUser($request)) {
-            $content = "無此使用者，請先登入";
+        $created_at = Carbon::now()->toDateTimeString();
+        $expired_at = Carbon::now()->add(2, 'month')->toDateTimeString();
+        $dt = new \MongoDB\BSON\UTCDateTime(strtotime($created_at) * 1000);
+        $dt_expired = new \MongoDB\BSON\UTCDateTime(strtotime($expired_at) * 1000);
+
+        $newCard = [
+            'CardID' => $this->getCardId(),
+            'UserID' => $id,
+            'Points' => 4,
+            "Expired" => $dt_expired,
+            "CardCreateTime" => $dt,
+        ];
+        if ($amount) {
+            $newCard['Payment'] = $amount;
+            $newCard['PaymentTime'] = $dt;
         } else {
-            if (!$amount) $amount = 1800;
-            DB::connection('mongodb')
-                ->collection('Purchase')
-                ->insert([
-                    'UserID' => $id,
-                    "NickName" => $request->displayName,
-                    "Email" => $request->email,
-                    "PictureUrl" => $request->pictureUrl,
-                ]);
+            $newCard['Payment'] = null;
+            $newCard['PaymentTime'] = null;
         }
+
+        Log::info('buyClassCard 5=' . json_encode($newCard));
+
+        DB::connection('mongodb')
+            ->collection('Purchase')
+            ->insert($newCard);
+
 
         return response($content, $status);
     }

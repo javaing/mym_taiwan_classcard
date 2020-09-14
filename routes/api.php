@@ -21,3 +21,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('{postId}/update', 'api\PostController@update')->where('postId', '[0-9]+');
 Route::post('/createUser', 'api\PostController@createUser');
 Route::post('/showPoint', 'api\PostController@showPoint');
+Route::post('/buyClassCard', 'api\PostController@buyClassCard');

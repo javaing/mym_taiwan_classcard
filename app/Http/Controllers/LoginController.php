@@ -126,7 +126,7 @@ class LoginController extends Controller
         $card = $this->getValidCard($id);
         Log::info('pag()=getValidCard =' . json_encode($card));
         if (!$card) {
-            return view('buynewcard')->with('id', $id);
+            return view('buynewcard');
         }
         $index = $card['Points'];
         $url = $this->lineService->registerClassUrl($user_profile['displayName'], $index);

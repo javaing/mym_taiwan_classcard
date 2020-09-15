@@ -71,7 +71,7 @@ class LoginController extends Controller
         //     $token = config('line.access_token');
         // }
         $user_profile = $this->lineService->getUserProfile($token);
-        setcookie('user_profile', $user_profile, time() + 3600 * 24 * 28, '/');
+        //setcookie('user_profile', $user_profile, time() + 3600 * 24 * 28, '/');
         //echo "<pre>";
         //print_r($user_profile);
         //echo "</pre>";

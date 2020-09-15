@@ -70,7 +70,7 @@ class LoginController extends Controller
         if (!array_key_exists('email', $user_profile)) {
             $user_profile['email'] = '';
         }
-        return $this->page($user_profile);
+        return $this->showPoints($user_profile);
     }
 
     public function askProfileReuse()

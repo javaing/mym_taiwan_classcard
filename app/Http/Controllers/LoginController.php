@@ -88,7 +88,6 @@ class LoginController extends Controller
     {
         //$id = $request->userId;
         $dt = Carbon::now();
-        Log::info('registerClass dt.' . $dt);
         return DB::collection('Purchase')
             ->where('UserID', $id)
             ->where('Expired', '>', $dt)
@@ -119,14 +118,25 @@ class LoginController extends Controller
                     "Email" => $user_profile['email'],
                     "PictureUrl" => $user_profile['pictureUrl'],
                 ]);
+            Log::info('pag()=insert UserInfo');
         }
         $card = $this->getValidCard($id);
+        Log::info('pag()=getValidCard =' . json_encode($card));
         if (!$card) {
-            $content = "購買新卡由此去_";
-            return response($content, $status);
+            return view('buynewcard', $id);
         }
         $index = $card['Points'];
         $url = $this->lineService->registerClassUrl($user_profile['displayName'], $index);
+        return view('classcard', [
+            'url' => $url,
+            'used' => $index
+        ]);
+    }
+
+    public function buyClassCard($id)
+    {
+        $index = 0;
+        $url = $this->lineService->registerClassUrl($id, $index);
         return view('classcard', [
             'url' => $url,
             'used' => $index

@@ -3,26 +3,23 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Line Login Demo</title>
+    <title>MYM Taiwan ClassCard</title>
 
     <!-- Bootstrap core CSS -->
     <link href="https://bootstrap.hexschool.com/docs/4.2/dist/css/bootstrap.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="https://bootstrap.hexschool.com/docs/4.2/examples/floating-labels/floating-labels.css" rel="stylesheet">
+
+    <base href="{{env('APP_URL')}}">
 </head>
 
 <body>
-    <form class="form-signin">
-        <div class="text-center mb-4">
-            @if($url == 'reuse')
-            <a href={{ route('reuse.line') }}><img class="mb-4" src="/images/line/2x/32dp/btn_base.png"></a>
-            @else
-            <a href="{{ $url }}"><img class="mb-4" src="/images/line/2x/32dp/btn_base.png"></a>
-            @endif
-        </div>
-        <p class="mt-5 mb-3 text-muted text-center">MYM Taiwan &copy; 2020</p>
-    </form>
+    <center>
+        <H4>
+            <a href="{{ route('buy.classcard') }}">購買新卡由此去</a>
+        </H4>
+    </center>
 
 </body>
 

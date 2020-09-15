@@ -15,11 +15,11 @@
 </head>
 
 <body>
-    <form class="form-signin">
+    <form class="form-signin" style="width: 100%;">
         @for ($i = 0; $i < 4; $i++) <div style="display:inline;">
-            @if ($i< $used) <img style="width: 80px;margin: 5px;" src="/images/classcard/graylotus.png">
+            @if ($i< $used) <img style="width: 20%;margin: 5px;" src="/images/classcard/graylotus.png">
                 @else
-                <a href="{{ $url }}"><img style="width:80px;margin: 5px;" src="/images/classcard/pinklotus.png"></a>
+                <a href="{{ $url }}"><img style="width:20%;margin: 5px;" src="/images/classcard/pinklotus.png"></a>
                 @endif
                 </div>
                 @endfor

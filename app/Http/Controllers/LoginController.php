@@ -96,6 +96,12 @@ class LoginController extends Controller
             ->first();
     }
 
+    private function getUser($id)
+    {
+        //$id = $request->userId;
+        return  DB::collection('UserInfo')->where('UserID', $id)->first();
+    }
+
     public function page($user_profile)
     {
         $status = 200;
@@ -104,7 +110,17 @@ class LoginController extends Controller
         //讀取該user狀態 from API
         //買新卡 call API
         //仍有剩餘格數 蓋過秀灰色，不可按
-        $card = $this->getValidCard($user_profile['userId']);
+        $id = $user_profile['userId'];
+        if (!$this->getUser($id)) {
+            DB::collection('UserInfo')
+                ->insert([
+                    'UserID' => $id,
+                    "NickName" => $user_profile['displayName'],
+                    "Email" => $user_profile['email'],
+                    "PictureUrl" => $user_profile['pictureUrl'],
+                ]);
+        }
+        $card = $this->getValidCard($id);
         if (!$card) {
             $content = "購買新卡由此去_";
             return response($content, $status);

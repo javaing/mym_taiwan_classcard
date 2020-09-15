@@ -21,8 +21,7 @@ class PostController extends Controller
     private function getUser(Request $request)
     {
         $id = $request->userId;
-        return  DB::connection('mongodb')
-            ->collection('UserInfo')->where('UserID', $id)->first();
+        return  DB::collection('UserInfo')->where('UserID', $id)->first();
     }
 
     private function getValidCard(Request $request)
@@ -30,18 +29,60 @@ class PostController extends Controller
         $id = $request->userId;
         $dt = Carbon::now();
         Log::info('registerClass dt.' . $dt);
-        return DB::connection('mongodb')->collection('Purchase')
+        return DB::collection('Purchase')
             ->where('UserID', $id)
             ->where('Expired', '>', $dt)
             ->where('Points', '>', 0)
             ->first();
     }
 
+    private function getExpiredCard(Request $request)
+    {
+        $id = $request->userId;
+        $dt = Carbon::now();
+        Log::info('registerClass dt.' . $dt);
+        return DB::collection('Purchase')
+            ->where('UserID', $id)
+            ->where('Expired', '<', $dt)
+            ->where('Points', '>', 0)
+            ->first();
+    }
+
     private function getCardId()
     {
-        $count = DB::collection('Purchase')->count() + 1;
-        return date("Ym") . str_pad($count, 3, '0', STR_PAD_LEFT);
+        $count = DB::collection('Purchase')->where('CardCreateTime', 'like', '%' . date("Y") . '%')->count() + 1;
+        return date("Y") . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
+
+    private function getCard(Request $request)
+    {
+        $id = $request->cardId;
+        $arr = DB::collection('Purchase')->where('CardID', $id);
+        return $arr ?  $arr->first() : $arr;
+    }
+
+    private function getCardPayment($id)
+    {
+        $payment = DB::collection('Purchase')->where('CardID', $id)->first()['Payment'];
+        //Log::info('getCardPayment=' . json_encode(DB::collection('Purchase')->where('CardID', $id)->first()));
+        return  $payment ? $payment : 0;
+    }
+
+    private function getCardPoint($id)
+    {
+        $arr = DB::collection('Purchase')->where('CardID', $id);
+        if (!$arr) return 0;
+        $point =  $arr->first()['Points'];
+        Log::info('getCardPoint=' . $arr->first()['Points']);
+        return  $point;
+    }
+
+    private function getMongoDateNow()
+    {
+        $created_at = Carbon::now()->toDateTimeString();
+        return new \MongoDB\BSON\UTCDateTime(strtotime($created_at) * 1000);
+    }
+
 
     public function createUser(Request $request)
     {
@@ -65,12 +106,9 @@ class PostController extends Controller
 
         $id = $request->userId;
 
-
         $status = 200;
-        //print_r("userid=" . $id);
         if (!$this->getUser($request)) {
-            DB::connection('mongodb')
-                ->collection('UserInfo')
+            DB::collection('UserInfo')
                 ->insert([
                     'UserID' => $id,
                     "NickName" => $request->displayName,
@@ -85,23 +123,14 @@ class PostController extends Controller
         return response($content, $status);
     }
 
-
-
-    //register class
-    //check if expire
-    //add a new record:
     public function showPoint(Request $request)
     {
         $status = 200;
         $content = "success";
 
-        $id = $request->userId;
-
         if (!$this->getUser($request)) {
             $content = "無此使用者，請先登入";
         } else {
-            $dt = Carbon::now();
-            Log::info('registerClass dt.' . $dt);
             $card = $this->getValidCard($request);
             if (!$card) {
                 $content = "購買課卡由此 xxxx";
@@ -115,7 +144,6 @@ class PostController extends Controller
 
     public function buyClassCard(Request $request)
     {
-
         /*
            "CardID" : "dddd",
     "UserID" : "Jimmy",
@@ -144,16 +172,22 @@ class PostController extends Controller
 
         $amount = $request->amount;
         $id = $request->userId;
+        $point = 4;
+        $this->insertPurchase($id, $amount, $point);
 
-        $created_at = Carbon::now()->toDateTimeString();
-        $expired_at = Carbon::now()->add(2, 'month')->toDateTimeString();
-        $dt = new \MongoDB\BSON\UTCDateTime(strtotime($created_at) * 1000);
+        return response($content, $status);
+    }
+
+    private function insertPurchase($id, $amount, $point)
+    {
+        $dt = $this->getMongoDateNow();
+        $expired_at = Carbon::now()->add(60, 'day')->toDateTimeString();
         $dt_expired = new \MongoDB\BSON\UTCDateTime(strtotime($expired_at) * 1000);
 
         $newCard = [
             'CardID' => $this->getCardId(),
             'UserID' => $id,
-            'Points' => 4,
+            'Points' => $point,
             "Expired" => $dt_expired,
             "CardCreateTime" => $dt,
         ];
@@ -167,10 +201,104 @@ class PostController extends Controller
 
         Log::info('buyClassCard 5=' . json_encode($newCard));
 
-        DB::connection('mongodb')
-            ->collection('Purchase')
+        DB::collection('Purchase')
             ->insert($newCard);
+    }
 
+    public function payUpClassCard(Request $request)
+    {
+        $status = 200;
+        $content = "success";
+
+        $card = $this->getCard($request);
+        if (!$card) {
+            $content = "無此卡片，請先查明CardID";
+            return response($content, $status);
+        }
+
+        if (!$request->payment) {
+            $content = "儲值金額不得為零";
+            return response($content, $status);
+        }
+
+        $id = $request->cardId;
+        $payment = $this->getCardPayment($id) + $request->payment;
+        $dt = $this->getMongoDateNow();
+        $newdata = array('$set' => array(
+            'Payment' => $payment,
+            'PaymentTime' => $dt,
+        ));
+        DB::collection('Purchase')
+            ->where('CardID', $id)
+            ->update($newdata, ['upsert' => true]);
+
+        return response($content, $status);
+    }
+
+    //register class
+    //check if expire
+    //add a new record:
+    public function registerClass(Request $request)
+    {
+        $status = 200;
+        $content = "success";
+
+        if (!$this->getUser($request)) {
+            $content = "無此使用者，請先登入";
+            return response($content, $status);
+        }
+
+        //是否有舊卡
+        $card = $this->getValidCard($request);
+        if (!$card) {
+            //是否有過期且尚有點數之卡=>可加值
+            $card = $this->getExpiredCard($request);
+            $card['message'] = "有過期且尚有點數之卡，可補差價續用";
+            return response($card, $status);
+        }
+
+        $id = $card['CardID'];
+        $point = $this->getCardPoint($id) - 1;
+        $newdata = array('$set' => array(
+            'Points' => $point,
+        ));
+        DB::collection('Purchase')
+            ->where('CardID', $id)
+            ->update($newdata, ['upsert' => true]);
+
+
+        return response($content, $status);
+    }
+
+    public function renewClassCard(Request $request)
+    {
+        $status = 200;
+        $content = "success";
+
+        if (!$this->getUser($request)) {
+            $content = "無此使用者，請先登入";
+            return response($content, $status);
+        }
+
+        $card = $this->getExpiredCard($request);
+        if (!$card) {
+            $content = "無卡可展期";
+            return response($content, $status);
+        }
+
+        //開新卡
+        $amount = 200;
+        $userid = $card['UserID'];
+        $point = $card['Points'];
+        $this->insertPurchase($userid, $amount, $point);
+
+        //舊卡歸零
+        $newdata = array('$set' => array(
+            'Points' => 0,
+        ));
+        DB::collection('Purchase')
+            ->where('CardID', $card['CardID'])
+            ->update($newdata, ['upsert' => true]);
 
         return response($content, $status);
     }

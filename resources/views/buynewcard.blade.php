@@ -17,7 +17,11 @@
 <body>
     <center>
         <H4>
-            <a href="{{ route('buy.classcard') }}">購買新卡由此去</a>
+            <a href="{{ route('buy.classcard', $userId, 1800) }}">買新卡</a>
+        </H4>
+        <br><br>
+        <H4>
+            <a href="{{ route('buy.classcard', $userId, 0) }}">下次繳費</a>
         </H4>
     </center>
 

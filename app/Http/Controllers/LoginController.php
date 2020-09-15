@@ -67,9 +67,7 @@ class LoginController extends Controller
 
     public function askProfile($token)
     {
-        // if (!$token) {
-        //     $token = config('line.access_token');
-        // }
+
         $user_profile = $this->lineService->getUserProfile($token);
         if (!array_key_exists('email', $user_profile)) {
             $user_profile['email'] = '';
@@ -78,12 +76,12 @@ class LoginController extends Controller
         //echo "<pre>";
         //print_r($user_profile);
         //echo "</pre>";
-        $this->page($user_profile);
+        return $this->page($user_profile);
     }
 
     public function askProfileReuse()
     {
-        $this->askProfile($_COOKIE["access_token"]);
+        return $this->askProfile($_COOKIE["access_token"]);
     }
 
 

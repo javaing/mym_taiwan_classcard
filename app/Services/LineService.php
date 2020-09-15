@@ -7,6 +7,13 @@ use Illuminate\Support\Facades\Log;
 
 class LineService
 {
+
+    public function registerClassUrl($user, $index)
+    {
+        $url = 'registeclass/' . $index;
+        return $url;
+    }
+
     public function getLoginBaseUrl()
     {
         // 組成 Line Login Url

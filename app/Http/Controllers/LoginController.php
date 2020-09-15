@@ -6,6 +6,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Services\LineService;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class LoginController extends Controller
 {
@@ -73,11 +75,50 @@ class LoginController extends Controller
         //echo "<pre>";
         //print_r($user_profile);
         //echo "</pre>";
-        app('App\Http\Controllers\ClassCardController')->page();
+        $this->page($user_profile);
     }
 
     public function askProfileReuse()
     {
         $this->askProfile($_COOKIE["access_token"]);
+    }
+
+
+    private function getValidCard($id)
+    {
+        //$id = $request->userId;
+        $dt = Carbon::now();
+        Log::info('registerClass dt.' . $dt);
+        return DB::collection('Purchase')
+            ->where('UserID', $id)
+            ->where('Expired', '>', $dt)
+            ->where('Points', '>', 0)
+            ->first();
+    }
+
+    public function page($user_profile)
+    {
+        $status = 200;
+        $content = "success";
+
+        //讀取該user狀態 from API
+        //買新卡 call API
+        //仍有剩餘格數 蓋過秀灰色，不可按
+        $card = $this->getValidCard($user_profile['userId']);
+        if (!$card) {
+            $content = "購買新卡由此去_";
+            return response($content, $status);
+        }
+        $index = $card['Points'];
+        $url = $this->lineService->registerClassUrl($user_profile['displayName'], $index);
+        return view('classcard', [
+            'url' => $url,
+            'used' => $index
+        ]);
+    }
+
+    public function registeclass($index)
+    {
+        return $this->page($index + 1);
     }
 }

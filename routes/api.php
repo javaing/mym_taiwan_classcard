@@ -22,3 +22,6 @@ Route::get('{postId}/update', 'api\PostController@update')->where('postId', '[0-
 Route::post('/createUser', 'api\PostController@createUser');
 Route::post('/showPoint', 'api\PostController@showPoint');
 Route::post('/buyClassCard', 'api\PostController@buyClassCard');
+Route::post('/payUpClassCard', 'api\PostController@payUpClassCard');
+Route::post('/registerClass', 'api\PostController@registerClass');
+Route::post('/renewClassCard', 'api\PostController@renewClassCard');

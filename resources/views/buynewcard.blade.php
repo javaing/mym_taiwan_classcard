@@ -17,11 +17,11 @@
 <body>
     <center>
         <H4>
-            <a href="{{ route('buy.classcard', ['userId' => $card['UserID']]) }}">買新卡</a>
+            <a href="{{ route('buy.classcard', ['userId' => $userId]) }}">買新卡</a>
         </H4>
         <br><br>
         <H4>
-            <a href="{{ route('buy.classcard', ['userId' => $card['UserID']]) }}">下次繳費</a>
+            <a href="{{ route('buy.classcard', ['userId' => $userId]) }}">買卡但下次繳</a>
         </H4>
     </center>
 

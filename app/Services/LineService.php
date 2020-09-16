@@ -36,7 +36,7 @@ class LineService
         ];
         $response = $client->request('POST', config('line.get_token_url'), [
             //'debug' => true,
-            //'headers' => $headers,
+            'headers' => $headers,
             'form_params' => [
                 'grant_type' => 'authorization_code',
                 'client_id' => config('line.channel_id'),

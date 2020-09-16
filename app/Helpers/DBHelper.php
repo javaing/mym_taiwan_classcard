@@ -20,6 +20,17 @@ class DBHelper
             ->first();
     }
 
+    public static function getValidCardNoMatter($userId)
+    {
+        //$id = $request->userId;
+        $dt = Carbon::now();
+        return DB::collection('Purchase')
+            ->where('UserID', $userId)
+            ->where('Expired', '>', $dt)
+            //->where('Points', '>', 0)
+            ->first();
+    }
+
     public static function getUser($userId)
     {
         //$id = $request->userId;

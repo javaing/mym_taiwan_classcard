@@ -98,7 +98,7 @@ class LoginController extends Controller
         if (!HelpersDBHelper::getUser($userId)) {
             HelpersDBHelper::insertNewUser($user_profile);
         }
-        $card = HelpersDBHelper::getValidCard($userId);
+        $card = HelpersDBHelper::getValidCardNoMatter($userId);
         if (!$card) {
             return view("buynewcard")->with('userId', $userId);
             //print_r($user_profile);

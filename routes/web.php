@@ -22,3 +22,5 @@ Route::get('/line', 'LoginController@pageLine');
 Route::get('/callback/login', 'LoginController@lineLoginCallBack');
 Route::get('line/reuse/', 'LoginController@askProfileReuse')->name('reuse.line');
 Route::get('classcard/buy/', 'LoginController@buyClassCard')->name('buy.classcard');
+Route::get('/registe/{point}/{cardId}', 'ClassCardController@registeclassByPoint')
+    ->where(['point' => '[0-9]+', 'cardId' => '[0-9]+'])->name('registe.classcard');

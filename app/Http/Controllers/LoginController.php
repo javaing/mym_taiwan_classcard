@@ -51,7 +51,7 @@ class LoginController extends Controller
             $response = $this->lineService->getLineToken($code);
             if (array_key_exists('id_token', $response)) {
                 //Log::info($response['id_token']);
-                $decode = $this->lineService->verifyIDToken($response['id_token']);
+                //$decode = $this->lineService->verifyIDToken($response['id_token']);
                 //Log::info($decode);
                 //$expires = strtotime('+30 day', time());
                 $this->saveAccessToken($response['access_token']);
@@ -99,27 +99,20 @@ class LoginController extends Controller
             HelpersDBHelper::insertNewUser($user_profile);
         }
         $card = HelpersDBHelper::getValidCard($userId);
-        Log::info('pag()=getValidCard =' . json_encode($card));
         if (!$card) {
             return view("buynewcard")->with('userId', $userId);
             //print_r($user_profile);
             //return;
         }
         $point = $card['Points'];
-        $url = $this->lineService->registerClassUrl($user_profile['displayName'], $point);
+        //$url = $this->lineService->registerClassUrl($user_profile['displayName'], $point);
+
+        Log::info('showPoints()= userid=' . $userId . ' cardId=' . $card['CardID'] . ' point=' . $point);
+        //Log::info('showPoints card=' . json_encode($card));
         return view('classcard', [
-            'url' => $url,
-            'point' => $point
+            'userId' => $userId,
+            'cardId' => $card['CardID'],
+            'point' => $point,
         ]);
-    }
-
-    public function buyClassCard($userId, $amount)
-    {
-        HelpersDBHelper::buyClassCard($userId, $amount);
-    }
-
-    public function registeclass($index)
-    {
-        return $this->page($index + 1);
     }
 }

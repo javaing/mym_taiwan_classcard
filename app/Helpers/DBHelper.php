@@ -2,32 +2,35 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
+
 
 class DBHelper
 {
-    public static function shout(string $string)
-    {
-        return strtoupper($string);
-    }
-
-    public static function getValidCard($id)
+    public static function getValidCard($userId)
     {
         //$id = $request->userId;
         $dt = Carbon::now();
         return DB::collection('Purchase')
-            ->where('UserID', $id)
+            ->where('UserID', $userId)
             ->where('Expired', '>', $dt)
             ->where('Points', '>', 0)
             ->first();
     }
 
-    public static function getUser($id)
+    public static function getUser($userId)
     {
         //$id = $request->userId;
-        return  DB::collection('UserInfo')->where('UserID', $id)->first();
+        return  DB::collection('UserInfo')->where('UserID', $userId)->first();
+    }
+
+    public static function getUserId($cardId)
+    {
+        $arr = DB::collection('Purchase')->where('CardID', $cardId);
+        if (!$arr) return "";
+        return  $arr->first()['UserID'];
     }
 
     public static function insertNewUser($user_profile)
@@ -102,6 +105,40 @@ class DBHelper
         Log::info('insertPurchase =' . json_encode($newCard));
 
         DB::collection('Purchase')
+            ->insert($newCard);
+    }
+
+    public static function registeclassByPoint($cardId, $point)
+    {
+        $newdata = array('$set' => array(
+            'Points' => $point - 1,
+        ));
+        DB::collection('Purchase')
+            ->where('CardID', $cardId)
+            ->update($newdata, ['upsert' => true]);
+    }
+
+    public static function isExpiredCard($cardId)
+    {
+        $card = DB::collection('Purchase')->where('CardID', $cardId)->first();
+        return ($card['Payment'] == 200) ? true : false;
+    }
+
+
+    public static function insertConsume($cardId, $point)
+    {
+        $cost = 500;
+        if ($point == 1 && !DBHelper::isExpiredCard($cardId)) {
+            $cost = 300;
+        }
+
+        $newCard = [
+            'CardID' => $cardId,
+            'UserID' => DBHelper::getUserId($cardId),
+            "Cost" => $cost,
+            "PointConsumeTime" => DBHelper::getMongoDateNow(),
+        ];
+        DB::collection('Consume')
             ->insert($newCard);
     }
 }

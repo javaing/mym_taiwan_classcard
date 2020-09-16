@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Services\LineService;
+use Redirect;
 
 class LoginController extends Controller
 {
@@ -20,7 +21,6 @@ class LoginController extends Controller
     public function pageLine()
     {
         $url = $this->lineService->getLoginBaseUrl();
-        Log::info('test 1');
         if (isset($_COOKIE["access_token"])) {
             Log::info(time());
             $url = 'reuse';
@@ -39,13 +39,11 @@ class LoginController extends Controller
 
     public function lineLoginCallBack(Request $request)
     {
-        Log::info('1');
         try {
             $error = $request->input('error', false);
             if ($error) {
                 throw new Exception($request->all());
             }
-            Log::info('2');
             $code = $request->input('code', '');
 
             $response = $this->lineService->getLineToken($code);
@@ -101,18 +99,21 @@ class LoginController extends Controller
         $card = HelpersDBHelper::getValidCardNoMatter($userId);
         if (!$card) {
             return view("buynewcard")->with('userId', $userId);
-            //print_r($user_profile);
-            //return;
         }
-        $point = $card['Points'];
-        //$url = $this->lineService->registerClassUrl($user_profile['displayName'], $point);
 
-        Log::info('showPoints()= userid=' . $userId . ' cardId=' . $card['CardID'] . ' point=' . $point);
-        //Log::info('showPoints card=' . json_encode($card));
-        return view('classcard', [
-            'userId' => $userId,
-            'cardId' => $card['CardID'],
-            'point' => $point,
+        return redirect('classcard/' . $card['CardID']);
+    }
+
+    public function showClassCard($cardId)
+    {
+        $card = HelpersDBHelper::getCard($cardId);
+        if (!$card) {
+            print_r('無此課卡');
+            return;
+        }
+        Log::info("showClassCard({$cardId})");
+        return view('classcard2', [
+            'card' => $card,
         ]);
     }
 }

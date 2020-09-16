@@ -28,6 +28,7 @@ class DBHelper
             ->where('UserID', $userId)
             ->where('Expired', '>', $dt)
             //->where('Points', '>', 0)
+            ->orderBy('Expired', 'asce')
             ->first();
     }
 
@@ -35,6 +36,11 @@ class DBHelper
     {
         //$id = $request->userId;
         return  DB::collection('UserInfo')->where('UserID', $userId)->first();
+    }
+
+    public static function getCard($cardId)
+    {
+        return DB::collection('Purchase')->where('CardID', $cardId)->first();
     }
 
     public static function getUserId($cardId)
@@ -56,28 +62,11 @@ class DBHelper
         Log::info('pag()=insert UserInfo');
     }
 
-    public static function buyClassCard($userId, $amount)
+    public static function buyNewCard($userId)
     {
-        $status = 200;
-        $content = "success";
-
-        if (!DBHelper::getUser($userId)) {
-            $content = "無此使用者，請先登入";
-            return response($content, $status);
-        }
-
-        //是否有舊卡
-        $card = DBHelper::getValidCard($userId);
-        if ($card) {
-            $card['message'] = "尚有點數可用";
-            $content = $card;
-            return response($content, $status);
-        }
-
+        $amount = 1800;
         $point = 4;
         DBHelper::insertPurchase($userId, $amount, $point);
-
-        return response($content, $status);
     }
 
     public static function getMongoDateNow()

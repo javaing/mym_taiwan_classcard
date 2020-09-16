@@ -21,9 +21,9 @@
             <TD COLSPAN=3>
                 <form class="form-signin" style="width: 100%;">
                     @for ($i = 4; $i >= 1; $i--) <div style="display:inline;">
-                        @if ($i> $point) <img style="width: 20%;margin: 5px;" src="/images/classcard/graylotus.png">
+                        @if ($i> $card['Points']) <img style="width: 20%;margin: 5px;" src="/images/classcard/graylotus.png">9/2
                         @else
-                        <a href="{{ route('registe.classcard',  [$point, $cardId]) }}"><img style="width:20%;margin: 5px;" src="/images/classcard/pinklotus.png"></a>
+                        <a href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}"><img style="width:20%;margin: 5px;" src="/images/classcard/pinklotus.png"></a>
                         @endif
                     </div>
                     @endfor
@@ -33,12 +33,18 @@
             </TD>
         </TR>
         <TR>
-            <TD align="center">@if ($point==0) <H4>
-                    <a href="{{ route('buy.classcard', $userId, 1800) }}">買新卡</a>
+            <TD COLSPAN=3 align="right">期限: {{ $card['Expired']->toDateTime()->format('Y-m-d') }}</TD>
+        </TR>
+        @php
+        {{ $dt = App\Helpers\DBHelper::getMongoDateNow(); }}
+        @endphp
+        <TR>
+            <TD align="center">@if ($card['Points']==0) <H4>
+                    <a href="{{ route('buy.classcard', ['userId' => $card['UserID']] ) }}">買新卡2</a>
                 </H4>
                 @endif</TD>
-            <TD> @if ($point==0) <H4>
-                    <a href="{{ route('buy.classcard', $userId, 1800) }}">展期</a>
+            <TD> @if ($dt>$card['Expired'] && $card['Points']>0) <H4>
+                    <a href="{{ route('buy.classcard', ['userId' => $card['UserID']]) }}">展期2</a>
                 </H4>
                 @endif</TD>
         </TR>

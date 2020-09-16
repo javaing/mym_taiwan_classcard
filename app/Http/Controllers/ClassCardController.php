@@ -40,15 +40,20 @@ class ClassCardController extends Controller
     {
         DBHelper::registeclassByPoint($cardId, $point);
         DBHelper::insertConsume($cardId, $point);
-        return view('classcard', [
-            'userId' => DBHelper::getUserId($cardId),
-            'cardId' => $cardId,
-            'point' => $point - 1,
-        ]);
+        // return view('classcard', [
+        //     'userId' => DBHelper::getUserId($cardId),
+        //     'cardId' => $cardId,
+        //     'point' => $point - 1,
+        // ]);
+        return redirect('classcard/' . $cardId);
     }
 
-    public function buyClassCard($userId, $amount)
+    public function buyClassCard(Request $request)
     {
-        DBHelper::buyClassCard($userId, $amount);
+        $userId = $request->userId;
+        DBHelper::buyNewCard($userId);
+
+        $card = DBHelper::getValidCard($userId);
+        return redirect('classcard/' . $card['CardID']);
     }
 }

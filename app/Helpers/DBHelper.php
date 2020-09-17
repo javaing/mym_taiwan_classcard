@@ -9,9 +9,22 @@ use Carbon\Carbon;
 
 class DBHelper
 {
+    public static function getMongoDateNow()
+    {
+        $created_at = Carbon::now()->toDateTimeString();
+        return new \MongoDB\BSON\UTCDateTime(strtotime($created_at) * 1000);
+    }
+
+    public static function toDateString($dbdate)
+    {
+        if (!$dbdate) return '';
+        return $dbdate->toDateTime()->format('Y-m-d');
+    }
+
+
+    //[Purchase]------------------------------------------------------------------
     public static function getValidCard($userId)
     {
-        //$id = $request->userId;
         $dt = Carbon::now();
         return DB::collection('Purchase')
             ->where('UserID', $userId)
@@ -22,7 +35,6 @@ class DBHelper
 
     public static function getValidCardNoMatter($userId)
     {
-        //$id = $request->userId;
         $dt = Carbon::now();
         return DB::collection('Purchase')
             ->where('UserID', $userId)
@@ -30,17 +42,6 @@ class DBHelper
             //->where('Points', '>', 0)
             ->orderBy('Expired', 'asce')
             ->first();
-    }
-
-    public static function getUser($userId)
-    {
-        //$id = $request->userId;
-        return  DB::collection('UserInfo')->where('UserID', $userId)->first();
-    }
-
-    public static function getUserName($userId)
-    {
-        return  DB::collection('UserInfo')->where('UserID', $userId)->first()['NickName'];
     }
 
     public static function getCard($cardId)
@@ -55,12 +56,52 @@ class DBHelper
         return  $arr->first()['UserID'];
     }
 
-    public static function toDateString($dbdate)
+    public static function getCardId()
     {
-        if (!$dbdate) return '';
-        return $dbdate->toDateTime()->format('Y-m-d');
+        $count = DB::collection('Purchase')->where('CardCreateTime', 'like', '%' . date("Y") . '%')->count() + 1;
+        return date("Y") . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 
+    public static function registeclassByPoint($cardId, $point)
+    {
+        $newdata = array('$set' => array(
+            'Points' => $point - 1,
+        ));
+        DB::collection('Purchase')
+            ->where('CardID', $cardId)
+            ->update($newdata, ['upsert' => true]);
+    }
+
+    public static function isExpiredCard($cardId)
+    {
+        $card = DB::collection('Purchase')->where('CardID', $cardId)->first();
+        return ($card['Payment'] == 200) ? true : false;
+    }
+
+    public static function getBalanceIn($carbonFrom, $carbonTo)
+    {
+        //get()出來就是array
+        return DB::collection('Purchase')
+            ->where('PaymentTime', '>=', $carbonFrom)
+            ->where('PaymentTime', '<', $carbonTo)
+            ->get();
+    }
+
+
+    //[UserInfo]--------------------------------------------------------
+    public static function getUser($userId)
+    {
+        //$id = $request->userId;
+        return  DB::collection('UserInfo')->where('UserID', $userId)->first();
+    }
+
+    public static function getUserName($userId)
+    {
+        return  DB::collection('UserInfo')->where('UserID', $userId)->first()['NickName'];
+    }
+
+
+    //[Consume]----------------------------------------------------------
     public static function getConsume($cardId)
     {
         //get()出來就是array
@@ -70,16 +111,30 @@ class DBHelper
             ->orderBy('PointConsumeTime')->get();
     }
 
+    public static function getBalanceOut($carbonFrom, $carbonTo)
+    {
+        //get()出來就是array
+        return DB::collection('Consume')
+            ->where('PointConsumeTime', '>=', $carbonFrom)
+            ->where('PointConsumeTime', '<', $carbonTo)
+            ->get();
+    }
+
+
+
     public static function insertNewUser($user_profile)
     {
+
         DB::collection('UserInfo')
             ->insert([
                 'UserID' => $user_profile['userId'],
                 "NickName" => $user_profile['displayName'],
                 "Email" => $user_profile['email'],
                 "PictureUrl" => $user_profile['pictureUrl'],
+                "Mobile" => "",
+                "Address" => "",
+                "Referrer" => "",
             ]);
-        Log::info('pag()=insert UserInfo');
     }
 
     public static function buyNewCard($userId)
@@ -87,18 +142,6 @@ class DBHelper
         $amount = 1800;
         $point = 4;
         DBHelper::insertPurchase($userId, $amount, $point);
-    }
-
-    public static function getMongoDateNow()
-    {
-        $created_at = Carbon::now()->toDateTimeString();
-        return new \MongoDB\BSON\UTCDateTime(strtotime($created_at) * 1000);
-    }
-
-    public static function getCardId()
-    {
-        $count = DB::collection('Purchase')->where('CardCreateTime', 'like', '%' . date("Y") . '%')->count() + 1;
-        return date("Y") . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 
     public static function insertPurchase($id, $amount, $point)
@@ -127,23 +170,6 @@ class DBHelper
         DB::collection('Purchase')
             ->insert($newCard);
     }
-
-    public static function registeclassByPoint($cardId, $point)
-    {
-        $newdata = array('$set' => array(
-            'Points' => $point - 1,
-        ));
-        DB::collection('Purchase')
-            ->where('CardID', $cardId)
-            ->update($newdata, ['upsert' => true]);
-    }
-
-    public static function isExpiredCard($cardId)
-    {
-        $card = DB::collection('Purchase')->where('CardID', $cardId)->first();
-        return ($card['Payment'] == 200) ? true : false;
-    }
-
 
     public static function insertConsume($cardId, $point)
     {

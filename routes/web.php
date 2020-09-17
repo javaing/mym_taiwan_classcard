@@ -26,3 +26,5 @@ Route::get('classcard/{cardId}', 'ClassCardController@showClassCard')->where('ca
 Route::get('classcard/buy/', 'ClassCardController@buyClassCard')->name('buy.classcard');
 Route::get('/registe/{point}/{cardId}', 'ClassCardController@registeclassByPoint')
     ->where(['point' => '[0-9]+', 'cardId' => '[0-9]+'])->name('registe.classcard');
+
+Route::get('/account/balance', 'AccountController@balance');

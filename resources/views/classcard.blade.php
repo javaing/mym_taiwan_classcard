@@ -23,37 +23,41 @@
 
     <TABLE BORDER=0 CELLPADDING="4">
         <TR>
-            <TD COLSPAN=3>
-                <form>
-                    @for ($i = 4; $i >= 1; $i--) <div style="display:inline;">
-                        @if ($i> $card['Points']) <img style="width: 20%;margin: 5px;" src="/images/classcard/graylotus.png">
-                        @if ($arr && sizeof($arr)> 0)
-                        {{DBHelper::toDateString( $arr[4-$i]['PointConsumeTime'] ) }}
-                        @endif
-                        @else
-                        <a href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}"><img style="width:20%;margin: 5px;" src="/images/classcard/pinklotus.png"></a>
-                        @endif
-                    </div>
-                    @endfor
-
-
-                </form>
-            </TD>
+            <TD COLSPAN=4>{{ DBHelper::getUserName($card['UserID']) }} 你好</TD>
         </TR>
-
         <TR>
-            <TD COLSPAN=3 align="right">期限: {{ DBHelper::toDateString($card['Expired']) }}</TD>
+            <form>
+                @for ($i = 4; $i >= 1; $i--) <TD>
+                    <div style="display:inline;">
+                        @if ($i> $card['Points']) <img style="width: 100;" src="/images/classcard/graylotus.png">
+                        @if ($arr && sizeof($arr)> 0)
+                        <br>
+                        <center>
+                            {{DBHelper::toDateString( $arr[4-$i]['PointConsumeTime'] ) }}
+                            <center>
+                                @endif
+                                @else
+                                <a href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}"><img style="width:20%;margin: 5px;" src="/images/classcard/pinklotus.png"></a>
+                                @endif
+                    </div>
+                </TD>
+                @endfor
+
+            </form>
+        </TR>
+        <TR>
+            <TD COLSPAN=4 align="right">期限: {{ DBHelper::toDateString($card['Expired']) }}</TD>
         </TR>
         @php
         {{ $dt = App\Helpers\DBHelper::getMongoDateNow(); }}
         @endphp
         <TR>
-            <TD align="center">@if ($card['Points']==0) <H4>
-                    <a href="{{ route('buy.classcard', ['userId' => $card['UserID']] ) }}">買新卡2</a>
+            <TD align="center" COLSPAN=2>@if ($card['Points']==0) <H4>
+                    <a href="{{ route('buy.classcard', ['userId' => $card['UserID']] ) }}">買新卡</a>
                 </H4>
                 @endif</TD>
-            <TD> @if ($dt>$card['Expired'] && $card['Points']>0) <H4>
-                    <a href="{{ route('buy.classcard', ['userId' => $card['UserID']]) }}">展期2</a>
+            <TD COLSPAN=2> @if ($dt>$card['Expired'] && $card['Points']>0) <H4>
+                    <a href="{{ route('buy.classcard', ['userId' => $card['UserID']]) }}">展期</a>
                 </H4>
                 @endif</TD>
         </TR>

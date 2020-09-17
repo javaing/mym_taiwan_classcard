@@ -38,6 +38,11 @@ class DBHelper
         return  DB::collection('UserInfo')->where('UserID', $userId)->first();
     }
 
+    public static function getUserName($userId)
+    {
+        return  DB::collection('UserInfo')->where('UserID', $userId)->first()['NickName'];
+    }
+
     public static function getCard($cardId)
     {
         return DB::collection('Purchase')->where('CardID', $cardId)->first();

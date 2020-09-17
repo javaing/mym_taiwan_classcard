@@ -21,6 +21,14 @@
         $dateTo = Carbon\Carbon::createFromDate(2020, 10, 1);
         $arrIn = DBHelper::getBalanceIn($dateFrom, $dateTo);
         $arrOut = DBHelper::getBalanceOut($dateFrom, $dateTo);
+        Illuminate\Support\Facades\Log::info('$arrIn=' . $arrIn);
+        $sumIn=0; $sumOut=0;
+        foreach($arrIn as $each) {
+            $sumIn += $each['Payment'];
+        }
+        foreach($arrOut as $each) {
+            $sumOut += $each['Cost'];
+        }
     }}
     @endphp
     <table>
@@ -40,12 +48,17 @@
 
         @foreach($arrIn as $purchase)
         <tr>
-            <td>{{$purchase['UserID'] }}</td>
-            <td>{{$purchase['CardID'] }}</td>
-            <td>{{ DBHelper::toDateString( $purchase['PaymentTime']) }}</td>
-            <td align="right" width="100"> {{$purchase['Payment'] }}</td>
+            <td width="100"> {{ DBHelper::getUserName(    $purchase['UserID']) }}</td>
+            <td> {{$purchase['CardID'] }}</td>
+            <td> {{ DBHelper::toDateString( $purchase['PaymentTime']) }}</td>
+            <td align="right" width="100"> {{ number_format( $purchase['Payment'])   }}</td>
         </tr>
         @endforeach
+        <tr>
+            <td COLSPAN=4 align="right">
+                小計 {{ number_format($sumIn)}}
+            </td>
+        </tr>
     </table>
 
 
@@ -68,9 +81,14 @@
         <tr>
             <td>{{$consume['CardID'] }}</td>
             <td>{{ DBHelper::toDateString( $consume['PointConsumeTime']) }}</td>
-            <td align="right" width="100"> {{$consume['Cost'] }}</td>
+            <td align="right" width="100"> {{ number_format( $consume['Cost'])  }}</td>
         </tr>
         @endforeach
+        <tr>
+            <td COLSPAN=4 align="right">
+                小計 {{number_format($sumOut)}}
+            </td>
+        </tr>
     </table>
 
 </body>

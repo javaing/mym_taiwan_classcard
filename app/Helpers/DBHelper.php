@@ -91,7 +91,6 @@ class DBHelper
     //[UserInfo]--------------------------------------------------------
     public static function getUser($userId)
     {
-        //$id = $request->userId;
         return  DB::collection('UserInfo')->where('UserID', $userId)->first();
     }
 

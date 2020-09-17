@@ -62,7 +62,7 @@ class DBHelper
         return DB::collection('Consume')
             ->select('PointConsumeTime')
             ->where('CardID', $cardId)
-            ->orderBy('PointConsumeTime', 'asce')->get();
+            ->orderBy('PointConsumeTime')->get();
     }
 
     public static function insertNewUser($user_profile)

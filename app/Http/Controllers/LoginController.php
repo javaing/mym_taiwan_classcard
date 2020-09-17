@@ -7,7 +7,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Services\LineService;
-use Redirect;
 
 class LoginController extends Controller
 {
@@ -102,18 +101,5 @@ class LoginController extends Controller
         }
 
         return redirect('classcard/' . $card['CardID']);
-    }
-
-    public function showClassCard($cardId)
-    {
-        $card = HelpersDBHelper::getCard($cardId);
-        if (!$card) {
-            print_r('無此課卡');
-            return;
-        }
-        Log::info("showClassCard({$cardId})");
-        return view('classcard2', [
-            'card' => $card,
-        ]);
     }
 }

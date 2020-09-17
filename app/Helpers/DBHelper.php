@@ -50,6 +50,21 @@ class DBHelper
         return  $arr->first()['UserID'];
     }
 
+    public static function toDateString($dbdate)
+    {
+        if (!$dbdate) return '';
+        return $dbdate->toDateTime()->format('Y-m-d');
+    }
+
+    public static function getConsume($cardId)
+    {
+        //get()出來就是array
+        return DB::collection('Consume')
+            ->select('PointConsumeTime')
+            ->where('CardID', $cardId)
+            ->orderBy('PointConsumeTime', 'asce')->get();
+    }
+
     public static function insertNewUser($user_profile)
     {
         DB::collection('UserInfo')

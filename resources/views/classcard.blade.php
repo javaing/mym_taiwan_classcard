@@ -37,7 +37,7 @@
                             <center>
                                 @endif
                                 @else
-                                <a href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}"><img style="width:20%;margin: 5px;" src="/images/classcard/pinklotus.png"></a>
+                                <a href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}"><img style="width: 100;" src="/images/classcard/pinklotus.png"></a>
                                 @endif
                     </div>
                 </TD>

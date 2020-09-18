@@ -23,7 +23,7 @@ class DBHelper
 
     public static function parse($str)
     {
-        Log::info('parse=' . Carbon::parse($str));
+        //Log::info('parse=' . Carbon::parse($str));
         return Carbon::parse($str);
     }
 
@@ -103,6 +103,11 @@ class DBHelper
     public static function getUserName($userId)
     {
         return  DB::collection('UserInfo')->where('UserID', $userId)->first()['NickName'];
+    }
+
+    public static function getUsers()
+    {
+        return  DB::collection('UserInfo')->get();
     }
 
 

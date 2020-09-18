@@ -102,4 +102,11 @@ class LoginController extends Controller
 
         return redirect('classcard/' . $card['CardID']);
     }
+
+    public function alluser()
+    {
+        $users = HelpersDBHelper::getUsers();
+        Log::info('alluser=' . $users);
+        return view("alluser")->with('users', $users);
+    }
 }

@@ -17,7 +17,7 @@
         <form>
             @for ($i = 4; $i >= 1; $i--) <TD>
                 <div style="display:inline;">
-                    @if ($i> $card['Points']) <img style="width: 100;" src="/images/classcard/graylotus.png">
+                    @if ($i> $card['Points']) <img style="width: 75;" src="/images/classcard/graylotus.png">
                     @if ($arr && sizeof($arr)> 0)
                     <br>
                     <center>
@@ -25,7 +25,7 @@
                         <center>
                             @endif
                             @else
-                            <a href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}"><img style="width: 100;" src="/images/classcard/pinklotus.png"></a>
+                            <a href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}"><img style="width: 75;" src="/images/classcard/pinklotus.png"></a>
                             @endif
                 </div>
             </TD>

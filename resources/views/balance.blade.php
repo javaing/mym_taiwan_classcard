@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', '體位法課卡')
+@section('title', '報表-收支')
 
 @section('content')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">

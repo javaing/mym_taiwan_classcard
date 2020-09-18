@@ -21,12 +21,14 @@
                     @if ($arr && sizeof($arr)> 0)
                     <br>
                     <center>
-                        {{DBHelper::toDateString( $arr[4-$i]['PointConsumeTime'] ) }}
-                        <center>
-                            @endif
-                            @else
-                            <a href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}"><img style="width: 75;" src="/images/classcard/pinklotus.png"></a>
-                            @endif
+                        <font size="1">
+                            {{DBHelper::toDateString( $arr[4-$i]['PointConsumeTime'] ) }}
+                        </font>
+                    </center>
+                    @endif
+                    @else
+                    <a href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}"><img style="width: 75;" src="/images/classcard/pinklotus.png"></a>
+                    @endif
                 </div>
             </TD>
             @endfor

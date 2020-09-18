@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <form class="form-signin">
+    <form class="form-signin .m-4 .w-full .lg:w-3/4 .lg:max-w-lg">
         <div class="text-center mb-4">
             @if($url == 'reuse')
             <a href={{ route('reuse.line') }}><img class="mb-4" src="/images/line/2x/32dp/btn_base.png"></a>

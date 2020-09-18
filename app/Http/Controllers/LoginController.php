@@ -55,7 +55,7 @@ class LoginController extends Controller
             }
 
 
-            $this->askProfile($response['access_token']);
+            return $this->askProfile($response['access_token']);
         } catch (Exception $ex) {
             Log::error($ex);
         }

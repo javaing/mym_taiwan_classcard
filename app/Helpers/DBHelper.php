@@ -21,6 +21,12 @@ class DBHelper
         return $dbdate->toDateTime()->format('Y-m-d');
     }
 
+    public static function parse($str)
+    {
+        Log::info('parse=' . Carbon::parse($str));
+        return Carbon::parse($str);
+    }
+
 
     //[Purchase]------------------------------------------------------------------
     public static function getValidCard($userId)
@@ -78,12 +84,12 @@ class DBHelper
         return ($card['Payment'] == 200) ? true : false;
     }
 
-    public static function getBalanceIn($carbonFrom, $carbonTo)
+    public static function getBalanceIn($from, $to)
     {
         //get()出來就是array
         return DB::collection('Purchase')
-            ->where('PaymentTime', '>=', $carbonFrom)
-            ->where('PaymentTime', '<', $carbonTo)
+            ->where('PaymentTime', '>=', DBHelper::parse($from))
+            ->where('PaymentTime', '<', DBHelper::parse($to))
             ->get();
     }
 
@@ -110,12 +116,12 @@ class DBHelper
             ->orderBy('PointConsumeTime')->get();
     }
 
-    public static function getBalanceOut($carbonFrom, $carbonTo)
+    public static function getBalanceOut($from, $to)
     {
         //get()出來就是array
         return DB::collection('Consume')
-            ->where('PointConsumeTime', '>=', $carbonFrom)
-            ->where('PointConsumeTime', '<', $carbonTo)
+            ->where('PointConsumeTime', '>=', DBHelper::parse($from))
+            ->where('PointConsumeTime', '<', DBHelper::parse($to))
             ->get();
     }
 

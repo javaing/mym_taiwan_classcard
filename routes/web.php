@@ -27,4 +27,5 @@ Route::get('classcard/buy/', 'ClassCardController@buyClassCard')->name('buy.clas
 Route::get('/registe/{point}/{cardId}', 'ClassCardController@registeclassByPoint')
     ->where(['point' => '[0-9]+', 'cardId' => '[0-9]+'])->name('registe.classcard');
 
-Route::get('/account/balance', 'AccountController@balance');
+Route::get('/account/balance', 'AccountController@create');
+Route::Post('/account/balance', 'AccountController@balance');

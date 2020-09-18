@@ -17,12 +17,31 @@ class AccountController extends Controller
         //$this->classcardService = $classcardService;
     }
 
-
-    public function balance()
+    public function create()
     {
+        $start = Carbon::now()->startOfMonth()->add(-1, 'month');
+        $end = Carbon::now()->startOfMonth()->add(1, 'month');
+
+        $request = new Request();
+        $request->start = DBHelper::toDateString($start);
+        $request->end = DBHelper::toDateString($end);
+        return $this->balance($request);
+    }
+
+    public function balance(Request $request)
+    {
+        $start = $request->start;
+        $end = $request->end;
+        //Log::info($start);
+        //Log::info($end);
+        if (!$start) {
+            $start = Carbon::now()->startOfMonth()->add(-1, 'month');
+            $end = Carbon::now()->startOfMonth()->add(1, 'month');
+        }
 
         return view('balance', [
-            'arr' => null,
+            'start' => $start,
+            'end' => $end,
         ]);
     }
 }

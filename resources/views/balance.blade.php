@@ -3,8 +3,6 @@
 @section('title', '報表-收支')
 
 @section('content')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
 
 @php
 {{
@@ -21,7 +19,8 @@
     }}
 @endphp
 
-
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
 <div class="text-left" style="width:200px;">
     <h4>查詢區間</h4>
     <form action="{{url()->action('AccountController@balance')}}" method="POST">
@@ -31,7 +30,7 @@
         <script type="text/javascript">
             $('.date').datepicker({
                 format: 'yyyy-mm-dd',
-
+                autoclose: true
             });
         </script>
         <button class="btn btn-link" type="submit">查詢</button>

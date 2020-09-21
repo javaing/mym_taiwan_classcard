@@ -106,7 +106,7 @@ class LoginController extends Controller
     public function alluser()
     {
         $users = HelpersDBHelper::getUsers();
-        Log::info('alluser=' . $users);
+        //Log::info('alluser=' . $users);
         return view("alluser")->with('users', $users);
     }
 }

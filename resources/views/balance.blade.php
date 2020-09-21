@@ -46,7 +46,6 @@
                 </th>
             </tr>
             <tr>
-                <th>用戶</th>
                 <th>卡號</th>
                 <th>日期</th>
                 <th>
@@ -56,8 +55,7 @@
 
             @foreach($arrIn as $purchase)
             <tr>
-                <td width="100"> {{ DBHelper::getUserName(    $purchase['UserID']) }}</td>
-                <td> {{$purchase['CardID'] }}</td>
+                <td width="100"> {{$purchase['CardID'] }} <br> ({{ DBHelper::getUserName(    $purchase['UserID']) }})</td>
                 <td> {{ DBHelper::toDateString( $purchase['PaymentTime']) }}</td>
                 <td align="right" width="100"> {{ number_format( $purchase['Payment'])   }}</td>
             </tr>
@@ -86,9 +84,9 @@
 
             @foreach($arrOut as $consume)
             <tr>
-                <td>{{$consume['CardID'] }}</td>
+                <td width="100">{{$consume['CardID'] }}</td>
                 <td>{{ DBHelper::toDateString( $consume['PointConsumeTime']) }}</td>
-                <td align="right" width="100"> {{ number_format( $consume['Cost'])  }}</td>
+                <td align="right" width="80"> {{ number_format( $consume['Cost'])  }}</td>
             </tr>
             @endforeach
             <tr>

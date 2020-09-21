@@ -57,7 +57,7 @@
             <tr>
                 <td width="100"> {{$purchase['CardID'] }} <br> ({{ DBHelper::getUserName(    $purchase['UserID']) }})</td>
                 <td> {{ DBHelper::toDateString( $purchase['PaymentTime']) }}</td>
-                <td align="right" width="100"> {{ number_format( $purchase['Payment'])   }}</td>
+                <td align="right" width="80"> {{ number_format( $purchase['Payment'])   }}</td>
             </tr>
             @endforeach
             <tr>

@@ -21,11 +21,6 @@ class ClassCardController extends Controller
     {
         DBHelper::registeclassByPoint($cardId, $point);
         DBHelper::insertConsume($cardId, $point);
-        // return view('classcard', [
-        //     'userId' => DBHelper::getUserId($cardId),
-        //     'cardId' => $cardId,
-        //     'point' => $point - 1,
-        // ]);
         return redirect('classcard/' . $cardId);
     }
 

@@ -47,10 +47,6 @@ class LoginController extends Controller
 
             $response = $this->lineService->getLineToken($code);
             if (array_key_exists('id_token', $response)) {
-                //Log::info($response['id_token']);
-                //$decode = $this->lineService->verifyIDToken($response['id_token']);
-                //Log::info($decode);
-                //$expires = strtotime('+30 day', time());
                 $this->saveAccessToken($response['access_token']);
             }
 

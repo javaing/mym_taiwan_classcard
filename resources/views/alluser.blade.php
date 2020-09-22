@@ -15,7 +15,7 @@
         <tr>
             <td> <img width="50" height="50" src="{{ $user['PictureUrl']   }}"></td>
             <td width="100"> <a href="/alluser/{{ $user['UserID'] }}">{{ $user['NickName'] }}</a> </td>
-            <td width="70"> {{ $user['Mobile'] }}</td>
+            <td width="100"> {{ $user['Mobile'] }}</td>
             <td width="110"> {{ $user['Email'] }}</td>
         </tr> @endforeach
     </table>

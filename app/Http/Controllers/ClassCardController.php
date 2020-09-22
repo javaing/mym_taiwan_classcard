@@ -4,16 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Services\ClassCardService;
 use App\Helpers\DBHelper as DBHelper;
 
 class ClassCardController extends Controller
 {
-    protected $classcardService;
+    //protected $classcardService;
 
-    public function __construct(ClassCardService $classcardService)
+    public function __construct()
     {
-        $this->classcardService = $classcardService;
+        //$this->classcardService = $classcardService;
     }
 
 

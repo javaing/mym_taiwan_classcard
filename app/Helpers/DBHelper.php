@@ -75,7 +75,7 @@ class DBHelper
         ));
         DB::collection('Purchase')
             ->where('CardID', $cardId)
-            ->update($newdata, ['upsert' => true]);
+            ->update($newdata);
     }
 
     public static function isExpiredCard($cardId)

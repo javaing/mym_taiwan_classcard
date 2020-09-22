@@ -21,7 +21,8 @@ Route::get('/', function () {
 Route::get('/line', 'LoginController@pageLine');
 Route::get('/callback/login', 'LoginController@lineLoginCallBack');
 Route::get('line/reuse/', 'LoginController@askProfileReuse')->name('reuse.line');
-Route::get('/alluser', 'LoginController@alluser');
+Route::get('/alluser/{userId?}', 'LoginController@alluser');
+Route::post('/alluser', 'LoginController@updateUser');
 
 Route::get('classcard/{cardId}', 'ClassCardController@showClassCard')->where('cardId', '[0-9]+');
 Route::get('classcard/buy/', 'ClassCardController@buyClassCard')->name('buy.classcard');

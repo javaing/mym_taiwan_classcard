@@ -99,10 +99,52 @@ class LoginController extends Controller
         return redirect('classcard/' . $card['CardID']);
     }
 
-    public function alluser()
+    public function alluser(Request $request, $arg1 = null)
     {
         $users = HelpersDBHelper::getUsers();
+        $detail = null;
+        if ($arg1) {
+            $detail = HelpersDBHelper::getUser($arg1);
+
+            $check = array('UserName', 'Mobile', 'Address', 'Referrer', 'Email');
+            foreach ($check as $key) {
+                $this->checkField($key, $detail);
+            }
+        }
+        //Log::info('detail=' . implode("|", $detail));
+        return view("alluser")->with(['users' => $users, 'userDetail' => $detail]);
+    }
+
+    public function checkField($key, $search)
+    {
+        if (!array_key_exists($key, $search)) $search[$key] = '';
+    }
+
+
+    public function updateUser(Request $request)
+    {
+        $userDetail = null;
+        $uid = $request->UserID;
+        if ($uid) {
+            //update userinfo
+            $datas = array(
+                'NickName' => $request->NickName,
+                'UserName' => $request->UserName,
+                'Mobile' => $request->Mobile,
+                'Address' => $request->Address,
+                'Referrer' => $request->Referrer,
+                'Email' => $request->Email
+            );
+            HelpersDBHelper::updateUser($uid, $datas);
+
+            $userDetail = HelpersDBHelper::getUser($uid);
+        } else {
+            Log::info('No userId to update!');
+        }
+
+
+        $users = HelpersDBHelper::getUsers();
         //Log::info('alluser=' . $users);
-        return view("alluser")->with('users', $users);
+        return view("alluser")->with(['users' => $users, 'userDetail' => $userDetail]);
     }
 }

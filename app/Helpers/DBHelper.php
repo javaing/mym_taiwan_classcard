@@ -110,6 +110,13 @@ class DBHelper
         return  DB::collection('UserInfo')->get();
     }
 
+    public static function updateUser($userId, $datas)
+    {
+        $newdata = array('$set' => $datas);
+        DB::collection('UserInfo')
+            ->where('UserID', $userId)
+            ->update($newdata);
+    }
 
     //[Consume]----------------------------------------------------------
     public static function getConsume($cardId)

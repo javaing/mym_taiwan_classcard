@@ -11,6 +11,7 @@
             $arr = DBHelper::getConsume( $card['CardID']);
             $allow_locations = array(
                 array('lat' => '25.028','lng'=>'121.547'),
+                array('lat' => '25.047','lng'=>'121.531'),
                 array('lat' => '25.022','lng'=>'121.520'),
                 array('lat' => '25.039','lng'=>'121.552')
             );

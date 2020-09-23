@@ -5,46 +5,45 @@
 @section('content')
 @php
 {{
+    //25.028  121.547 公司
+    //25.022  121.520 心悅
+    //25.039 121.552 AA
             $arr = DBHelper::getConsume( $card['CardID']);
+            $allow_locations = array(
+                array('lat' => '25.028','lng'=>'121.547'),
+                array('lat' => '25.022','lng'=>'121.520'),
+                array('lat' => '25.039','lng'=>'121.552')
+            );
         }}
 @endphp
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script>
-    function getLocation() {
-        alert(position.coords);
-        if (navigator.geolocation) {
-            alert(position.coords.latitude);
-            navigator.geolocation.getCurrentPosition(savePosition, positionError, {
-                timeout: 10000
-            });
-        } else {
-            //Geolocation is not supported by this browser
-        }
-    }
-
-    // handle the error here
-    function positionError(error) {
-        var errorCode = error.code;
-        var message = error.message;
-
-        alert(message);
-    }
-
-    function savePosition(position) {
-        $.post("geo.php", {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-        });
-    }
-</script>
-<button onclick="getLocation();">Get My Location</button>
-
 <div id="wrapper">
     <?php
+
     $ip = $_SERVER['REMOTE_ADDR'];
-    echo var_export(unserialize(file_get_contents('http://www.geoplugin.net/php.gp?ip=' . $ip)));
+    $geo = unserialize(file_get_contents('http://www.geoplugin.net/php.gp?ip=' . $ip));
+    $lat = $geo["geoplugin_latitude"];
+    $lng = $geo["geoplugin_longitude"];
+    $lat = "25.0478";
+    $lng = "121.5318";
+    $isLocationAllow = false;
+    if ($lat && $lng) {
+        foreach ($allow_locations as $each) {
+            if (substr($lat, 0, 6) == $each['lat']) {
+                if (substr($lng, 0, 7) == $each['lng']) {
+                    echo 'bingo';
+                    $isLocationAllow = true;
+                    break;
+                }
+            }
+        }
+        echo 'not allow register location';
+    } else {
+        echo 'empty lat,lng';
+    }
+
+
     ?>
 </div>
 

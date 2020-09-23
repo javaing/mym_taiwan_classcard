@@ -8,42 +8,48 @@
     //25.028  121.547 公司
     //25.022  121.520 心悅
     //25.039 121.552 AA
-            $arr = DBHelper::getConsume( $card['CardID']);
-            $allow_locations = array(
-                array('lat' => '25.028','lng'=>'121.547'),
-                array('lat' => '25.047','lng'=>'121.531'),
-                array('lat' => '25.022','lng'=>'121.520'),
-                array('lat' => '25.039','lng'=>'121.552')
-            );
-        }}
+    $arr = DBHelper::getConsume( $card['CardID']);
+    $allow_locations = array(
+            array('lat' => '25.028','lng'=>'121.547'),
+            array('lat' => '25.047','lng'=>'121.531'),
+            array('lat' => '25.022','lng'=>'121.520'),
+            array('lat' => '25.039','lng'=>'121.552')
+        );
+    }}
+
+$isLocationAllow = false;
+function checkLocation() {
+if ($isLocationAllow) {
+route('registe.classcard', [$card['Points'], $card['CardID']]);
+} else {
+
+}
+}
 @endphp
 <div id="wrapper">
     <?php
-
     $ip = $_SERVER['REMOTE_ADDR'];
     $geo = unserialize(file_get_contents('http://www.geoplugin.net/php.gp?ip=' . $ip));
     $lat = $geo["geoplugin_latitude"];
     $lng = $geo["geoplugin_longitude"];
     //$lat = "25.0288";
     //$lng = "121.5478";
-    $isLocationAllow = false;
+
     if ($lat && $lng) {
         foreach ($allow_locations as $each) {
-            if (substr($lat, 0, 6) == $each['lat']) {
-                if (substr($lng, 0, 7) == $each['lng']) {
-                    echo 'bingo';
+            if (substr($lat, 0, 5) == $each['lat']) {
+                if (substr($lng, 0, 6) == $each['lng']) {
+                    //echo 'bingo';
                     $isLocationAllow = true;
                     break;
                 }
             }
         }
-        if (!$isLocationAllow)
-            echo "({$lat}, {$lng}) not allow register location";
+        //if (!$isLocationAllow)
+        //echo "({$lat}, {$lng}) not allow register location";
     } else {
-        echo 'empty lat,lng';
+        //echo 'empty lat,lng';
     }
-
-
     ?>
 </div>
 
@@ -65,7 +71,13 @@
                     </center>
                     @endif
                     @else
+                    @if($isLocationAllow)
                     <a href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}"><img style="width: 75;" src="/images/classcard/pinklotus.png"></a>
+                    @else
+                    <a onclick="alert('蓋章地點僅限心悅或喜樂修苑');"><img style="width: 75;" src="/images/classcard/pinklotus.png"></a>
+                    @endif
+
+
                     @endif
                 </div>
             </TD>

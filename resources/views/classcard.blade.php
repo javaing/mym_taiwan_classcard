@@ -23,8 +23,8 @@
     $geo = unserialize(file_get_contents('http://www.geoplugin.net/php.gp?ip=' . $ip));
     $lat = $geo["geoplugin_latitude"];
     $lng = $geo["geoplugin_longitude"];
-    $lat = "25.0478";
-    $lng = "121.5318";
+    //$lat = "25.0288";
+    //$lng = "121.5478";
     $isLocationAllow = false;
     if ($lat && $lng) {
         foreach ($allow_locations as $each) {
@@ -36,7 +36,8 @@
                 }
             }
         }
-        echo 'not allow register location';
+        if (!$isLocationAllow)
+            echo "({$lat}, {$lng}) not allow register location";
     } else {
         echo 'empty lat,lng';
     }

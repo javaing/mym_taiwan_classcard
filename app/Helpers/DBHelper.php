@@ -21,6 +21,12 @@ class DBHelper
         return $dbdate->toDateTime()->format('Y-m-d');
     }
 
+    public static function toDateStringShort($dbdate)
+    {
+        if (!$dbdate) return '';
+        return $dbdate->toDateTime()->format('y-m-d');
+    }
+
     public static function parse($str)
     {
         //Log::info('parse=' . Carbon::parse($str));

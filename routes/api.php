@@ -25,4 +25,4 @@ Route::post('/buyClassCard', 'api\PostController@buyClassCard');
 Route::post('/payUpClassCard', 'api\PostController@payUpClassCard');
 Route::post('/registerClass', 'api\PostController@registerClass');
 Route::post('/renewClassCard', 'api\PostController@renewClassCard');
-Route::post('/upload', 'api\PostController@upload');
+//Route::post('/upload', 'api\PostController@upload');

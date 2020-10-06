@@ -27,15 +27,15 @@
     <table border="0" style="margin-top: 36;">
         <tr>
             <td width="60" height="36">暱稱</td>
-            <td><input name="NickName" type="text" value="{{$userDetail['NickName']}}"> </td>
+            <td><input name="NickName" type="text" value="{{$userDetail['NickName']}}" required="true"> </td>
         </tr>
         <tr>
             <td width="60" height="36">姓名</td>
-            <td> <input name="UserName" type="text" value="{{$userDetail['UserName']}}"> </td>
+            <td> <input name="UserName" type="text" value="{{$userDetail['UserName']}}" required="true"> </td>
         </tr>
         <tr>
             <td width="60" height="36">手機</td>
-            <td><input name="Mobile" type="text" value="{{$userDetail['Mobile']}}"> </td>
+            <td><input name="Mobile" type="tel" value="{{$userDetail['Mobile']}}" pattern="[0-9]{10}||[0-9]{4}-[0-9]{3}-[0-9]{3}"> </td>
         </tr>
         <tr>
             <td width="60" height="36">地址</td>
@@ -47,7 +47,7 @@
         </tr>
         <tr>
             <td width="60" height="36">email</td>
-            <td><input name="Email" type="text" value="{{$userDetail['Email']}}"> </td>
+            <td><input name="Email" type="email" value="{{$userDetail['Email']}}"> </td>
         </tr>
         <tr>
             <input name="UserID" type="hidden" value="{{$userDetail['UserID']}}">

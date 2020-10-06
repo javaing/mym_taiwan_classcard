@@ -31,3 +31,4 @@ Route::get('/registe/{point}/{cardId}', 'ClassCardController@registeclassByPoint
 
 Route::get('/account/balance', 'AccountController@create');
 Route::Post('/account/balance', 'AccountController@balance');
+Route::get('/account/{cardId}', 'AccountController@cardDetail')->where('cardId', '[0-9]+')->name('account.cardDetail');

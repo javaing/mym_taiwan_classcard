@@ -44,4 +44,17 @@ class AccountController extends Controller
             'end' => $end,
         ]);
     }
+
+    public function cardDetail($cardId)
+    {
+        $card = DBHelper::getCard($cardId);
+        if (!$card) {
+            print_r('無此課卡');
+            return;
+        }
+        Log::info("cardId({$cardId})");
+        return view('balanceDetail', [
+            'cardId' => $cardId,
+        ]);
+    }
 }

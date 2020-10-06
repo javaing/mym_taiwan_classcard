@@ -134,6 +134,14 @@ class DBHelper
             ->orderBy('PointConsumeTime')->get();
     }
 
+    public static function getConsumeByCard($cardId)
+    {
+        //get()出來就是array
+        return DB::collection('Consume')
+            ->where('CardID', $cardId)
+            ->orderBy('PointConsumeTime')->get();
+    }
+
     public static function getBalanceOut($from, $to)
     {
         //get()出來就是array

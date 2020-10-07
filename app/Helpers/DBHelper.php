@@ -201,7 +201,7 @@ class DBHelper
             $newCard['PaymentTime'] = null;
         }
 
-        Log::info('insertPurchase =' . json_encode($newCard));
+        //Log::info('insertPurchase =' . json_encode($newCard));
 
         DB::collection('Purchase')
             ->insert($newCard);
@@ -234,5 +234,21 @@ class DBHelper
         ];
         DB::collection('Consume')
             ->insert($newCard);
+    }
+
+    public static function isDeposited($cardId, $cost)
+    {
+        $today = date("Y-m-d");
+        $datas = DB::collection('Consume')
+            ->where('CardID', $cardId)
+            ->where('UserID', DBHelper::getUserId($cardId))
+            ->where('Cost', $cost)
+            ->where('PointConsumeTime', '>=', DBHelper::parse($today))
+            ->get();
+        Log::info('DBHelper::isDeposited =' . sizeof($datas) . ",date=" . $today);
+        if (sizeof($datas) > 0)
+            return true;
+        else
+            return false;
     }
 }

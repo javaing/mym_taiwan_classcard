@@ -63,9 +63,19 @@ class AccountController extends Controller
         $cardId = $request->cardId;
         $amount = $request->amount;
         Log::info("deposite($cardId, $amount)");
-        DBHelper::depositeConsume($cardId, $amount);
-        return view('balanceDetail', [
-            'cardId' => $cardId,
-        ]);
+        $exist = DBHelper::isDeposited($cardId, $amount);
+        //Log::info("deposite($exist)");
+        //print_r($exist);
+        //return;
+
+        if ($exist) {
+            $link = $_SERVER['HTTP_REFERER'];
+            print_r('資料已重複不予處理，請<a href="' . $link . '">回上頁</a>');
+        } else {
+            DBHelper::depositeConsume($cardId, $amount);
+            return view('balanceDetail', [
+                'cardId' => $cardId,
+            ]);
+        }
     }
 }

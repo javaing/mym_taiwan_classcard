@@ -45,14 +45,25 @@ class AccountController extends Controller
         ]);
     }
 
-    public function cardDetail($cardId)
+    public function cardDetail($cardid)
     {
-        $card = DBHelper::getCard($cardId);
+        $card = DBHelper::getCard($cardid);
         if (!$card) {
             print_r('無此課卡');
             return;
         }
-        Log::info("cardId({$cardId})");
+        Log::info("cardId({$cardid})");
+        return view('balanceDetail', [
+            'cardId' => $cardid,
+        ]);
+    }
+
+    public function deposite(Request $request)
+    {
+        $cardId = $request->cardId;
+        $amount = $request->amount;
+        Log::info("deposite($cardId, $amount)");
+        DBHelper::depositeConsume($cardId, $amount);
         return view('balanceDetail', [
             'cardId' => $cardId,
         ]);

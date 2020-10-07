@@ -60,6 +60,10 @@ class DBHelper
     {
         return DB::collection('Purchase')->where('CardID', $cardId)->first();
     }
+    public static function getCardHistory($cardId)
+    {
+        return DB::collection('Purchase')->where('CardID', $cardId)->get();
+    }
 
     public static function getUserId($cardId)
     {
@@ -210,6 +214,18 @@ class DBHelper
             $cost = 300;
         }
 
+        $newCard = [
+            'CardID' => $cardId,
+            'UserID' => DBHelper::getUserId($cardId),
+            "Cost" => $cost,
+            "PointConsumeTime" => DBHelper::getMongoDateNow(),
+        ];
+        DB::collection('Consume')
+            ->insert($newCard);
+    }
+
+    public static function depositeConsume($cardId, $cost)
+    {
         $newCard = [
             'CardID' => $cardId,
             'UserID' => DBHelper::getUserId($cardId),

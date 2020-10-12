@@ -103,7 +103,7 @@
         </div><!-- /.modal -->
     </div>
     @else
-    <a href="{{$_SERVER['HTTP_REFERER']}}">使用完畢</a>
+    <a href="/account/balance">使用完畢</a>
     @endif
 
 </center>

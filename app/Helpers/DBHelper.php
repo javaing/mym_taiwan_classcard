@@ -74,7 +74,10 @@ class DBHelper
 
     public static function getCardId()
     {
-        $count = DB::collection('Purchase')->where('CardCreateTime', 'like', '%' . date("Y") . '%')->count() + 1;
+        $count = DB::collection('Purchase')
+            ->where('CardCreateTime', 'like', '%' . date("Y") . '%')
+            ->where('Payment', '>', 0) //因為可能有退卡，是負的要去掉
+            ->count() + 1;
         return date("Y") . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 
@@ -207,6 +210,34 @@ class DBHelper
             ->insert($newCard);
     }
 
+    public static function refund($cardId, $amount)
+    {
+        //清空點數
+        $newdata = array('$set' => array(
+            'Points' => 0,
+        ));
+        DB::collection('Purchase')
+            ->where('CardID', $cardId)
+            ->update($newdata);
+
+
+        //新增一筆金額為負的
+        $dt = DBHelper::getMongoDateNow();
+
+        $newCard = [
+            'CardID' => $cardId,
+            'UserID' => DBHelper::getUserId($cardId),
+            'Points' => 0,
+            "Expired" => $dt,
+            "CardCreateTime" => $dt,
+            "Payment" => -$amount,
+            "PaymentTime" => $dt,
+        ];
+
+        DB::collection('Purchase')
+            ->insert($newCard);
+    }
+
     public static function insertConsume($cardId, $point)
     {
         $cost = 500;
@@ -214,18 +245,6 @@ class DBHelper
             $cost = 300;
         }
 
-        $newCard = [
-            'CardID' => $cardId,
-            'UserID' => DBHelper::getUserId($cardId),
-            "Cost" => $cost,
-            "PointConsumeTime" => DBHelper::getMongoDateNow(),
-        ];
-        DB::collection('Consume')
-            ->insert($newCard);
-    }
-
-    public static function depositeConsume($cardId, $cost)
-    {
         $newCard = [
             'CardID' => $cardId,
             'UserID' => DBHelper::getUserId($cardId),

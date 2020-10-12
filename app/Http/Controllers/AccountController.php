@@ -72,7 +72,7 @@ class AccountController extends Controller
             $link = $_SERVER['HTTP_REFERER'];
             print_r('資料已重複不予處理，請<a href="' . $link . '">回上頁</a>');
         } else {
-            DBHelper::depositeConsume($cardId, $amount);
+            DBHelper::refund($cardId, $amount);
             return view('balanceDetail', [
                 'cardId' => $cardId,
             ]);

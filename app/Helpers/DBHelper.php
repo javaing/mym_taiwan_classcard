@@ -255,16 +255,35 @@ class DBHelper
             ->insert($newCard);
     }
 
-    public static function isDeposited($cardId, $cost)
+    private static function today()
     {
         $today = date("Y-m-d");
+        return DBHelper::parse($today);
+    }
+
+    public static function isConsume($cardId)
+    {
+        $datas = DB::collection('Consume')
+            ->where('CardID', $cardId)
+            ->where('UserID', DBHelper::getUserId($cardId))
+            ->where('PointConsumeTime', '>=', DBHelper::today())
+            ->get();
+        Log::info('DBHelper::isConsume =' . sizeof($datas) . ",date=" . DBHelper::today());
+        if (sizeof($datas) > 0)
+            return true;
+        else
+            return false;
+    }
+
+    public static function isDeposited($cardId, $cost)
+    {
         $datas = DB::collection('Consume')
             ->where('CardID', $cardId)
             ->where('UserID', DBHelper::getUserId($cardId))
             ->where('Cost', $cost)
-            ->where('PointConsumeTime', '>=', DBHelper::parse($today))
+            ->where('PointConsumeTime', '>=', DBHelper::today())
             ->get();
-        Log::info('DBHelper::isDeposited =' . sizeof($datas) . ",date=" . $today);
+        Log::info('DBHelper::isDeposited =' . sizeof($datas) . ",date=" . DBHelper::today());
         if (sizeof($datas) > 0)
             return true;
         else

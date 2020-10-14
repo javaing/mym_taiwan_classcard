@@ -17,41 +17,28 @@
         );
     }}
 
-$isLocationAllow = false;
-function checkLocation() {
-if ($isLocationAllow) {
-route('registe.classcard', [$card['Points'], $card['CardID']]);
-} else {
-
-}
-}
+$isLocationAllow = true;
 @endphp
-<div id="wrapper">
+<!-- <div id="wrapper">
     <?php
-    $ip = $_SERVER['REMOTE_ADDR'];
-    $geo = unserialize(file_get_contents('http://www.geoplugin.net/php.gp?ip=' . $ip));
-    $lat = $geo["geoplugin_latitude"];
-    $lng = $geo["geoplugin_longitude"];
-    //$lat = "25.0288";
-    //$lng = "121.5478";
+    // $ip = $_SERVER['REMOTE_ADDR'];
+    // $geo = unserialize(file_get_contents('http://www.geoplugin.net/php.gp?ip=' . $ip));
+    // $lat = $geo["geoplugin_latitude"];
+    // $lng = $geo["geoplugin_longitude"];
 
-    if ($lat && $lng) {
-        foreach ($allow_locations as $each) {
-            if (substr($lat, 0, 5) == $each['lat']) {
-                if (substr($lng, 0, 6) == $each['lng']) {
-                    //echo 'bingo';
-                    $isLocationAllow = true;
-                    break;
-                }
-            }
-        }
-        //if (!$isLocationAllow)
-        //echo "({$lat}, {$lng}) not allow register location";
-    } else {
-        //echo 'empty lat,lng';
-    }
+    // if ($lat && $lng) {
+    //     foreach ($allow_locations as $each) {
+    //         if (substr($lat, 0, 5) == $each['lat']) {
+    //             if (substr($lng, 0, 6) == $each['lng']) {
+    //                 $isLocationAllow = true;
+    //                 break;
+    //             }
+    //         }
+    //     }
+    // } else {
+    // }
     ?>
-</div>
+</div> -->
 
 <TABLE BORDER=0 CELLPADDING="4">
     <TR>

@@ -18,7 +18,17 @@ class ClassCardController extends Controller
 
     public function registeclassByPoint($point, $cardId)
     {
+        //先檢查一天只能蓋一次
+        $exist = DBHelper::isConsume($cardId, $point);
+        if ($exist) {
+            $link = $_SERVER['HTTP_REFERER'];
+            print_r('今日已蓋章，請<a href="' . $link . '">回上頁</a>');
+            return;
+        }
+
+        //扣點數
         DBHelper::registeclassByPoint($cardId, $point);
+        //紀錄花費500 or 300
         DBHelper::insertConsume($cardId, $point);
         return redirect('classcard/' . $cardId);
     }

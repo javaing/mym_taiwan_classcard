@@ -22,7 +22,7 @@ class ClassCardController extends Controller
         $exist = DBHelper::isConsume($cardId, $point);
         if ($exist) {
             $link = $_SERVER['HTTP_REFERER'];
-            print_r('今日已蓋章，請<a href="' . $link . '">回上頁</a>');
+            print_r('<h3>今日已蓋章，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
 
@@ -47,7 +47,7 @@ class ClassCardController extends Controller
         $card = DBHelper::getCard($cardId);
         if (!$card) {
             $link = $_SERVER['HTTP_REFERER'];
-            print_r('無此課卡，請<a href="' . $link . '">回上頁</a>');
+            print_r('<h3>無此課卡，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
         Log::info("showClassCard({$cardId})");
@@ -61,7 +61,7 @@ class ClassCardController extends Controller
         $arr = DBHelper::getUserHistory($userId);
         if (!$arr) {
             $link = $_SERVER['HTTP_REFERER'];
-            print_r('無上課紀錄，請<a href="' . $link . '">回上頁</a>');
+            print_r('<h3>無上課紀錄，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
         Log::info("showClassHistory({$userId},index={$index})");

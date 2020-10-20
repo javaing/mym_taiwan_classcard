@@ -18,7 +18,7 @@ class DBHelper
     public static function toDateString($dbdate)
     {
         if (!$dbdate) return '';
-        return $dbdate->toDateTime()->format('Y-m-d');
+        return $dbdate->toDateTime()->format('Y/m/d');
     }
 
     public static function toDateStringShort($dbdate)
@@ -63,6 +63,10 @@ class DBHelper
     public static function getCardHistory($cardId)
     {
         return DB::collection('Purchase')->where('CardID', $cardId)->get();
+    }
+    public static function getUserHistory($userId)
+    {
+        return DB::collection('Purchase')->where('UserID', $userId)->get();
     }
 
     public static function getUserId($cardId)

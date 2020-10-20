@@ -46,12 +46,28 @@ class ClassCardController extends Controller
     {
         $card = DBHelper::getCard($cardId);
         if (!$card) {
-            print_r('無此課卡');
+            $link = $_SERVER['HTTP_REFERER'];
+            print_r('無此課卡，請<a href="' . $link . '">回上頁</a>');
             return;
         }
         Log::info("showClassCard({$cardId})");
         return view('classcard', [
             'card' => $card,
+        ]);
+    }
+
+    public function showClassHistory($userId, $index)
+    {
+        $arr = DBHelper::getUserHistory($userId);
+        if (!$arr) {
+            $link = $_SERVER['HTTP_REFERER'];
+            print_r('無上課紀錄，請<a href="' . $link . '">回上頁</a>');
+            return;
+        }
+        Log::info("showClassHistory({$userId},index={$index})");
+        return view('classhistory', [
+            'card' => $arr[$index],
+            'index' => $index
         ]);
     }
 }

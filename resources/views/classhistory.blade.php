@@ -5,6 +5,7 @@
 @section('content')
 @php
 {{
+    $size = sizeof(DBHelper::getUserHistory($card['UserID']));
     $consumeCount = DBHelper::getConsume( $card['CardID']);
 }}
 @endphp
@@ -18,15 +19,37 @@
 <div align="center">
     <img style="margin-bottom: 24px;width: 50%" src="/images/div.png">
 </div>
-<div align="center" style="margin-bottom: 2px">
-    <p16>課程使用期限</p16>
+<div align="center" style="margin-bottom: 2px;">
+
+    @if ($index-1>=0 )
+
+    <a href="{{ route('show.classhistory', [
+        'userId' => $card['UserID'], 
+        'index'=>$index-1,
+        ] ) }}">
+        <img style="width: 20px;height:20px" src="/images/arrow_left.png">
+    </a>
+    @else
+    <img style="width: 20px;height:20px" src="/images/arrow_left.png">
+    @endif
+
+    <p16>上課紀錄</p16>
+
+    @if ($index+1<$size ) <a href="{{ route('show.classhistory', [
+        'userId' => $card['UserID'], 
+        'index'=>$index+1,
+        ] ) }}">
+        <img style="width: 20px;height:20px" src="/images/arrow_right.png">
+        </a>
+        @else
+        <img style="width: 20px;height:20px" src="/images/arrow_right.png">
+        @endif
 </div>
 <div align="center" style="margin-bottom: 24px">
-    <p16>{{ DBHelper::toDateString($card['Expired']) }}</p16>
+    <p16>{{ DBHelper::toDateString($card['PaymentTime']) }}</p16>
 </div>
 
 <TABLE BORDER=0 align="center">
-
     <form>
         @for ($i = 4; $i >= 1; $i--)
 
@@ -57,35 +80,14 @@
     </form>
 </TABLE>
 
-@php
-{{ $dt = App\Helpers\DBHelper::getMongoDateNow(); }}
-@endphp
-@if ($card['Points']==0)
-
-<div align="center" style="margin-Top: 8px;">
-    <a href="{{ route('buy.classcard', ['userId' => $card['UserID']] ) }}">
-        <input type="image" style="width:136px;height:36px;" src="/images/classcard/buy_card.png" alt="購買新卡" />
-    </a>
-</div>
-@else
 <div align="center" style="margin-Top: 8px;width:136px;height:36px;">
-
 </div>
-@endif
 <div align="center" style="margin-Top: 24px;">
-    <a href="{{ route('show.classhistory', [
-        'userId' => $card['UserID'], 
-        'index'=>0
-        ] ) }}">
-        <input type="image" style="width:136px;height:36px;" src="/images/classcard/class_history.png" alt="" />
+    <a href="{{ route('reuse.line') }}">
+        <input type="image" style="width:136px;height:36px;" src="/images/classcard/back_classcard.png" alt="" />
     </a>
 </div>
 
 
-@if ($dt>$card['Expired'] && $card['Points']>0)
-<div>
-    <a href="{{ route('buy.classcard', ['userId' => $card['UserID']]) }}">展期</a>
-</div>
-@endif
 
 @endsection

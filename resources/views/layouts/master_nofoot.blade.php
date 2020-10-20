@@ -16,36 +16,7 @@
             background-size: contain;
             height: 120px;
             width: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 4px;
         }
-
-        #div_unuse {
-            background-image: url('/images/classcard/point_unuse.png');
-            background-repeat: no-repeat;
-            background-size: contain;
-            height: 120px;
-            width: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 4px;
-        }
-
-        #div_btn_border {
-            background-image: url('/images/classcard/border_normal.png');
-            background-repeat: no-repeat;
-            background-size: contain;
-            height: 136px;
-            width: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 4px;
-        }
-
 
         body {
             background-color: #FFF9E5;
@@ -84,8 +55,5 @@
 
 
 </body>
-<footer class="footer text-fades text-center py-5">
-    @include('layouts.footer')
-</footer>
 
 </html>

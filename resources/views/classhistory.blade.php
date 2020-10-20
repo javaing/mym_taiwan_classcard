@@ -46,7 +46,7 @@
         @endif
 </div>
 <div align="center" style="margin-bottom: 24px">
-    <p16>{{ DBHelper::toDateString($card['PaymentTime']) }}</p16>
+    <p16>{{ $index+1}}/{{ $size }}</p16>
 </div>
 
 <TABLE BORDER=0 align="center">

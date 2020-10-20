@@ -9,14 +9,14 @@
 }}
 @endphp
 
-<div align="right">
+<div align="right" style="margin-right: 30px;">
     <p18>
         {{ DBHelper::getUserName($card['UserID']) }} 你好
     </p18>
 </div>
 
 <div align="center">
-    <img style="margin-bottom: 24px;width: 50%" src="/images/div.png">
+    <img style="margin-bottom: 24px;" src="/images/div.png">
 </div>
 <div align="center" style="margin-bottom: 2px">
     <p16>課程使用期限</p16>

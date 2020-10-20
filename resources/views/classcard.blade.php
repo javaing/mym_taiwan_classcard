@@ -16,7 +16,7 @@
 </div>
 
 <div align="center">
-    <img style="margin-bottom: 24px;" src="/images/div.png">
+    <img style="margin-bottom: 24px;width:80%;" src="/images/div.png">
 </div>
 <div align="center" style="margin-bottom: 2px">
     <p16>課程使用期限</p16>

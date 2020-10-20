@@ -14,8 +14,8 @@
             background-image: url('/images/classcard/point_used.png');
             background-repeat: no-repeat;
             background-size: contain;
-            height: 120px;
-            width: 120px;
+            height: 100px;
+            width: 100px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -26,8 +26,8 @@
             background-image: url('/images/classcard/point_unuse.png');
             background-repeat: no-repeat;
             background-size: contain;
-            height: 120px;
-            width: 120px;
+            height: 100px;
+            width: 100px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -84,7 +84,7 @@
 
 
 </body>
-<footer class="footer text-fades text-center py-5">
+<footer class="footer text-fades text-center py-4">
     @include('layouts.footer')
 </footer>
 

@@ -77,15 +77,16 @@
     </style>
 </head>
 
-<body>
+<body style="height:100%;">
     <div class="container" style="margin-top: 24px;">
         @yield('content')
     </div>
 
 
+    <footer class="footer text-fades text-center py-4">
+        @include('layouts.footer')
+    </footer>
+
 </body>
-<footer class="footer text-fades text-center py-4">
-    @include('layouts.footer')
-</footer>
 
 </html>

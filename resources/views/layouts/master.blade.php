@@ -78,7 +78,7 @@
 </head>
 
 <body style="height:100%;">
-    <div class="container" style="margin-top: 24px;">
+    <div class="container" style="margin-top: 0px;">
         @yield('content')
     </div>
 

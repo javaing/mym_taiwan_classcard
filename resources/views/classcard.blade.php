@@ -126,7 +126,7 @@
 </div>
 @endif
 
-<div align="center" style="margin-Top: 28px;">
+<div align="center" style="margin-Top: 8px;">
     <a href="{{ route('show.classhistory', [
         'userId' => $card['UserID'], 
         'index'=>0

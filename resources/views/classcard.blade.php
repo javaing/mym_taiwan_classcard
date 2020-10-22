@@ -19,7 +19,7 @@
 
 
 <div class="display-flex">
-    <div class="div-size" style="width:80%;text-align:center;margin-left:100px">
+    <div class="div-size" style="width:80%;text-align:center">
         <p18>{{ DBHelper::getUserName($card['UserID']) }}</p18>
     </div>
     <div class="div-size">
@@ -46,7 +46,7 @@
 
             $("#SS" + N).attr("src", "/images/classcard/point_today.png");
             window.setTimeout(function() {
-                $("#SS" + N).attr("src", "/images/classcard/point_unuse.png");
+                $("#SS" + N).attr("src", "/images/classcard/point_" + N + ".png");
             }, 2000);
         });
     });
@@ -118,20 +118,20 @@
 @if ($card['Points']==0)
 <div align="center" style="margin-Top: 8px;">
     <a href="{{ route('buy.classcard', ['userId' => $card['UserID']] ) }}">
-        <input type="image" style="width:136px;height:36px;" src="/images/classcard/buy_card.png" alt="購買新卡" />
+        <input type="image" style="width:106px;height:28px;" src="/images/classcard/buy_card.png" alt="購買新卡" />
     </a>
 </div>
 @else
-<div align="center" style="margin-Top: 8px;width:136px;height:36px;">
+<div align="center" style="margin-Top: 8px;width:106px;height:28px;">
 </div>
 @endif
 
-<div align="center" style="margin-Top: 24px;">
+<div align="center" style="margin-Top: 28px;">
     <a href="{{ route('show.classhistory', [
         'userId' => $card['UserID'], 
         'index'=>0
         ] ) }}">
-        <input type="image" style="width:136px;height:36px;" src="/images/classcard/class_history.png" alt="" />
+        <input type="image" style="width:106px;height:28px;" src="/images/classcard/class_history.png" alt="" />
     </a>
 </div>
 

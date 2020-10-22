@@ -7,19 +7,19 @@
 {{
     $size = sizeof(DBHelper::getUserHistory($card['UserID']));
     $consumeCount = DBHelper::getConsume( $card['CardID']);
+    $thisYearCount = DBHelper::thisYearCount($card['UserID']);
+    $thisMonthCount = DBHelper::thisMonthCount($card['UserID']);
 }}
 @endphp
 
-<TABLE BORDER=0 style="margin-bottom: 12px;width:100%;">
-    <TR>
-        <TD COLSPAN=2 align="right">
-            <p18>{{ DBHelper::getUserName($card['UserID']) }}</p18>
-        </TD>
-        <TD align="right">
-            <p18>您好</p18>
-        </TD>
-    </TR>
-</TABLE>
+<div class="display-flex">
+    <div class="div-size" style="width:80%;text-align:center">
+        <p18>{{ DBHelper::getUserName($card['UserID']) }}</p18>
+    </div>
+    <div class="div-size">
+        <p18>您好</p18>
+    </div>
+</div>
 
 <div align="center">
     <img style="margin-bottom: 12px;width:80%;" src="/images/div.png">
@@ -72,9 +72,7 @@
                     @endif
                 </div>
                 @else
-                <a href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}">
-                    <div id="div_unuse"></div>
-                </a>
+                <div id="div_unuse" />
                 @endif
             </TD>
             @if ($i%2==1 )
@@ -85,11 +83,17 @@
     </form>
 </TABLE>
 
-<div align="center" style="margin-Top: 8px;width:136px;height:36px;">
+<div class="display-flex" style="margin-Top: 8px;">
+    <div class="div-size" style="width:50%;text-align:center">
+        <p18>今年/{{$thisYearCount}}堂</p18>
+    </div>
+    <div class="div-size" style="width:50%;text-align:center">
+        <p18>本月/{{$thisMonthCount}}堂</p18>
+    </div>
 </div>
-<div align="center" style="margin-Top: 24px;">
+<div align="center" style="margin-Top: 8px;">
     <a href="{{ route('reuse.line') }}">
-        <input type="image" style="width:136px;height:36px;" src="/images/classcard/back_classcard.png" alt="" />
+        <input type="image" style="width:106px;height:28px;" src="/images/classcard/back_classcard.png" alt="" />
     </a>
 </div>
 

@@ -73,6 +73,10 @@
             color: #FFFFFF;
             font-size: 14;
         }
+
+        .display-flex {
+            display: flex;
+        }
     </style>
 </head>
 

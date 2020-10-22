@@ -17,16 +17,16 @@
 }}
 @endphp
 
-<TABLE BORDER=0 style="margin-bottom: 12px;width:100%;">
-    <TR>
-        <TD COLSPAN=2 align="right">
-            <p18>{{ DBHelper::getUserName($card['UserID']) }}</p18>
-        </TD>
-        <TD align="right">
-            <p18>您好</p18>
-        </TD>
-    </TR>
-</TABLE>
+
+<div class="display-flex">
+    <div class="div-size" style="width:80%;text-align:center;margin-left:100px">
+        <p18>{{ DBHelper::getUserName($card['UserID']) }}</p18>
+    </div>
+    <div class="div-size">
+        <p18>您好</p18>
+    </div>
+</div>
+
 
 <div align="center">
     <img style="margin-bottom: 12px;width:80%;" src="/images/div.png">

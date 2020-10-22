@@ -21,6 +21,11 @@ class DBHelper
         return $dbdate->toDateTime()->format('Y/m/d');
     }
 
+    public static function todaySlash()
+    {
+        return DBHelper::toDateString(Carbon::now());
+    }
+
     public static function toDateStringShort($dbdate)
     {
         if (!$dbdate) return '';

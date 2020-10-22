@@ -5,7 +5,15 @@
 @section('content')
 @php
 {{
-    $consumeCount = DBHelper::getConsume( $card['CardID']);
+    $registArray = DBHelper::getConsume( $card['CardID']);
+    $today = DBHelper::todaySlash();
+    $isTodayDone = false;
+    for ($i = 0; $i < sizeof($registArray); $i++) {
+        if($today==DBHelper::toDateString( $registArray[$i]['PointConsumeTime'])) {
+            $isTodayDone = true;
+            break;
+        }
+    }
 }}
 @endphp
 
@@ -30,8 +38,31 @@
     <p16>{{ DBHelper::toDateString($card['Expired']) }}</p16>
 </div>
 
-<TABLE BORDER=0 align="center">
+@if ($isTodayDone)
+<script type="text/javascript">
+    $(function() {
+        $("#div_unuse img").click(function() {
+            var N = $(this).attr("id").substr(2);
 
+            $("#SS" + N).attr("src", "/images/classcard/point_today.png");
+            window.setTimeout(function() {
+                $("#SS" + N).attr("src", "/images/classcard/point_unuse.png");
+            }, 2000);
+        });
+    });
+</script>
+@else
+<script type="text/javascript">
+    $(function() {
+        $("#div_unuse img").click(function() {
+            $('#registeLink')[0].click();
+        });
+    });
+</script>
+@endif
+
+
+<TABLE BORDER=0 align="center">
     <form>
         @for ($i = 4; $i >= 1; $i--)
 
@@ -41,17 +72,38 @@
             @endif
             <TD align="center">
                 @if ($i> $card['Points'])
+
+                @if ($registArray && sizeof($registArray)>(4-$i))
                 <div id="div_used">
-                    @if ($consumeCount && sizeof($consumeCount)>(4-$i))
-                    <p14white>
-                        {{DBHelper::toDateString( $consumeCount[4-$i]['PointConsumeTime'] ) }}
-                    </p14white>
-                    @endif
+                    <p14white>{{DBHelper::toDateString( $registArray[4-$i]['PointConsumeTime'] ) }}</p14white>
                 </div>
                 @else
-                <a href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}">
-                    <div id="div_unuse"></div>
-                </a>
+                <div id="div_used" />
+                @endif
+
+                @else
+
+                <div id="div_unuse">
+                    @switch(4-$i+1)
+                    @case(1)
+                    <img src="/images/classcard/point_1.png" style="width:100%;height:100%" id="SS1">
+                    @break
+
+                    @case(2)
+                    <img src="/images/classcard/point_2.png" style="width:100%;height:100%" id="SS2">
+                    @break
+
+                    @case(3)
+                    <img src="/images/classcard/point_3.png" style="width:100%;height:100%" id="SS3">
+                    @break
+
+                    @case(4)
+                    <img src="/images/classcard/point_4.png" style="width:100%;height:100%" id="SS4">
+                    @break
+                    @endswitch
+                </div>
+                <a id="registeLink" href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}" />
+
                 @endif
             </TD>
             @if ($i%2==1 )
@@ -62,11 +114,8 @@
     </form>
 </TABLE>
 
-@php
-{{ $dt = App\Helpers\DBHelper::getMongoDateNow(); }}
-@endphp
-@if ($card['Points']==0)
 
+@if ($card['Points']==0)
 <div align="center" style="margin-Top: 8px;">
     <a href="{{ route('buy.classcard', ['userId' => $card['UserID']] ) }}">
         <input type="image" style="width:136px;height:36px;" src="/images/classcard/buy_card.png" alt="購買新卡" />
@@ -74,9 +123,9 @@
 </div>
 @else
 <div align="center" style="margin-Top: 8px;width:136px;height:36px;">
-
 </div>
 @endif
+
 <div align="center" style="margin-Top: 24px;">
     <a href="{{ route('show.classhistory', [
         'userId' => $card['UserID'], 
@@ -86,6 +135,9 @@
     </a>
 </div>
 
+@php
+{{ $dt = App\Helpers\DBHelper::getMongoDateNow(); }}
+@endphp
 @if ($dt>$card['Expired'] && $card['Points']>0)
 <div>
     <a href="{{ route('buy.classcard', ['userId' => $card['UserID']]) }}">展期</a>

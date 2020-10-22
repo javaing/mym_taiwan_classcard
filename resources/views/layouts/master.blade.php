@@ -23,7 +23,6 @@
         }
 
         #div_unuse {
-            background-image: url('/images/classcard/point_unuse.png');
             background-repeat: no-repeat;
             background-size: contain;
             height: 100px;

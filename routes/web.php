@@ -21,8 +21,8 @@ Route::get('/', function () {
 Route::get('/line', 'LoginController@pageLine');
 Route::get('/callback/login', 'LoginController@lineLoginCallBack');
 Route::get('line/reuse/', 'LoginController@askProfileReuse')->name('reuse.line');
-Route::get('/alluser/{userId?}', 'LoginController@alluser');
-Route::post('/alluser', 'LoginController@updateUser');
+Route::get('/alluser/{userId?}', 'LoginController@alluser')->middleware('auth.basic');
+Route::post('/alluser', 'LoginController@updateUser')->middleware('auth.basic');
 
 Route::get('classcard/{cardId}', 'ClassCardController@showClassCard')->where('cardId', '[0-9]+');
 Route::get('classcard/buy/', 'ClassCardController@buyClassCard')->name('buy.classcard');
@@ -34,3 +34,7 @@ Route::get('/account/balance', 'AccountController@create');
 Route::Post('/account/balance', 'AccountController@balance');
 Route::get('/account/{cardId}', 'AccountController@cardDetail')->where('cardId', '[0-9]+')->name('account.cardDetail');
 Route::get('account/deposite', 'AccountController@deposite')->name('account.deposite');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

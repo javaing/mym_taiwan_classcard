@@ -14,7 +14,7 @@ class AccountController extends Controller
 
     public function __construct()
     {
-        //$this->classcardService = $classcardService;
+        $this->middleware('auth');
     }
 
     public function create()

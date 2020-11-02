@@ -14,9 +14,10 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+Route::get('/', 'LoginController@pageLine');
 //Route::get('/class', 'ClassCardController@page');
 //Route::get('/registeclass/{index}', 'ClassCardController@registeclass')->where('index', '[0-9]+');
 Route::get('/line', 'LoginController@pageLine');

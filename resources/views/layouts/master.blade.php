@@ -68,9 +68,9 @@
             font-size: 14;
         }
 
-        p14white {
+        p16white {
             color: #FFFFFF;
-            font-size: 14;
+            font-size: 16;
         }
 
         .display-flex {

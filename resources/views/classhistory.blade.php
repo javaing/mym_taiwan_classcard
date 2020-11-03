@@ -66,7 +66,7 @@
 
             @if ($registArray && sizeof($registArray)>(4-$i))
             <div id="div_used">
-                <p14white>{{DBHelper::toDateString( $registArray[4-$i]['PointConsumeTime'] ) }}</p14white>
+                <p16white>{{DBHelper::toDateString( $registArray[4-$i]['PointConsumeTime'] ) }}</p16white>
             </div>
             @else
             <div id="div_used" />

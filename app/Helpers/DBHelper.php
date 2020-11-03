@@ -203,10 +203,10 @@ class DBHelper
             ]);
     }
 
-    public static function buyNewCard($userId)
+    public static function buyNewCard($userId, $point)
     {
         $amount = 1800;
-        $point = 4;
+        if ($point == 1) $amount = 500;
         DBHelper::insertPurchase($userId, $amount, $point);
     }
 
@@ -219,7 +219,7 @@ class DBHelper
         $newCard = [
             'CardID' => DBHelper::getCardId(),
             'UserID' => $id,
-            'Points' => $point,
+            'Points' => (int)$point,
             "Expired" => $dt_expired,
             "CardCreateTime" => $dt,
         ];
@@ -231,7 +231,7 @@ class DBHelper
             $newCard['PaymentTime'] = null;
         }
 
-        //Log::info('insertPurchase =' . json_encode($newCard));
+        Log::info('insertPurchase =' . json_encode($newCard));
 
         DB::collection('Purchase')
             ->insert($newCard);

@@ -36,7 +36,8 @@ class ClassCardController extends Controller
     public function buyClassCard(Request $request)
     {
         $userId = $request->userId;
-        DBHelper::buyNewCard($userId);
+        $point = $request->point; //1 or 4
+        DBHelper::buyNewCard($userId, $point);
 
         $card = DBHelper::getValidCard($userId);
         return redirect('classcard/' . $card['CardID']);

@@ -135,8 +135,6 @@
 @if ($card['Points']==0)
 <div align="center" style="margin-Top: 8px;">
     <img class="img-responsive center-block" data-toggle="modal" data-target="#exampleModalCentered" type="image" style="width:106px;height:28px;" src="/images/classcard/buy_card.png" />
-    <a id="buyNewLink1" href="{{ route('buy.classcard', ['userId' => $card['UserID'], 'point'=>1] ) }}" />
-    <a id="buyNewLink4" href="{{ route('buy.classcard', ['userId' => $card['UserID'], 'point'=>4] ) }}" />
 </div>
 
 <!-- Modal -->
@@ -146,6 +144,8 @@
             <div class="modal-body">
                 <button id="buycard1" class="btn btn-primary btn-lg btn-block">單堂 500元</button>
                 <button id="buycard4" class="btn btn-primary btn-lg btn-block">四堂 1800元</button>
+                <a id="buyNewLink1" href="{{ route('buy.classcard', ['userId' => $card['UserID'], 'point'=>1] ) }}" />
+                <a id="buyNewLink4" href="{{ route('buy.classcard', ['userId' => $card['UserID'], 'point'=>4] ) }}" />
             </div>
         </div>
     </div>

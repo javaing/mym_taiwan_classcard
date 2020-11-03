@@ -45,7 +45,6 @@
             margin: 4px;
         }
 
-
         body {
             background-color: #FFF9E5;
         }

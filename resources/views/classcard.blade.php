@@ -121,66 +121,35 @@
     </form>
 </TABLE>
 
-
-<!-- CSS -->
-<style>
-    .ui-widget-header,
-    .ui-state-default,
-    ui-button {
-        background: #b9cd6d;
-        border: 1px solid #b9cd6d;
-        color: #FFFFFF;
-        font-weight: bold;
-    }
-</style>
 <script>
     $(function() {
-
-        $("#buyNewBtn").click(function() {
-            //alert('buy new card');
-            var dialog = new BootstrapDialog({
-                message: function(dialogRef) {
-                    var $message = $('<div>購買課卡</div>');
-                    var $button = $('<button class="btn btn-primary btn-lg btn-block">單堂 500元</button>');
-                    $button.on('click', {
-                        dialogRef: dialogRef
-                    }, function(event) {
-                        $('#buyNewLink1')[0].click();
-                        event.data.dialogRef.close();
-                    });
-                    $message.append($button);
-
-                    var $button2 = $('<button class="btn btn-primary btn-lg btn-block">四堂 1800元</button>');
-
-                    $button2.on('click', {
-                        dialogRef: dialogRef
-                    }, function(event) {
-                        $('#buyNewLink4')[0].click();
-                        event.data.dialogRef.close();
-                    });
-                    $message.append($button2);
-
-                    return $message;
-                },
-                closable: false
-            });
-            dialog.realize();
-            dialog.getModalHeader().hide();
-            dialog.getModalFooter().hide();
-            dialog.open();
-
+        $("#buycard1").click(function() {
+            $('#buyNewLink1')[0].click();
         });
-
+        $("#buycard4").click(function() {
+            $('#buyNewLink4')[0].click();
+        });
     });
 </script>
 
 @if ($card['Points']==0)
 <div align="center" style="margin-Top: 8px;">
-    <input id="buyNewBtn" type="image" style="width:106px;height:28px;" src="/images/classcard/buy_card.png" alt="購買新卡" />
+    <img class="img-responsive center-block" data-toggle="modal" data-target="#exampleModalCentered" type="image" style="width:106px;height:28px;" src="/images/classcard/buy_card.png" />
     <a id="buyNewLink1" href="{{ route('buy.classcard', ['userId' => $card['UserID'], 'point'=>1] ) }}" />
     <a id="buyNewLink4" href="{{ route('buy.classcard', ['userId' => $card['UserID'], 'point'=>4] ) }}" />
 </div>
 
+<!-- Modal -->
+<div class="modal" id="exampleModalCentered" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenteredLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button id="buycard1" class="btn btn-primary btn-lg btn-block">單堂 500元</button>
+                <button id="buycard4" class="btn btn-primary btn-lg btn-block">四堂 1800元</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @else
 <div align="center" style="margin-Top: 8px;width:106px;height:28px;">

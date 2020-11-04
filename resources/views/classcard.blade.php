@@ -91,6 +91,9 @@
                 @else
 
                 <div id="div_unuse">
+                    @if($oneOrFourClass==1)
+                    <img src="/images/classcard/point_unuse.png" style="width:100%;height:100%" id="SS1">
+                    @else
                     @switch($oneOrFourClass-$i+1)
                     @case(1)
                     <img src="/images/classcard/point_1.png" style="width:100%;height:100%" id="SS1">
@@ -108,6 +111,8 @@
                     <img src="/images/classcard/point_4.png" style="width:100%;height:100%" id="SS4">
                     @break
                     @endswitch
+                    @endif
+
                 </div>
                 <a id="registeLink" href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}" />
 
@@ -142,8 +147,8 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-body">
-                <button id="buycard1" class="btn btn-primary btn-lg btn-block" style="background-color: #F2B98F;">單堂 500元</button>
-                <button id="buycard4" class="btn btn-primary btn-lg btn-block" style="background-color: #F2B98F;">四堂 1800元</button>
+                <button id="buycard1" class="btn btn-primary btn-lg btn-block border-none" style="color:#c59c40;background-color: #FFf9e5;border-color:#FFFFFF">單堂 500元</button>
+                <button id="buycard4" class="btn btn-primary btn-lg btn-block border-none" style="color:#c59c40;background-color: #FFf9e5;border-color:#FFFFFF">四堂 1800元</button>
                 <a id="buyNewLink1" href="{{ route('buy.classcard', ['userId' => $card['UserID'], 'point'=>1] ) }}" />
                 <a id="buyNewLink4" href="{{ route('buy.classcard', ['userId' => $card['UserID'], 'point'=>4] ) }}" />
             </div>

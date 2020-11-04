@@ -142,8 +142,8 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-body">
-                <button id="buycard1" class="btn btn-primary btn-lg btn-block">單堂 500元</button>
-                <button id="buycard4" class="btn btn-primary btn-lg btn-block">四堂 1800元</button>
+                <button id="buycard1" class="btn btn-primary btn-lg btn-block" style="background-color: #F2B98F;">單堂 500元</button>
+                <button id="buycard4" class="btn btn-primary btn-lg btn-block" style="background-color: #F2B98F;">四堂 1800元</button>
                 <a id="buyNewLink1" href="{{ route('buy.classcard', ['userId' => $card['UserID'], 'point'=>1] ) }}" />
                 <a id="buyNewLink4" href="{{ route('buy.classcard', ['userId' => $card['UserID'], 'point'=>4] ) }}" />
             </div>

@@ -21,7 +21,7 @@ class LineService
         $url .= 'response_type=code';
         $url .= '&client_id=' . config('line.channel_id');
         $url .= '&redirect_uri=' . config('app.url') . '/callback/login';
-        $url .= '&state=test'; // 暫時固定方便測試
+        $url .= '&state=mym'; // 暫時固定方便測試
         $url .= '&scope=openid%20profile%20email'; //眉角在這裡，scope要加email
 
         return $url;
@@ -70,6 +70,19 @@ class LineService
             'form_params' => [
                 'id_token' => $token,
                 'client_id' => config('line.channel_id'),
+            ]
+        ]);
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    public function logout($token)
+    {
+        $client = new Client();
+        $response = $client->request('POST', "https://api.line.me/oauth2/v2.1/revoke", [
+            'form_params' => [
+                'access_token' => $token,
+                'client_id' => config('line.channel_id'),
+                'client_secret' => config('line.secret'),
             ]
         ]);
         return json_decode($response->getBody()->getContents(), true);

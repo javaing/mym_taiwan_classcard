@@ -21,11 +21,20 @@ class LoginController extends Controller
     {
         $url = $this->lineService->getLoginBaseUrl();
         if (isset($_COOKIE["access_token"])) {
-            Log::info(time());
+            //Log::info(time());
             //$url = 'reuse';
         }
 
         return view('line')->with('url', $url);
+    }
+
+
+    public function logout()
+    {
+        if (isset($_COOKIE["access_token"])) {
+            return $this->lineService->logout($_COOKIE["access_token"]);
+        }
+        return "無access_token無法logout";
     }
 
     public function saveAccessToken($access)

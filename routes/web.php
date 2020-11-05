@@ -25,6 +25,7 @@ Route::get('/callback/login', 'LoginController@lineLoginCallBack');
 Route::get('line/reuse/', 'LoginController@askProfileReuse')->name('reuse.line');
 Route::get('/alluser/{userId?}', 'LoginController@alluser')->middleware('auth.basic');
 Route::post('/alluser', 'LoginController@updateUser')->middleware('auth.basic');
+Route::get('/logout', 'LoginController@logout');
 
 Route::get('classcard/{cardId}', 'ClassCardController@showClassCard')->where('cardId', '[0-9]+');
 Route::get('classcard/buy/', 'ClassCardController@buyClassCard')->name('buy.classcard');

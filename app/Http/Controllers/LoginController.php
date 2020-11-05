@@ -32,7 +32,7 @@ class LoginController extends Controller
     public function logout()
     {
         if (isset($_COOKIE["access_token"])) {
-            Log::info('logout access=' + $_COOKIE["access_token"]);
+            Log::info($_COOKIE["access_token"]);
             return $this->lineService->logout($_COOKIE["access_token"]);
         }
         return "無access_token無法logout";

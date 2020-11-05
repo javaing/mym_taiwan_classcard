@@ -22,7 +22,7 @@ class LoginController extends Controller
         $url = $this->lineService->getLoginBaseUrl();
         if (isset($_COOKIE["access_token"])) {
             Log::info(time());
-            $url = 'reuse';
+            //$url = 'reuse';
         }
 
         return view('line')->with('url', $url);
@@ -76,9 +76,8 @@ class LoginController extends Controller
                 "statusMessage" => "白露"
             ];
             return $this->showPoints($user_profile);
-        } else {
-            return $this->askProfile($_COOKIE["access_token"]);
         }
+        return $this->askProfile($_COOKIE["access_token"]);
     }
 
 

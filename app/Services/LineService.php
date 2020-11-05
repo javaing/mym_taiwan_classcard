@@ -78,7 +78,11 @@ class LineService
     public function logout($token)
     {
         $client = new Client();
+        $headers = [
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ];
         $response = $client->request('POST', "https://api.line.me/oauth2/v2.1/revoke", [
+            'headers' => $headers,
             'form_params' => [
                 'access_token' => $token,
                 'client_id' => config('line.channel_id'),

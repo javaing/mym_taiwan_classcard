@@ -19,14 +19,19 @@
     }}
 @endphp
 <center>
-    <p>
-        卡號:{{ $cardId }}
-    </p>
+
+    <div class="text">
+        <p>
+            {{ DBHelper::getUserName($arrIn[0]['UserID']) }}
+            <br>
+            卡號:{{ $cardId }}
+        </p>
+    </div>
 
     <div>
         <table>
             <tr>
-                <td> 預付</td>
+                <td> 預付(金額負數表示退款)</td>
             </tr>
             <tr height="30">
 
@@ -42,16 +47,13 @@
             </tr>
             @endforeach
 
-        </table>
-    </div>
-    <br>
-    <div>
-        <table>
+            <tr>
+                <td>&nbsp;&nbsp;</td>
+            </tr>
             <tr>
                 <td>已用</td>
             </tr>
             <tr height="30">
-
                 <th>日期</th>
                 <th>
                     <center>金額</center>
@@ -72,6 +74,7 @@
             </tr>
         </table>
     </div>
+    <br>
     <br>
 
     @if($sumIn-$sumOut)

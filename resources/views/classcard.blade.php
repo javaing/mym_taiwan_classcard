@@ -28,10 +28,10 @@
 @endphp
 
 <div align="center">
-    <div style="margin-top: 12px;">
+    <div style="margin-top: 3px;">
         <p18>Hello!</p18>
     </div>
-    <div style="margin-top: 6px;margin-bottom: 6px;">
+    <div style="margin-top: 3px;margin-bottom: 6px;">
         <p18>{{ DBHelper::getUserName($card['UserID']) }}</p18>
     </div>
 </div>

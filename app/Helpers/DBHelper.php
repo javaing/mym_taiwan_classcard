@@ -100,10 +100,16 @@ class DBHelper
             ->update($newdata);
     }
 
+    public static function isSingleClassCard($cardId)
+    {
+        $card = DB::collection('Purchase')->where('CardID', $cardId)->first();
+        return ($card['Payment'] == 500);
+    }
+
     public static function isExpiredCard($cardId)
     {
         $card = DB::collection('Purchase')->where('CardID', $cardId)->first();
-        return ($card['Payment'] == 200) ? true : false;
+        return ($card['Payment'] == 200);
     }
 
     public static function getBalanceIn($from, $to)
@@ -268,8 +274,12 @@ class DBHelper
     public static function insertConsume($cardId, $point)
     {
         $cost = 500;
-        if ($point == 1 && !DBHelper::isExpiredCard($cardId)) {
-            $cost = 300;
+        if ($point == 1) {
+            if (DBHelper::isSingleClassCard($cardId)) {
+                //$cost = 500;
+            } else if (!DBHelper::isExpiredCard($cardId)) {
+                $cost = 300;
+            }
         }
 
         $newCard = [

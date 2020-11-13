@@ -12,12 +12,12 @@
 }}
 @endphp
 
-<div class="display-flex">
-    <div class="div-size" style="width:80%;text-align:center">
-        <p18>{{ DBHelper::getUserName($card['UserID']) }}</p18>
+<div align="center">
+    <div style="margin-top: 12px;">
+        <p18>Hello!</p18>
     </div>
-    <div class="div-size">
-        <p18>您好</p18>
+    <div style="margin-top: 6px;margin-bottom: 6px;">
+        <p18>{{ DBHelper::getUserName($card['UserID']) }}</p18>
     </div>
 </div>
 

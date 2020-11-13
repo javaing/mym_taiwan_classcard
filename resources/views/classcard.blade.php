@@ -2,6 +2,14 @@
 
 @section('title', '體位法課卡')
 
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.9/css/bootstrap-dialog.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.9/js/bootstrap-dialog.min.js"></script>
+
+
 @section('content')
 @php
 {{
@@ -19,18 +27,12 @@
 }}
 @endphp
 
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.9/css/bootstrap-dialog.min.css" rel="stylesheet" type="text/css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.9/js/bootstrap-dialog.min.js"></script>
-<div class="display-flex">
-    <div class="div-size" style="width:80%;text-align:center">
-        <p18>{{ DBHelper::getUserName($card['UserID']) }}</p18>
+<div align="center">
+    <div style="margin-top: 12px;">
+        <p18>Hello!</p18>
     </div>
-    <div class="div-size">
-        <p18>您好</p18>
+    <div style="margin-top: 6px;margin-bottom: 6px;">
+        <p18>{{ DBHelper::getUserName($card['UserID']) }}</p18>
     </div>
 </div>
 

@@ -29,9 +29,10 @@ class ClassCardController extends Controller
         //扣點數
         DBHelper::registeclassByPoint($cardId, $point);
         //紀錄花費500 or 300
-        DBHelper::insertConsume($cardId, $point);
+        DBHelper::insertConsumeToday($cardId, $point);
         return redirect('classcard/' . $cardId);
     }
+
 
     public function buyClassCard(Request $request)
     {

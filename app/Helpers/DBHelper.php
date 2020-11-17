@@ -121,6 +121,14 @@ class DBHelper
             ->get();
     }
 
+    public static function getLiveCards()
+    {
+        //get()出來就是array
+        return DB::collection('Purchase')
+            ->where('Points', '>', 0)
+            ->get();
+    }
+
 
     //[UserInfo]--------------------------------------------------------
     public static function getUser($userId)
@@ -271,7 +279,12 @@ class DBHelper
             ->insert($newCard);
     }
 
-    public static function insertConsume($cardId, $point)
+    public static function insertConsumeToday($cardId, $point)
+    {
+        DBHelper::insertConsume($cardId, $point, DBHelper::getMongoDateNow());
+    }
+
+    public static function insertConsume($cardId, $point, $dt)
     {
         $cost = 500;
         if ($point == 1) {
@@ -286,24 +299,31 @@ class DBHelper
             'CardID' => $cardId,
             'UserID' => DBHelper::getUserId($cardId),
             "Cost" => $cost,
-            "PointConsumeTime" => DBHelper::getMongoDateNow(),
+            "PointConsumeTime" => $dt,
         ];
         DB::collection('Consume')
             ->insert($newCard);
     }
 
-    private static function today()
+    public static function today()
     {
         $today = date("Y-m-d");
         return DBHelper::parse($today);
     }
 
+
+
     public static function isConsume($cardId)
+    {
+        return DBHelper::isConsume($cardId, DBHelper::today());
+    }
+
+    public static function isConsumeByDate($cardId, $dt)
     {
         $datas = DB::collection('Consume')
             ->where('CardID', $cardId)
             ->where('UserID', DBHelper::getUserId($cardId))
-            ->where('PointConsumeTime', '>=', DBHelper::today())
+            ->where('PointConsumeTime', '>=', $dt)
             ->get();
         Log::info('DBHelper::isConsume =' . sizeof($datas) . ",date=" . DBHelper::today());
         if (sizeof($datas) > 0)

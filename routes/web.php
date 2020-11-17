@@ -33,6 +33,8 @@ Route::get('classcard/history/{userId}/{index}', 'ClassCardController@showClassH
 Route::get('/registe/{point}/{cardId}', 'ClassCardController@registeclassByPoint')
     ->where(['point' => '[0-9]+', 'cardId' => '[0-9]+'])->name('registe.classcard');
 
+Route::get('/classcard/byhand', 'AccountController@classByhand');
+Route::Post('/classcard/byhand', 'AccountController@registeclassByhand');
 Route::get('/account/balance', 'AccountController@create');
 Route::Post('/account/balance', 'AccountController@balance');
 Route::get('/account/{cardId}', 'AccountController@cardDetail')->where('cardId', '[0-9]+')->name('account.cardDetail');

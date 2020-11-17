@@ -78,4 +78,44 @@ class AccountController extends Controller
             ]);
         }
     }
+
+    //for get
+    public function classByhand()
+    {
+        return view('classbyhand');
+    }
+
+    //for post
+    public function registeclassByhand(Request $request)
+    {
+        $cardId = $request->cardId;
+        //Log::info("registeclassByhand cardId($cardId)");
+        if (DBHelper::getCard($cardId) == null) {
+            $link = $_SERVER['HTTP_REFERER'];
+            print_r('<h3>尚未選卡，請<a href="' . $link . '">回上頁</a></h3>');
+            return;
+        }
+
+
+        $point = DBHelper::getCard($cardId)['Points']; //1 or 4
+        $dt = $request->registedate;
+        //Log::info("registeclassByhand dt($dt)");
+        $timezone_ms = 8 * 60 * 60 * 1000;
+        $dt = new \MongoDB\BSON\UTCDateTime(strtotime($dt) * 1000 + $timezone_ms);
+
+
+        //先檢查一天只能蓋一次
+        $exist = DBHelper::isConsumeByDate($cardId, $dt);
+        if ($exist) {
+            $link = $_SERVER['HTTP_REFERER'];
+            print_r('<h3>今日已蓋章，請<a href="' . $link . '">回上頁</a></h3>');
+            return;
+        }
+
+        //扣點數
+        DBHelper::registeclassByPoint($cardId, $point);
+        //紀錄花費500 or 300
+        DBHelper::insertConsume($cardId, $point, $dt);
+        return redirect('account/' . $cardId);
+    }
 }

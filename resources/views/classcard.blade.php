@@ -177,7 +177,7 @@
 @endphp
 @if ($dt>$card['Expired'] && $card['Points']>0)
 <div>
-    <a href="{{ route('buy.classcard', ['userId' => $card['UserID']]) }}">展期</a>
+    <a href="{{ route('buy.classcard', ['userId' => $card['UserID']]) }}">逾期補差額</a>
 </div>
 @endif
 

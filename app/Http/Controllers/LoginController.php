@@ -100,6 +100,7 @@ class LoginController extends Controller
         if (!HelpersDBHelper::getUser($userId)) {
             HelpersDBHelper::insertNewUser($user_profile);
         }
+        setcookie('userId', $userId, time() + 3600 * 24 * 28, '/');
         $card = HelpersDBHelper::getValidCardNoMatter($userId);
         if (!$card) {
             return view("buynewcard")->with('userId', $userId);

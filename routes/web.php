@@ -32,6 +32,7 @@ Route::get('classcard/buy/', 'ClassCardController@buyClassCard')->name('buy.clas
 Route::get('classcard/history/{userId}/{index}', 'ClassCardController@showClassHistory')->name('show.classhistory');
 Route::get('/registe/{point}/{cardId}', 'ClassCardController@registeclassByPoint')
     ->where(['point' => '[0-9]+', 'cardId' => '[0-9]+'])->name('registe.classcard');
+Route::get('classcard/history', 'ClassCardController@showClassHistoryByCookie');
 
 Route::get('/classcard/byhand', 'AccountController@classByhand');
 Route::Post('/classcard/byhand', 'AccountController@registeclassByhand');

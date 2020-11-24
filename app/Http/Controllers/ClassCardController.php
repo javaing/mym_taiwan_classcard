@@ -72,4 +72,15 @@ class ClassCardController extends Controller
             'index' => $index
         ]);
     }
+
+    public function showClassHistoryByCookie()
+    {
+        $userId = null;
+        if (isset($_COOKIE["userId"])) {
+            $userId = $_COOKIE["userId"];
+        } else {
+            return app('App\Http\Controllers\LoginController')->pageLine();
+        }
+        return $this->showClassHistory($userId, 0);
+    }
 }

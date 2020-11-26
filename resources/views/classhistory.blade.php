@@ -5,10 +5,14 @@
 @section('content')
 @php
 {{
-    $size = sizeof(DBHelper::getUserHistory($card['UserID']));
-    $registArray = DBHelper::getConsume( $card['CardID']);
-    $thisYearCount = DBHelper::thisYearCount($card['UserID']);
-    $thisMonthCount = DBHelper::thisMonthCount($card['UserID']);
+    $cardId = $card['CardID'];
+    $userId = $card['UserID'];
+    $size = sizeof(DBHelper::getUserHistory($userId));
+    $registArray = DBHelper::getConsume( $cardId);
+    $thisYearCount = DBHelper::thisYearCount($userId);
+    $thisMonthCount = DBHelper::thisMonthCount( $userId);
+    $stampCount = 4;
+    if(DBHelper::isSingleClassCard($cardId)) $stampCount = 1;
 }}
 @endphp
 
@@ -17,7 +21,7 @@
         <p18>Hello!</p18>
     </div>
     <div style="margin-top: 3px;margin-bottom: 6px;">
-        <p18>{{ DBHelper::getUserName($card['UserID']) }}</p18>
+        <p18>{{ DBHelper::getUserName($userId) }}</p18>
     </div>
 </div>
 
@@ -56,7 +60,7 @@
 
 <TABLE BORDER=0 align="center">
 
-    @for ($i = 4; $i >= 1; $i--)
+    @for ($i = $stampCount; $i >= 1; $i--)
     @if ($i%2==0 )
     <TR>
         @else
@@ -64,16 +68,18 @@
         <TD align="center">
             @if ($i> $card['Points'])
 
-            @if ($registArray && sizeof($registArray)>(4-$i))
+            @if ($registArray && sizeof($registArray)>($stampCount-$i))
             <div id="div_used">
-                <p16white>{{DBHelper::toDateString( $registArray[4-$i]['PointConsumeTime'] ) }}</p16white>
+                <p16white>{{DBHelper::toDateString( $registArray[$stampCount-$i]['PointConsumeTime'] ) }}</p16white>
             </div>
             @else
             <div id="div_used" />
             @endif
 
             @else
-            <div id="div_unuse" />
+            <div id="div_used">
+                <p16white> </p16white>
+            </div>
             @endif
         </TD>
         @if ($i%2==1 )

@@ -81,13 +81,26 @@ class DBHelper
         return  $arr->first()['UserID'];
     }
 
+    static function generateRandomString($length = 10)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
     public static function getCardId()
     {
-        $count = DB::collection('Purchase')
-            ->where('CardCreateTime', 'like', '%' . date("Y") . '%')
-            ->where('Payment', '>', 0) //因為可能有退卡，是負的要去掉
-            ->count() + 1;
-        return date("Y") . str_pad($count, 4, '0', STR_PAD_LEFT);
+        // $count = DB::collection('Purchase')
+        //     ->where('CardCreateTime', 'like', '%' . date("Y") . '%')
+        //     ->where('Payment', '>', 0) //因為可能有退卡，是負的要去掉
+        //     ->count() + 1;
+        // return date("Y") . str_pad($count, 4, '0', STR_PAD_LEFT);
+
+        return DBHelper::generateRandomString();
     }
 
     public static function registeclassByPoint($cardId, $point)

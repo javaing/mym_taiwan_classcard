@@ -78,7 +78,7 @@
 
             @else
             <div id="div_used">
-                <p16white> </p16white>
+                <p16white>尚未使用</p16white>
             </div>
             @endif
         </TD>

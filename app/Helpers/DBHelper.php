@@ -315,7 +315,7 @@ class DBHelper
 
     public static function isConsume($cardId)
     {
-        return DBHelper::isConsume($cardId, DBHelper::today());
+        return DBHelper::isConsumeByDate($cardId, DBHelper::today());
     }
 
     public static function isConsumeByDate($cardId, $dt)

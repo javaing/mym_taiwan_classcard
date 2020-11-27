@@ -30,7 +30,7 @@ class ClassCardController extends Controller
         DBHelper::registeclassByPoint($cardId, $point);
         //紀錄花費500 or 300
         DBHelper::insertConsumeToday($cardId, $point);
-        return redirect('classcard/' . $cardId);
+        return redirect('classcard/show/' . $cardId);
     }
 
 
@@ -41,7 +41,7 @@ class ClassCardController extends Controller
         DBHelper::buyNewCard($userId, $point);
 
         $card = DBHelper::getValidCard($userId);
-        return redirect('classcard/' . $card['CardID']);
+        return redirect('classcard/show/' . $card['CardID']);
     }
 
     public function showClassCard($cardId)

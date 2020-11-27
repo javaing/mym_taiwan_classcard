@@ -17,6 +17,7 @@ class LoginController extends Controller
         $this->lineService = $lineService;
     }
 
+    //如換domain name，請更新.env APP_URL
     public function pageLine()
     {
         $url = $this->lineService->getLoginBaseUrl();
@@ -106,7 +107,7 @@ class LoginController extends Controller
             return view("buynewcard")->with('userId', $userId);
         }
 
-        return redirect('classcard/' . $card['CardID']);
+        return redirect('classcard/show/' . $card['CardID']);
     }
 
     public function alluser(Request $request, $arg1 = null)

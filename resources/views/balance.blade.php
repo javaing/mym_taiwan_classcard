@@ -25,6 +25,15 @@
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
+<script>
+    (function() {
+        function changeBackground() {
+            $('body').css('background', '#FFF9E5');
+            setTimeout(changeBackground, 100);
+        }
+        changeBackground();
+    })();
+</script>
 <div class="text-left" style="width:200px;">
     <h4>查詢區間</h4>
     <form action="{{url()->action('AccountController@balance')}}" method="POST">
@@ -106,6 +115,5 @@
 
 
 </div>
-
 
 @endsection

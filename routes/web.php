@@ -28,11 +28,12 @@ Route::post('/alluser', 'LoginController@updateUser')->middleware('auth.basic');
 Route::get('/logout', 'LoginController@logout');
 
 Route::get('classcard/buy', 'ClassCardController@buyClassCard')->name('buy.classcard');
-Route::get('classcard/{cardId}', 'ClassCardController@showClassCard')->where('cardId', '[0-9A-Za-z]+');
+Route::get('classcard/history', 'ClassCardController@showClassHistoryByCookie');
 Route::get('classcard/history/{userId}/{index}', 'ClassCardController@showClassHistory')->name('show.classhistory');
+Route::get('classcard/show/{cardId}', 'ClassCardController@showClassCard')->where('cardId', '[0-9A-Za-z]+');
 Route::get('/registe/{point}/{cardId}', 'ClassCardController@registeclassByPoint')
     ->where(['point' => '[0-9]+', 'cardId' => '[0-9A-Za-z]+'])->name('registe.classcard');
-Route::get('classcard/history', 'ClassCardController@showClassHistoryByCookie');
+
 
 Route::get('/classcard/byhand', 'AccountController@classByhand');
 Route::Post('/classcard/byhand', 'AccountController@registeclassByhand');

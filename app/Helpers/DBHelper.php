@@ -71,7 +71,10 @@ class DBHelper
     }
     public static function getUserHistory($userId)
     {
-        return DB::collection('Purchase')->where('UserID', $userId)->get();
+        return DB::collection('Purchase')
+            ->where('UserID', $userId)
+            ->where('Payment', '>', 0) //因為可能有退卡，是負的要去掉
+            ->get();
     }
 
     public static function getUserId($cardId)

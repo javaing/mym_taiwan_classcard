@@ -55,7 +55,8 @@
         @endif
 </div>
 <div align="center" style="margin-bottom: 20px">
-    <p16>{{ $index+1}}/{{ $size }}</p16>
+    <p16>{{ $index+1}}/{{ $size }}</p16><br>
+    <p14>(卡號 {{$cardId}})</p14>
 </div>
 
 <TABLE BORDER=0 align="center">
@@ -73,7 +74,9 @@
                 <p16white>{{DBHelper::toDateString( $registArray[$stampCount-$i]['PointConsumeTime'] ) }}</p16white>
             </div>
             @else
-            <div id="div_used" />
+            <div id="div_used">
+                <p16white>n/a</p16white>
+            </div>
             @endif
 
             @else

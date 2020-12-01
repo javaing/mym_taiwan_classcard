@@ -18,6 +18,15 @@
         }
     }}
 @endphp
+<script>
+    (function() {
+        function changeBackground() {
+            $('body').css('background', '#FFF9E5');
+            setTimeout(changeBackground, 100);
+        }
+        changeBackground();
+    })();
+</script>
 <center>
 
     <div class="text">
@@ -98,7 +107,7 @@
                     退款{{$sumIn-$sumOut}}元
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消
                     </button>
                     <a href="{{ route('account.deposite', ['cardId' =>$cardId, 'amount'=>$sumIn-$sumOut]) }}" class="btn btn-primary">確認</a>
                 </div>

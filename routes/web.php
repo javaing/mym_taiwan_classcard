@@ -39,8 +39,9 @@ Route::get('/classcard/byhand', 'AccountController@classByhand');
 Route::Post('/classcard/byhand', 'AccountController@registeclassByhand');
 Route::get('/account/balance', 'AccountController@create');
 Route::Post('/account/balance', 'AccountController@balance');
-Route::get('/account/{cardId}', 'AccountController@cardDetail')->where('cardId', '[0-9A-Za-z]+')->name('account.cardDetail');
 Route::get('account/deposite', 'AccountController@deposite')->name('account.deposite');
+Route::get('/account/{cardId}', 'AccountController@cardDetail')->where('cardId', '[0-9A-Za-z]+')->name('account.cardDetail');
+
 
 Auth::routes();
 

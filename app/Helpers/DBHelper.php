@@ -134,6 +134,7 @@ class DBHelper
         return DB::collection('Purchase')
             ->where('PaymentTime', '>=', DBHelper::parse($from))
             ->where('PaymentTime', '<', DBHelper::parse($to))
+            ->where('Payment', '>', 0)
             ->get();
     }
 

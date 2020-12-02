@@ -65,6 +65,7 @@ class DBHelper
             ->where('UserID', $userId)
             ->where('Expired', '>', $dt)
             //->where('Points', '>', 0)
+            ->orderBy('Expired')
             ->first();
         if ($cards != null)
             return $cards;

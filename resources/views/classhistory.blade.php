@@ -102,11 +102,4 @@
 </TABLE>
 
 
-<div align="center" style="margin-Top: 12px;">
-    <a href="{{ route('reuse.line') }}">
-        <input type="image" style="width:106px;height:28px;" src="/images/classcard/back_classcard.png" alt="" />
-    </a>
-</div>
-
-
 @endsection

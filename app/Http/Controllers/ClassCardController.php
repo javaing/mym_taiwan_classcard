@@ -33,6 +33,17 @@ class ClassCardController extends Controller
         return redirect('classcard/show/' . $cardId);
     }
 
+    public function extendCard(Request $request)
+    {
+        $userId = $request->userId;
+        $cardId = $request->cardId;
+        //Log::info("extendCard({$userId},cardId={$cardId})");
+        DBHelper::extendCard($userId, $cardId);
+
+        $card = DBHelper::getValidCard($userId);
+        return redirect('classcard/show/' . $card['CardID']);
+    }
+
 
     public function buyClassCard(Request $request)
     {
@@ -66,7 +77,7 @@ class ClassCardController extends Controller
             print_r('<h3>無上課紀錄，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
-        Log::info("showClassHistory({$userId},index={$index})");
+        //Log::info("showClassHistory({$userId},index={$index})");
         return view('classhistory', [
             'card' => $arr[$index],
             'index' => $index

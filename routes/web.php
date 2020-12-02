@@ -33,7 +33,7 @@ Route::get('classcard/history/{userId}/{index}', 'ClassCardController@showClassH
 Route::get('classcard/show/{cardId}', 'ClassCardController@showClassCard')->where('cardId', '[0-9A-Za-z]+');
 Route::get('/registe/{point}/{cardId}', 'ClassCardController@registeclassByPoint')
     ->where(['point' => '[0-9]+', 'cardId' => '[0-9A-Za-z]+'])->name('registe.classcard');
-
+Route::get('classcard/extend', 'ClassCardController@extendCard')->name('extend.classcard');
 
 Route::get('/classcard/byhand', 'AccountController@classByhand');
 Route::Post('/classcard/byhand', 'AccountController@registeclassByhand');

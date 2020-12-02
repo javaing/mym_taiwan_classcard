@@ -43,9 +43,17 @@ class DBHelper
     public static function getValidCard($userId)
     {
         $dt = Carbon::now();
-        return DB::collection('Purchase')
+        $cards = DB::collection('Purchase')
             ->where('UserID', $userId)
             ->where('Expired', '>', $dt)
+            ->where('Points', '>', 0)
+            ->first();
+        if ($cards != null)
+            return $cards;
+
+        return DB::collection('Purchase')
+            ->where('UserID', $userId)
+            ->where('Expired', '=', null)
             ->where('Points', '>', 0)
             ->first();
     }
@@ -53,11 +61,18 @@ class DBHelper
     public static function getValidCardNoMatter($userId)
     {
         $dt = Carbon::now();
-        return DB::collection('Purchase')
+        $cards = DB::collection('Purchase')
             ->where('UserID', $userId)
             ->where('Expired', '>', $dt)
             //->where('Points', '>', 0)
-            ->orderBy('Expired', 'asce')
+            ->first();
+        if ($cards != null)
+            return $cards;
+
+        return DB::collection('Purchase')
+            ->where('UserID', $userId)
+            ->where('Expired', '==', null)
+            //->where('Points', '>', 0)
             ->first();
     }
 
@@ -97,13 +112,13 @@ class DBHelper
 
     public static function getCardId()
     {
-        // $count = DB::collection('Purchase')
-        //     ->where('CardCreateTime', 'like', '%' . date("Y") . '%')
-        //     ->where('Payment', '>', 0) //因為可能有退卡，是負的要去掉
-        //     ->count() + 1;
-        // return date("Y") . str_pad($count, 4, '0', STR_PAD_LEFT);
+        $count = DB::collection('Purchase')
+            ->where('CardCreateTime', 'like', '%' . date("Y") . '%')
+            ->where('Payment', '>', 0) //因為可能有退卡，是負的要去掉
+            ->count() + 1;
+        return date("Y") . str_pad($count, 4, '0', STR_PAD_LEFT);
 
-        return DBHelper::generateRandomString();
+        //return DBHelper::generateRandomString();
     }
 
     public static function registeclassByPoint($cardId, $point)
@@ -122,7 +137,14 @@ class DBHelper
         return ($card['Payment'] == 500);
     }
 
-    public static function isExpiredCard($cardId)
+    public static function isExpired($card)
+    {
+        if ($card['Expired'] == null) return false;
+        $dt = DBHelper::getMongoDateNow();
+        return ($dt > $card['Expired'] && $card['Points'] > 0);
+    }
+
+    public static function isExtendCard($cardId)
     {
         $card = DB::collection('Purchase')->where('CardID', $cardId)->first();
         return ($card['Payment'] == 200);
@@ -134,7 +156,7 @@ class DBHelper
         return DB::collection('Purchase')
             ->where('PaymentTime', '>=', DBHelper::parse($from))
             ->where('PaymentTime', '<', DBHelper::parse($to))
-            ->where('Payment', '>', 0)
+            //->where('Payment', '>', 0)
             ->get();
     }
 
@@ -155,7 +177,16 @@ class DBHelper
 
     public static function getUserName($userId)
     {
-        return  DB::collection('UserInfo')->where('UserID', $userId)->first()['NickName'];
+        $user = DB::collection('UserInfo')->where('UserID', $userId)->first();
+        if ($user['UserName'] != '')
+            return $user['UserName'];
+        else
+            return $user['NickName'];
+    }
+
+    public static function getNickName($userId)
+    {
+        return DB::collection('UserInfo')->where('UserID', $userId)->first()['NickName'];
     }
 
     public static function getUsers()
@@ -236,9 +267,33 @@ class DBHelper
 
     public static function buyNewCard($userId, $point)
     {
-        $amount = 1800;
-        if ($point == 1) $amount = 500;
-        DBHelper::insertPurchase($userId, $amount, $point);
+        if ($point == 1)
+            DBHelper::insertPurchaseNoExpired($userId, 500, $point);
+        else
+            DBHelper::insertPurchase($userId, 1800, $point);
+    }
+
+    public static function clearPoints($cardId)
+    {
+        $newdata = array('$set' => array(
+            'Points' => 0,
+        ));
+        DB::collection('Purchase')
+            ->where('CardID', $cardId)
+            ->update($newdata);
+    }
+
+    //逾期補差額:舊卡點數轉移至新卡
+    public static function extendCard($userId, $cardId)
+    {
+        $card = DBHelper::getCard($cardId);
+        $point = $card['Points'];
+
+        //清空點數
+        DBHelper::clearPoints($cardId);
+
+        $amount = 200;
+        DBHelper::insertPurchaseNoExpired($userId, $amount, $point);
     }
 
     public static function insertPurchase($id, $amount, $point)
@@ -268,16 +323,34 @@ class DBHelper
             ->insert($newCard);
     }
 
+    public static function insertPurchaseNoExpired($id, $amount, $point)
+    {
+        $dt = DBHelper::getMongoDateNow();
+        $newCard = [
+            'CardID' => DBHelper::getCardId(),
+            'UserID' => $id,
+            'Points' => (int)$point,
+            "Expired" => null,
+            "CardCreateTime" => $dt,
+        ];
+        if ($amount) {
+            $newCard['Payment'] = $amount;
+            $newCard['PaymentTime'] = $dt;
+        } else {
+            $newCard['Payment'] = null;
+            $newCard['PaymentTime'] = null;
+        }
+
+        Log::info('insertPurchaseNoExpired =' . json_encode($newCard));
+
+        DB::collection('Purchase')
+            ->insert($newCard);
+    }
+
     public static function refund($cardId, $amount)
     {
         //清空點數
-        $newdata = array('$set' => array(
-            'Points' => 0,
-        ));
-        DB::collection('Purchase')
-            ->where('CardID', $cardId)
-            ->update($newdata);
-
+        DBHelper::clearPoints($cardId);
 
         //新增一筆金額為負的
         $dt = DBHelper::getMongoDateNow();
@@ -307,7 +380,7 @@ class DBHelper
         if ($point == 1) {
             if (DBHelper::isSingleClassCard($cardId)) {
                 //$cost = 500;
-            } else if (!DBHelper::isExpiredCard($cardId)) {
+            } else if (!DBHelper::isExtendCard($cardId)) {
                 $cost = 300;
             }
         }

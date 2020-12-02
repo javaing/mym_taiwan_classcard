@@ -63,7 +63,7 @@
     <div class="tab-pane fade in active" id="prepaid">
         <table>
             <tr height="30">
-                <th>卡號</th>
+                <th>名字</th>
                 <th>日期</th>
                 <th>
                     <center>金額</center>
@@ -73,9 +73,9 @@
             @foreach($arrIn as $purchase)
             <tr height="30">
                 <td width="100">
-                    <a href="{{ route('account.cardDetail', ['cardId' =>$purchase['CardID']]) }}">{{$purchase['CardID'] }}</a>
+                    <a href="{{ route('account.cardDetail', ['cardId' =>$purchase['CardID']]) }}">{{DBHelper::getUserName( $purchase['UserID']) }}</a>
 
-                    <br> ({{ DBHelper::getUserName(    $purchase['UserID']) }})</td>
+                </td>
                 <td> {{ DBHelper::toDateStringShort( $purchase['PaymentTime']) }}</td>
                 <td align="right" width="80"> {{ number_format( $purchase['Payment'])   }}</td>
             </tr>
@@ -91,7 +91,7 @@
     <div class="tab-pane fade" id="used">
         <table>
             <tr height="30">
-                <th>卡號</th>
+                <th>名字</th>
                 <th>日期</th>
                 <th>
                     <center>金額</center>
@@ -100,7 +100,11 @@
 
             @foreach($arrOut as $consume)
             <tr height="30">
-                <td width="100">{{$consume['CardID'] }}</td>
+                <td width="100">
+                    <a href="/alluser/{{ $consume['UserID'] }}">
+                        {{ DBHelper::getUserName( $consume['UserID']) }}
+                    </a>
+                </td>
                 <td>{{ DBHelper::toDateStringShort( $consume['PointConsumeTime']) }}</td>
                 <td align="right" width="80"> {{ number_format( $consume['Cost'])  }}</td>
             </tr>

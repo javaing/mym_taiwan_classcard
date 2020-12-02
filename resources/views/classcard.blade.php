@@ -32,7 +32,7 @@
         <p18>Hello!</p18>
     </div>
     <div style="margin-top: 3px;margin-bottom: 6px;">
-        <p18>{{ DBHelper::getUserName($card['UserID']) }}</p18>
+        <p18>{{ DBHelper::getNickName($card['UserID']) }}</p18>
     </div>
 </div>
 
@@ -87,7 +87,9 @@
                     <p16white>{{DBHelper::toDateString( $registArray[$oneOrFourClass-$i]['PointConsumeTime'] ) }}</p16white>
                 </div>
                 @else
-                <div id="div_used" />
+                <div id="div_used">
+                    <p16white>N/A</p16white>
+                </div>
                 @endif
 
                 @else
@@ -159,25 +161,14 @@
 </div>
 
 @else
-<div align="center" style="margin-Top: 8px;width:106px;height:28px;">
-</div>
+
 @endif
 
+@if ( DBHelper::isExpired($card) )
 <div align="center" style="margin-Top: 8px;">
-    <a href="{{ route('show.classhistory', [
-        'userId' => $card['UserID'], 
-        'index'=>0
-        ] ) }}">
-        <input type="image" style="width:106px;height:28px;" src="/images/classcard/class_history.png" alt="" />
+    <a href="{{ route('extend.classcard', ['userId' => $card['UserID'], 'cardId' => $card['CardID'] ]) }}">
+        <input type="image" style="height:28px;" src="/images/classcard/class_extend.png" alt="" />
     </a>
-</div>
-
-@php
-{{ $dt = App\Helpers\DBHelper::getMongoDateNow(); }}
-@endphp
-@if ($dt>$card['Expired'] && $card['Points']>0)
-<div>
-    <a href="{{ route('buy.classcard', ['userId' => $card['UserID']]) }}">逾期補差額</a>
 </div>
 @endif
 

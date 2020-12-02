@@ -301,6 +301,7 @@ class DBHelper
     //逾期補差額:舊卡點數轉移至新卡
     public static function extendCard($userId, $cardId)
     {
+        $cardId = base64_decode($cardId);
         $card = DBHelper::getCard($cardId);
         $point = $card['Points'];
 

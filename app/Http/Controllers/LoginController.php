@@ -108,7 +108,7 @@ class LoginController extends Controller
             return view("buynewcard")->with('userId', $userId);
         }
 
-        return redirect('classcard/show/' . $card['CardID']);
+        return redirect('classcard/show/' . base64_encode($card['CardID']));
     }
 
     public function alluser(Request $request, $arg1 = null)

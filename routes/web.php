@@ -30,9 +30,9 @@ Route::get('/logout', 'LoginController@logout');
 Route::get('classcard/buy', 'ClassCardController@buyClassCard')->name('buy.classcard');
 Route::get('classcard/history', 'ClassCardController@showClassHistoryByCookie');
 Route::get('classcard/history/{userId}/{index}', 'ClassCardController@showClassHistory')->name('show.classhistory');
-Route::get('classcard/show/{cardId}', 'ClassCardController@showClassCard')->where('cardId', '[0-9A-Za-z]+');
+Route::get('classcard/show/{cardId}', 'ClassCardController@showClassCard')->where('cardId', '[0-9A-Za-z=]+');
 Route::get('/registe/{point}/{cardId}', 'ClassCardController@registeclassByPoint')
-    ->where(['point' => '[0-9]+', 'cardId' => '[0-9A-Za-z]+'])->name('registe.classcard');
+    ->where(['point' => '[0-9]+', 'cardId' => '[0-9A-Za-z=]+'])->name('registe.classcard');
 Route::get('classcard/extend', 'ClassCardController@extendCard')->name('extend.classcard');
 
 Route::get('/classcard/byhand', 'AccountController@classByhand');
@@ -40,8 +40,8 @@ Route::Post('/classcard/byhand', 'AccountController@registeclassByhand');
 Route::get('/account/balance', 'AccountController@create');
 Route::Post('/account/balance', 'AccountController@balance');
 Route::get('account/deposite', 'AccountController@deposite')->name('account.deposite');
-Route::get('/account/{cardId}', 'AccountController@cardDetail')->where('cardId', '[0-9A-Za-z]+')->name('account.cardDetail');
-Route::get('/balance/byuser/{userId}', 'AccountController@balanceByUser')->where('userId', '[0-9A-Za-z]+');
+Route::get('/account/{cardId}', 'AccountController@cardDetail')->where('cardId', '[0-9A-Za-z=]+')->name('account.cardDetail');
+Route::get('/balance/byuser/{userId}', 'AccountController@balanceByUser')->where('userId', '[0-9A-Za-z=]+');
 
 
 Auth::routes();

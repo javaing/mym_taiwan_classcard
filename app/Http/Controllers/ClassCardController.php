@@ -18,6 +18,7 @@ class ClassCardController extends Controller
 
     public function registeclassByPoint($point, $cardId)
     {
+        $cardId = base64_decode($cardId);
         //先檢查一天只能蓋一次
         $exist = DBHelper::isConsume($cardId, $point);
         if ($exist) {
@@ -30,7 +31,7 @@ class ClassCardController extends Controller
         DBHelper::registeclassByPoint($cardId, $point);
         //紀錄花費500 or 300
         DBHelper::insertConsumeToday($cardId, $point);
-        return redirect('classcard/show/' . $cardId);
+        return redirect('classcard/show/' . base64_encode($cardId));
     }
 
     public function extendCard(Request $request)
@@ -41,7 +42,7 @@ class ClassCardController extends Controller
         DBHelper::extendCard($userId, $cardId);
 
         $card = DBHelper::getValidCard($userId);
-        return redirect('classcard/show/' . $card['CardID']);
+        return redirect('classcard/show/' . base64_encode($card['CardID']));
     }
 
 
@@ -52,11 +53,12 @@ class ClassCardController extends Controller
         DBHelper::buyNewCard($userId, $point);
 
         $card = DBHelper::getValidCard($userId);
-        return redirect('classcard/show/' . $card['CardID']);
+        return redirect('classcard/show/' . base64_encode($card['CardID']));
     }
 
     public function showClassCard($cardId)
     {
+        $cardId = base64_decode($cardId);
         $card = DBHelper::getCard($cardId);
         if (!$card) {
             $link = $_SERVER['HTTP_REFERER'];
@@ -77,6 +79,8 @@ class ClassCardController extends Controller
             print_r('<h3>無上課紀錄，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
+
+        if ($index >= sizeof($arr)) $index = sizeof($arr) - 1;
         //Log::info("showClassHistory({$userId},index={$index})");
         return view('classhistory', [
             'card' => $arr[$index],

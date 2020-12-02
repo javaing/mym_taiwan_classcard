@@ -160,6 +160,13 @@ class DBHelper
             ->get();
     }
 
+    public static function getBalanceByUserIn($userId)
+    {
+        return DB::collection('Purchase')
+            ->where('UserID', $userId)
+            ->get();
+    }
+
     public static function getLiveCards()
     {
         //get()出來就是array
@@ -226,6 +233,13 @@ class DBHelper
         return DB::collection('Consume')
             ->where('PointConsumeTime', '>=', DBHelper::parse($from))
             ->where('PointConsumeTime', '<', DBHelper::parse($to))
+            ->get();
+    }
+
+    public static function getBalanceByUserOut($userId)
+    {
+        return DB::collection('Consume')
+            ->where('UserID', $userId)
             ->get();
     }
 

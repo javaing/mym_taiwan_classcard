@@ -52,7 +52,7 @@ class AccountController extends Controller
             print_r('無此課卡');
             return;
         }
-        Log::info("cardId({$cardid})");
+        //Log::info("cardId({$cardid})");
         return view('balanceDetail', [
             'cardId' => $cardid,
         ]);
@@ -117,5 +117,14 @@ class AccountController extends Controller
         //紀錄花費500 or 300
         DBHelper::insertConsume($cardId, $point, $dt);
         return redirect('account/' . $cardId);
+    }
+
+    public function balanceByUser($userId)
+    {
+        if ($userId == null)
+            $userId = $_COOKIE["userId"];
+        return view('balancebyuser', [
+            'userId' => $userId,
+        ]);
     }
 }

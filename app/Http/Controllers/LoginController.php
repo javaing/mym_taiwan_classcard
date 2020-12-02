@@ -23,7 +23,7 @@ class LoginController extends Controller
         $url = $this->lineService->getLoginBaseUrl();
         if (isset($_COOKIE["access_token"])) {
             //Log::info(time());
-            //$url = 'reuse';
+            $url = 'reuse';
         }
 
         return view('line')->with('url', $url);

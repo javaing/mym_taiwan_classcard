@@ -25,6 +25,7 @@ class LoginController extends Controller
             //Log::info(time());
             $url = 'reuse';
         }
+        Log::info('pageLine()=' . $url);
 
         return view('line')->with('url', $url);
     }

@@ -50,7 +50,7 @@
     <div class="tab-pane fade in active" id="prepaid">
         <table>
             <tr height="30">
-                <th>名字</th>
+                <th>卡號</th>
                 <th>日期</th>
                 <th>
                     <center>金額</center>
@@ -78,7 +78,7 @@
     <div class="tab-pane fade" id="used">
         <table>
             <tr height="30">
-                <th>名字</th>
+                <th>卡號</th>
                 <th>日期</th>
                 <th>
                     <center>金額</center>

@@ -47,6 +47,7 @@ class DBHelper
             ->where('UserID', $userId)
             ->where('Expired', '>', $dt)
             ->where('Points', '>', 0)
+            ->orderBy('CardCreateTime', 'desc')
             ->first();
         if ($cards != null)
             return $cards;
@@ -72,7 +73,7 @@ class DBHelper
 
         return DB::collection('Purchase')
             ->where('UserID', $userId)
-            ->where('Expired', '==', null)
+            ->where('Expired', '=', null)
             //->where('Points', '>', 0)
             ->first();
     }

@@ -24,6 +24,7 @@
     }
     $oneOrFourClass = 4;
     if($card['Payment']==500) {$oneOrFourClass=1;}
+    $cardId = base64_encode( $card['CardID'] );
 }}
 @endphp
 
@@ -32,7 +33,7 @@
         <p18>Hello!</p18>
     </div>
     <div style="margin-top: 3px;margin-bottom: 6px;">
-        <p18>{{ DBHelper::getNickName($card['UserID']) }}</p18>
+        <p18>{{ DBHelper::getUserName($card['UserID']) }}</p18>
     </div>
 </div>
 
@@ -118,7 +119,7 @@
                     @endif
 
                 </div>
-                <a id="registeLink" href="{{ route('registe.classcard',  [$card['Points'], $card['CardID']]) }}" />
+                <a id="registeLink" href="{{ route('registe.classcard',  [$card['Points'], $cardId] ) }}" />
 
                 @endif
             </TD>

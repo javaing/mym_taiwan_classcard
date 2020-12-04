@@ -25,6 +25,8 @@
     $oneOrFourClass = 4;
     if($card['Payment']==500) {$oneOrFourClass=1;}
     $cardId = base64_encode( $card['CardID'] );
+    $expiredDate = DBHelper::toDateString($card['Expired']);
+    if($expiredDate=='') {$expiredDate = "無期限";}
 }}
 @endphp
 
@@ -45,7 +47,7 @@
     <p16>課程使用期限</p16>
 </div>
 <div align="center" style="margin-bottom: 24px">
-    <p16>{{ DBHelper::toDateString($card['Expired']) }}</p16>
+    <p16>{{ $expiredDate }}</p16>
 </div>
 
 @if ($isTodayDone)

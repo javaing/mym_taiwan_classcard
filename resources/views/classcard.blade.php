@@ -167,7 +167,7 @@
 
 @if ( DBHelper::isExpired($card) )
 <div align="center" style="margin-Top: 8px;">
-    <a href="{{ route('extend.classcard', ['userId' => $card['UserID'], 'cardId' => $card['CardID'] ]) }}">
+    <a href="{{ route('extend.classcard', ['userId' => $card['UserID'], 'cardId' => base64_encode($card['CardID']) ]) }}">
         <input type="image" style="height:28px;" src="/images/classcard/class_extend.png" alt="" />
     </a>
 </div>

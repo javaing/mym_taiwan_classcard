@@ -109,7 +109,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消
                     </button>
-                    <a href="{{ route('account.deposite', ['cardId' =>$cardId, 'amount'=>$sumIn-$sumOut]) }}" class="btn btn-primary">確認</a>
+                    <a href="{{ route('account.deposite', ['cardId' => base64_encode($cardId), 'amount'=>$sumIn-$sumOut]) }}" class="btn btn-primary">確認</a>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->

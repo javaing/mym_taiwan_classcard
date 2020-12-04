@@ -67,7 +67,7 @@
             @foreach($arrIn as $purchase)
             <tr height="30">
                 <td width="100">
-                    <a href="{{ route('account.cardDetail', ['cardId' =>$purchase['CardID']]) }}">{{$purchase['CardID'] }}</a>
+                    <a href="{{ route('account.cardDetail', ['cardId' => base64_encode($purchase['CardID']) ]) }}">{{$purchase['CardID'] }}</a>
 
                     <br> ({{ DBHelper::getUserName(    $purchase['UserID']) }})</td>
                 <td> {{ DBHelper::toDateStringShort( $purchase['PaymentTime']) }}</td>

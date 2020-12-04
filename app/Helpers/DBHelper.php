@@ -64,7 +64,7 @@ class DBHelper
         $dt = Carbon::now();
         $cards = DB::collection('Purchase')
             ->where('UserID', $userId)
-            ->where('Expired', '>', $dt)
+            //->where('Expired', '>', $dt)
             //->where('Points', '>', 0)
             ->orderBy('CardCreateTime', 'desc')
             ->first();

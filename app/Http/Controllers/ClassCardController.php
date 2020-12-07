@@ -8,11 +8,8 @@ use App\Helpers\DBHelper as DBHelper;
 
 class ClassCardController extends Controller
 {
-    //protected $classcardService;
-
     public function __construct()
     {
-        //$this->classcardService = $classcardService;
     }
 
 
@@ -38,7 +35,18 @@ class ClassCardController extends Controller
     {
         $userId = $request->userId;
         $cardId = $request->cardId;
-        //Log::info("extendCard({$userId},cardId={$cardId})");
+        $cardId = base64_decode($cardId);
+        Log::info("extendCard({$userId},cardId={$cardId})");
+
+        //是不是有需展期的卡片
+        $card = DBHelper::getCard($cardId);
+        if (!DBHelper::isExpired($card)) {
+            $link = $_SERVER['HTTP_REFERER'];
+            print_r('<h3>此卡尚未逾期，請<a href="' . $link . '">回上頁</a></h3>');
+            return;
+        }
+
+
         DBHelper::extendCard($userId, $cardId);
 
         $card = DBHelper::getValidCard($userId);
@@ -50,6 +58,15 @@ class ClassCardController extends Controller
     {
         $userId = $request->userId;
         $point = $request->point; //1 or 4
+
+        //是不是還有未使用的卡片
+        $card = DBHelper::getValidCard($userId);
+        if ($card) {
+            $link = $_SERVER['HTTP_REFERER'];
+            print_r('<h3>還有未使用的卡片(卡號:' . $card['CardID'] . ')，不須買新卡，請<a href="' . $link . '">回上頁</a></h3>');
+            return;
+        }
+
         DBHelper::buyNewCard($userId, $point);
 
         $card = DBHelper::getValidCard($userId);

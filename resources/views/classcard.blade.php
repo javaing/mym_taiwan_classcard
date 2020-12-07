@@ -15,7 +15,7 @@
 {{
     $registArray = DBHelper::getConsume( $card['CardID']);
     $today = DBHelper::todaySlash();
-    $isTodayDone = false;
+    $isTodayDone = false; //今日蓋過不可再蓋
     for ($i = 0; $i < sizeof($registArray); $i++) {
         if($today==DBHelper::toDateString( $registArray[$i]['PointConsumeTime'])) {
             $isTodayDone = true;
@@ -60,6 +60,14 @@
             window.setTimeout(function() {
                 $("#SS" + N).attr("src", "/images/classcard/point_" + N + ".png");
             }, 2000);
+        });
+    });
+</script>
+@elseif (DBHelper::isExpired($card))
+<script type="text/javascript">
+    $(function() {
+        $("#div_unuse img").click(function() {
+            alert('很抱歉，已逾期須補差額');
         });
     });
 </script>
@@ -169,7 +177,7 @@
 
 @if ( DBHelper::isExpired($card) )
 <div align="center" style="margin-Top: 8px;">
-    <a href="{{ route('extend.classcard', ['userId' => $card['UserID'], 'cardId' => base64_encode($card['CardID']) ]) }}">
+    <a href="{{ route('extend.classcard', ['userId' => $card['UserID'], 'cardId' => $cardId ]) }}">
         <input type="image" style="height:28px;" src="/images/classcard/class_extend.png" alt="" />
     </a>
 </div>

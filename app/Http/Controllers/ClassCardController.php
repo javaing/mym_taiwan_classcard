@@ -41,16 +41,13 @@ class ClassCardController extends Controller
         //是不是有需展期的卡片
         $card = DBHelper::getCard($cardId);
         if (!DBHelper::isExpired($card)) {
-            $link = $_SERVER['HTTP_REFERER'];
+            $link = $_SERVER['HTTP_REFERER'] ?? "";
             print_r('<h3>此卡尚未逾期，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
 
-
-        DBHelper::extendCard($userId, $cardId);
-
-        $card = DBHelper::getValidCard($userId);
-        return redirect('classcard/show/' . base64_encode($card['CardID']));
+        DBHelper::extendCard($cardId);
+        return redirect('classcard/show/' . base64_encode($cardId));
     }
 
 

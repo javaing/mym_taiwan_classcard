@@ -49,8 +49,9 @@ class DBHelper
             ->where('Points', '>', 0)
             ->orderBy('CardCreateTime', 'desc')
             ->first();
-        if ($cards != null)
+        if ($cards != null) {
             return $cards;
+        }
 
         return DB::collection('Purchase')
             ->where('UserID', $userId)
@@ -149,7 +150,7 @@ class DBHelper
     public static function isExtendCard($cardId)
     {
         $card = DB::collection('Purchase')->where('CardID', $cardId)->first();
-        return ($card['Payment'] == 200);
+        return ($card['Expired'] == null);
     }
 
     public static function getBalanceIn($from, $to)
@@ -300,17 +301,32 @@ class DBHelper
     }
 
     //逾期補差額:舊卡點數轉移至新卡
-    public static function extendCard($userId, $cardId)
+    // public static function extendCard($userId, $cardId)
+    // {
+    //     //$cardId = base64_decode($cardId);//不是給網頁call，不用de_base6
+    //     $card = DBHelper::getCard($cardId);
+    //     $point = $card['Points'];
+
+    //     //清空點數
+    //     DBHelper::clearPoints($cardId);
+
+    //     $amount = 200;
+    //     DBHelper::insertPurchaseNoExpired($userId, $amount, $point);
+    // }
+
+    //逾期補差額: Payment 1800變2000，期限變無限期，更新PaymentTime
+    public static function extendCard($cardId)
     {
-        //$cardId = base64_decode($cardId);//不是給網頁call，不用de_base6
-        $card = DBHelper::getCard($cardId);
-        $point = $card['Points'];
+        $newdata = array('$set' => array(
+            'Payment' => 2000,
+            'Expired' => null,
+            'PaymentTime' => DBHelper::getMongoDateNow(),
+        ));
 
-        //清空點數
-        DBHelper::clearPoints($cardId);
-
-        $amount = 200;
-        DBHelper::insertPurchaseNoExpired($userId, $amount, $point);
+        Log::info('extendCard(' . $cardId . ') =' . json_encode($newdata));
+        DB::collection('Purchase')
+            ->where('CardID', $cardId)
+            ->update($newdata);
     }
 
     public static function insertPurchase($id, $amount, $point)

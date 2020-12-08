@@ -57,6 +57,7 @@ class DBHelper
             ->where('UserID', $userId)
             ->where('Expired', '=', null)
             ->where('Points', '>', 0)
+            ->orderBy('CardCreateTime', 'desc')
             ->first();
     }
 
@@ -76,6 +77,7 @@ class DBHelper
             ->where('UserID', $userId)
             ->where('Expired', '=', null)
             //->where('Points', '>', 0)
+            ->orderBy('CardCreateTime', 'desc')
             ->first();
     }
 

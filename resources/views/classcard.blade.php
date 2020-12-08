@@ -65,11 +65,12 @@
 </script>
 @elseif (DBHelper::isExpired($card))
 <script type="text/javascript">
-    $(function() {
-        $("#div_unuse img").click(function() {
-            alert('很抱歉，已逾期須補差額');
-        });
-    });
+    // $(function() {
+    //     $("#div_unuse img").click(function() {
+    //         // alert('123');
+    //         //$('#test').click();
+    //     });
+    // });
 </script>
 @else
 <script type="text/javascript">
@@ -80,6 +81,20 @@
     });
 </script>
 @endif
+
+<!-- Modal -->
+<div class="modal" id="expiredHint" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                抱歉，已逾期須補差額
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <TABLE BORDER=0 align="center">
@@ -105,33 +120,39 @@
 
                 @else
 
-                <div id="div_unuse">
-                    @if($oneOrFourClass==1)
-                    <img src="/images/classcard/point_unuse.png" style="width:100%;height:100%" id="SS1">
+                @if (DBHelper::isExpired($card))
+                <div id="div_unuse" data-toggle="modal" data-target="#expiredHint">
                     @else
-                    @switch($oneOrFourClass-$i+1)
-                    @case(1)
-                    <img src="/images/classcard/point_1.png" style="width:100%;height:100%" id="SS1">
-                    @break
+                    <div id="div_unuse">
+                        @endif
 
-                    @case(2)
-                    <img src="/images/classcard/point_2.png" style="width:100%;height:100%" id="SS2">
-                    @break
 
-                    @case(3)
-                    <img src="/images/classcard/point_3.png" style="width:100%;height:100%" id="SS3">
-                    @break
+                        @if($oneOrFourClass==1)
+                        <img src="/images/classcard/point_unuse.png" style="width:100%;height:100%" id="SS1">
+                        @else
+                        @switch($oneOrFourClass-$i+1)
+                        @case(1)
+                        <img src="/images/classcard/point_1.png" style="width:100%;height:100%" id="SS1">
+                        @break
 
-                    @case(4)
-                    <img src="/images/classcard/point_4.png" style="width:100%;height:100%" id="SS4">
-                    @break
-                    @endswitch
+                        @case(2)
+                        <img src="/images/classcard/point_2.png" style="width:100%;height:100%" id="SS2">
+                        @break
+
+                        @case(3)
+                        <img src="/images/classcard/point_3.png" style="width:100%;height:100%" id="SS3">
+                        @break
+
+                        @case(4)
+                        <img src="/images/classcard/point_4.png" style="width:100%;height:100%" id="SS4">
+                        @break
+                        @endswitch
+                        @endif
+
+                    </div>
+                    <a id="registeLink" href="{{ route('registe.classcard',  [$card['Points'], $cardId] ) }}" />
+
                     @endif
-
-                </div>
-                <a id="registeLink" href="{{ route('registe.classcard',  [$card['Points'], $cardId] ) }}" />
-
-                @endif
             </TD>
             @if ($i%2==1 )
         </TR>

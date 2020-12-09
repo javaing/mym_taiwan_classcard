@@ -26,6 +26,11 @@
         }
         changeBackground();
     })();
+    $(document).ready(function() {
+        $("a[id='refundbtn']").dblclick(function() {
+            alert("無法重複退款");
+        });
+    });
 </script>
 <center>
 
@@ -109,7 +114,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消
                     </button>
-                    <a href="{{ route('account.deposite', ['cardId' => base64_encode($cardId), 'amount'=>$sumIn-$sumOut]) }}" class="btn btn-primary">確認</a>
+                    <a id='refundbtn' href="{{ route('account.deposite', ['cardId' => base64_encode($cardId), 'amount'=>$sumIn-$sumOut]) }}" class="btn btn-primary">確認</a>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->

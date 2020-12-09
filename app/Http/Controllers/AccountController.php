@@ -61,10 +61,10 @@ class AccountController extends Controller
 
     public function deposite(Request $request)
     {
-        $cardId = $request->cardId;
+        $cardId = base64_decode($request->cardId);
         $amount = $request->amount;
         Log::info("deposite($cardId, $amount)");
-        $exist = DBHelper::isDeposited($cardId, $amount);
+        $exist = DBHelper::isDeposited($cardId);
         //Log::info("deposite($exist)");
         //print_r($exist);
         //return;
@@ -89,7 +89,7 @@ class AccountController extends Controller
     //for post
     public function registeclassByhand(Request $request)
     {
-        $cardId = $request->cardId;
+        $cardId = base64_decode($request->cardId);
         //Log::info("registeclassByhand cardId($cardId)");
         if (DBHelper::getCard($cardId) == null) {
             $link = $_SERVER['HTTP_REFERER'];

@@ -67,7 +67,7 @@ class DBHelper
         $cards = DB::collection('Purchase')
             ->where('UserID', $userId)
             //->where('Expired', '>', $dt)
-            //->where('Points', '>', 0)
+            ->where('Payment', '>', 0)
             ->orderBy('CardCreateTime', 'desc')
             ->first();
         if ($cards != null)
@@ -76,7 +76,7 @@ class DBHelper
         return DB::collection('Purchase')
             ->where('UserID', $userId)
             ->where('Expired', '=', null)
-            //->where('Points', '>', 0)
+            ->where('Payment', '>', 0)
             ->orderBy('CardCreateTime', 'desc')
             ->first();
     }
@@ -94,13 +94,14 @@ class DBHelper
         return DB::collection('Purchase')
             ->where('UserID', $userId)
             ->where('Payment', '>', 0) //因為可能有退卡，是負的要去掉
+            ->where('Payment', '!=', 200) //逾期補繳的要去掉
             ->get();
     }
 
     public static function getUserId($cardId)
     {
         $arr = DB::collection('Purchase')->where('CardID', $cardId);
-        if (!$arr) return "";
+        if ($arr == null) return "";
         return  $arr->first()['UserID'];
     }
 
@@ -120,6 +121,7 @@ class DBHelper
         $count = DB::collection('Purchase')
             ->where('CardCreateTime', 'like', '%' . date("Y") . '%')
             ->where('Payment', '>', 0) //因為可能有退卡，是負的要去掉
+            ->where('Payment', '!=', 200) //逾期補繳的要去掉
             ->count() + 1;
         return date("Y") . str_pad($count, 4, '0', STR_PAD_LEFT);
 
@@ -133,6 +135,8 @@ class DBHelper
         ));
         DB::collection('Purchase')
             ->where('CardID', $cardId)
+            ->where('Payment', '>', 0) //因為可能有退卡，是負的要去掉
+            ->where('Payment', '!=', 200) //逾期補繳的要去掉
             ->update($newdata);
     }
 
@@ -286,10 +290,12 @@ class DBHelper
 
     public static function buyNewCard($userId, $point)
     {
+        $cardId = DBHelper::getCardId();
         if ($point == 1)
-            DBHelper::insertPurchaseNoExpired($userId, 500, $point);
+            DBHelper::insertPurchaseNoExpired($cardId, $userId, 500, $point);
         else
-            DBHelper::insertPurchase($userId, 1800, $point);
+            DBHelper::insertPurchase($cardId, $userId, 1800, $point);
+        return $cardId;
     }
 
     public static function clearPoints($cardId)
@@ -299,6 +305,7 @@ class DBHelper
         ));
         DB::collection('Purchase')
             ->where('CardID', $cardId)
+            ->where('Points', ">", 0)
             ->update($newdata);
     }
 
@@ -317,28 +324,45 @@ class DBHelper
     // }
 
     //逾期補差額: Payment 1800變2000，期限變無限期，更新PaymentTime
+    // public static function extendCard($cardId)
+    // {
+    //     $newdata = array('$set' => array(
+    //         'Payment' => 2000,
+    //         'Expired' => null,
+    //         'PaymentTime' => DBHelper::getMongoDateNow(),
+    //     ));
+
+    //     Log::info('extendCard(' . $cardId . ') =' . json_encode($newdata));
+    //     DB::collection('Purchase')
+    //         ->where('CardID', $cardId)
+    //         ->update($newdata);
+    // }
+
+    //逾期補差額v3: 新增一筆200的卡片，CardID與原卡相同，點數為零，無限期。原卡的期限變無限期
     public static function extendCard($cardId)
     {
+        //新增一筆200的卡片
+        DBHelper::insertPurchaseNoExpired($cardId, DBHelper::getUserId($cardId), 200, 0);
+
+        //更新原卡
         $newdata = array('$set' => array(
-            'Payment' => 2000,
             'Expired' => null,
-            'PaymentTime' => DBHelper::getMongoDateNow(),
         ));
 
-        Log::info('extendCard(' . $cardId . ') =' . json_encode($newdata));
+        Log::info('extendCard更新原卡(' . $cardId . ') =' . json_encode($newdata));
         DB::collection('Purchase')
             ->where('CardID', $cardId)
             ->update($newdata);
     }
 
-    public static function insertPurchase($id, $amount, $point)
+    public static function insertPurchase($cardId, $id, $amount, $point)
     {
         $dt = DBHelper::getMongoDateNow();
         $expired_at = Carbon::now()->add(60, 'day')->toDateTimeString();
         $dt_expired = new \MongoDB\BSON\UTCDateTime(strtotime($expired_at) * 1000);
 
         $newCard = [
-            'CardID' => DBHelper::getCardId(),
+            'CardID' => $cardId,
             'UserID' => $id,
             'Points' => (int)$point,
             "Expired" => $dt_expired,
@@ -358,23 +382,18 @@ class DBHelper
             ->insert($newCard);
     }
 
-    public static function insertPurchaseNoExpired($id, $amount, $point)
+    public static function insertPurchaseNoExpired($cardId, $userId, $amount, $point)
     {
         $dt = DBHelper::getMongoDateNow();
         $newCard = [
-            'CardID' => DBHelper::getCardId(),
-            'UserID' => $id,
+            'CardID' => $cardId,
+            'UserID' => $userId,
             'Points' => (int)$point,
             "Expired" => null,
             "CardCreateTime" => $dt,
+            'Payment' => $amount,
+            'PaymentTime' => $dt,
         ];
-        if ($amount) {
-            $newCard['Payment'] = $amount;
-            $newCard['PaymentTime'] = $dt;
-        } else {
-            $newCard['Payment'] = null;
-            $newCard['PaymentTime'] = null;
-        }
 
         Log::info('insertPurchaseNoExpired =' . json_encode($newCard));
 
@@ -457,15 +476,29 @@ class DBHelper
             return false;
     }
 
-    public static function isDeposited($cardId, $cost)
+    // public static function isDeposited($cardId, $cost)
+    // {
+    //     $datas = DB::collection('Consume')
+    //         ->where('CardID', $cardId)
+    //         ->where('UserID', DBHelper::getUserId($cardId))
+    //         ->where('Cost', $cost)
+    //         ->where('PointConsumeTime', '>=', DBHelper::today())
+    //         ->get();
+    //     Log::info('DBHelper::isDeposited =' . sizeof($datas) . ",date=" . DBHelper::today());
+    //     if (sizeof($datas) > 0)
+    //         return true;
+    //     else
+    //         return false;
+    // }
+
+    //該卡號有負數的紀錄的話
+    public static function isDeposited($cardId)
     {
-        $datas = DB::collection('Consume')
+        $datas = DB::collection('Purchase')
             ->where('CardID', $cardId)
-            ->where('UserID', DBHelper::getUserId($cardId))
-            ->where('Cost', $cost)
-            ->where('PointConsumeTime', '>=', DBHelper::today())
+            ->where('Payment', '<', 0) //退卡的
             ->get();
-        Log::info('DBHelper::isDeposited =' . sizeof($datas) . ",date=" . DBHelper::today());
+        Log::info('DBHelper::isDeposited size(Payment<0)=' . sizeof($datas));
         if (sizeof($datas) > 0)
             return true;
         else

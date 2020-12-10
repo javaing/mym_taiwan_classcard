@@ -12,6 +12,11 @@ class ClassCardController extends Controller
     {
     }
 
+    public function goBackLink()
+    {
+        return $_SERVER['HTTP_REFERER'] ?? '';
+    }
+
 
     public function registeclassByPoint($point, $cardId)
     {
@@ -19,7 +24,7 @@ class ClassCardController extends Controller
         //先檢查一天只能蓋一次
         $exist = DBHelper::isConsume($cardId, $point);
         if ($exist) {
-            $link = $_SERVER['HTTP_REFERER'];
+            $link = $this->goBackLink();
             print_r('<h3>今日已蓋章，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
@@ -41,7 +46,7 @@ class ClassCardController extends Controller
         //是不是有需展期的卡片
         $card = DBHelper::getCard($cardId);
         if (!DBHelper::isExpired($card)) {
-            $link = $_SERVER['HTTP_REFERER'] ?? "";
+            $link = $this->goBackLink();
             print_r('<h3>此卡尚未逾期，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
@@ -59,7 +64,7 @@ class ClassCardController extends Controller
         //是不是還有未使用的卡片
         $card = DBHelper::getValidCard($userId);
         if ($card) {
-            $link = $_SERVER['HTTP_REFERER'];
+            $link = $this->goBackLink();
             print_r('<h3>還有未使用的卡片(卡號:' . $card['CardID'] . ')，不須買新卡，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
@@ -73,7 +78,7 @@ class ClassCardController extends Controller
         $cardId = base64_decode($cardId);
         $card = DBHelper::getCard($cardId);
         if (!$card) {
-            $link = $_SERVER['HTTP_REFERER'];
+            $link = $this->goBackLink();
             print_r('<h3>無此課卡，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
@@ -86,14 +91,14 @@ class ClassCardController extends Controller
     public function showClassHistory($userId, $index)
     {
         $arr = DBHelper::getUserHistory($userId);
-        if (!$arr) {
-            $link = $_SERVER['HTTP_REFERER'];
+        Log::info("showClassHistory({$userId},index={$index}) data={$arr} ");
+        if (count($arr) == 0) {
+            $link = $this->goBackLink();
             print_r('<h3>無上課紀錄，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
 
         if ($index >= sizeof($arr)) $index = sizeof($arr) - 1;
-        //Log::info("showClassHistory({$userId},index={$index})");
         return view('classhistory', [
             'card' => $arr[$index],
             'index' => $index

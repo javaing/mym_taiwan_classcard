@@ -17,6 +17,11 @@ class AccountController extends Controller
         $this->middleware('auth');
     }
 
+    public function goBackLink()
+    {
+        return $_SERVER['HTTP_REFERER'] ?? '';
+    }
+
     public function create()
     {
         $start = Carbon::now()->startOfMonth()->add(-1, 'month');
@@ -70,7 +75,7 @@ class AccountController extends Controller
         //return;
 
         if ($exist) {
-            $link = $_SERVER['HTTP_REFERER'];
+            $link = $this->goBackLink();
             print_r('資料已重複不予處理，請<a href="' . $link . '">回上頁</a>');
         } else {
             DBHelper::refund($cardId, $amount);
@@ -92,7 +97,7 @@ class AccountController extends Controller
         $cardId = base64_decode($request->cardId);
         //Log::info("registeclassByhand cardId($cardId)");
         if (DBHelper::getCard($cardId) == null) {
-            $link = $_SERVER['HTTP_REFERER'];
+            $link = $this->goBackLink();
             print_r('<h3>尚未選卡，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
@@ -108,7 +113,7 @@ class AccountController extends Controller
         //先檢查一天只能蓋一次
         $exist = DBHelper::isConsumeByDate($cardId, $dt);
         if ($exist) {
-            $link = $_SERVER['HTTP_REFERER'];
+            $link = $this->goBackLink();
             print_r('<h3>今日已蓋章，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }

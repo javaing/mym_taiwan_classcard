@@ -14,14 +14,14 @@
 @php
 {{
     $registArray = DBHelper::getConsume( $card['CardID']);
-    $today = DBHelper::todaySlash();
-    $isTodayDone = false; //今日蓋過不可再蓋
+   
+    $listDate = array();
     for ($i = 0; $i < sizeof($registArray); $i++) {
-        if($today==DBHelper::toDateString( $registArray[$i]['PointConsumeTime'])) {
-            $isTodayDone = true;
-            break;
-        }
+        array_push($listDate, DBHelper::toDateStringJS( $registArray[$i]['PointConsumeTime']));
     }
+    //array_push($listDate, "2020/12/16");
+    //array_push($listDate, "2020/12/15");
+
     $oneOrFourClass = 4;
     if($card['Payment']==500) {$oneOrFourClass=1;}
     $cardId = base64_encode( $card['CardID'] );
@@ -50,37 +50,29 @@
     <p16>{{ $expiredDate }}</p16>
 </div>
 
-@if ($isTodayDone)
 <script type="text/javascript">
     $(function() {
         $("#div_unuse img").click(function() {
-            var N = $(this).attr("id").substr(2);
+            var str = document.getElementById('abcId').value;
+            var todayDate = new Date().toISOString().slice(0, 10);
+            //alert(str);
+            //alert(todayDate);
+            //alert(str.includes(todayDate));
+            //今日蓋過不可再蓋
+            if (str.includes(todayDate)) {
+                var N = $(this).attr("id").substr(2);
+                $("#SS" + N).attr("src", "/images/classcard/point_today.png");
+                window.setTimeout(function() {
+                    $("#SS" + N).attr("src", "/images/classcard/point_" + N + ".png");
+                }, 2000);
+            } else {
+                $('#registeLink')[0].click();
+            }
 
-            $("#SS" + N).attr("src", "/images/classcard/point_today.png");
-            window.setTimeout(function() {
-                $("#SS" + N).attr("src", "/images/classcard/point_" + N + ".png");
-            }, 2000);
         });
     });
 </script>
-@elseif (DBHelper::isExpired($card))
-<script type="text/javascript">
-    // $(function() {
-    //     $("#div_unuse img").click(function() {
-    //         // alert('123');
-    //         //$('#test').click();
-    //     });
-    // });
-</script>
-@else
-<script type="text/javascript">
-    $(function() {
-        $("#div_unuse img").click(function() {
-            $('#registeLink')[0].click();
-        });
-    });
-</script>
-@endif
+
 
 <!-- Modal -->
 <div class="modal" id="expiredHint" tabindex="-1" role="dialog" aria-hidden="true">
@@ -99,6 +91,9 @@
 
 <TABLE BORDER=0 align="center">
     <form>
+        <input type=hidden id="abcId" value="{{implode( ", ", $listDate )}}" />
+
+
         @for ($i = $oneOrFourClass; $i >= 1; $i--)
 
         @if ($i%2==0 )

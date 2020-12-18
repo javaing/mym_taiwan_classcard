@@ -32,6 +32,12 @@ class DBHelper
         return $dbdate->toDateTime()->format('y-m-d');
     }
 
+    public static function toDateStringJS($dbdate)
+    {
+        if (!$dbdate) return '';
+        return $dbdate->toDateTime()->format('Y-m-d');
+    }
+
     public static function parse($str)
     {
         //Log::info('parse=' . Carbon::parse($str));
@@ -503,5 +509,19 @@ class DBHelper
             return true;
         else
             return false;
+    }
+
+    public static function isTodayDone($cardId)
+    {
+        $registArray = DBHelper::getConsume($cardId);
+        $today = DBHelper::todaySlash();
+        $isTodayDone = false; //今日蓋過不可再蓋
+        for ($i = 0; $i < sizeof($registArray); $i++) {
+            if ($today == DBHelper::toDateString($registArray[$i]['PointConsumeTime'])) {
+                $isTodayDone = true;
+                break;
+            }
+        }
+        return $isTodayDone;
     }
 }

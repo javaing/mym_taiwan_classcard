@@ -27,20 +27,26 @@ Route::get('/alluser/{userId?}', 'LoginController@alluser')->middleware('auth.ba
 Route::post('/alluser', 'LoginController@updateUser')->middleware('auth.basic');
 Route::get('/logout', 'LoginController@logout');
 
+//買卡
 Route::get('classcard/buy', 'ClassCardController@buyClassCard')->name('buy.classcard');
+//上課紀錄
 Route::get('classcard/history', 'ClassCardController@showClassHistoryByCookie');
 Route::get('classcard/history/{userId}/{index}', 'ClassCardController@showClassHistory')->name('show.classhistory');
+//顯示課卡
 Route::get('classcard/show/{cardId}', 'ClassCardController@showClassCard')->where('cardId', '[0-9A-Za-z=]+');
+//蓋課卡
 Route::get('/registe/{point}/{cardId}', 'ClassCardController@registeclassByPoint')
     ->where(['point' => '[0-9]+', 'cardId' => '[0-9A-Za-z=]+'])->name('registe.classcard');
+//補繳
 Route::get('classcard/extend', 'ClassCardController@extendCard')->name('extend.classcard');
-
+//手動蓋課卡
 Route::get('/classcard/byhand', 'AccountController@classByhand');
 Route::Post('/classcard/byhand', 'AccountController@registeclassByhand');
+//後台
 Route::get('/account/balance', 'AccountController@create');
 Route::Post('/account/balance', 'AccountController@balance');
 Route::get('account/deposite', 'AccountController@deposite')->name('account.deposite');
-Route::get('/account/{cardId}', 'AccountController@cardDetail')->where('cardId', '[0-9A-Za-z=]+')->name('account.cardDetail');
+Route::get('/account/carddetail/{cardId}', 'AccountController@cardDetail')->where('cardId', '[0-9A-Za-z=]+')->name('account.cardDetail');
 Route::get('/balance/byuser/{userId}', 'AccountController@balanceByUser')->where('userId', '[0-9A-Za-z=]+');
 
 

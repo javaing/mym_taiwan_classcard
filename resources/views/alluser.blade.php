@@ -50,6 +50,10 @@
             <td><input name="Email" type="email" value="{{$userDetail['Email']}}"> </td>
         </tr>
         <tr>
+            <td width="70" height="36">身分證ID</td>
+            <td><input name="PersonalID" type="text" value="{{$userDetail['PersonalID']}}"> </td>
+        </tr>
+        <tr>
             <input name="UserID" type="hidden" value="{{$userDetail['UserID']}}">
             <td COLSPAN=2 align="right"><button class="btn btn-link" type="submit">更新</button>
         </tr>

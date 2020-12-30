@@ -74,9 +74,11 @@ class AccountController extends Controller
         //print_r($exist);
         //return;
 
+        $backLink = $this->goBackLink();
         if ($exist) {
-            $link = $this->goBackLink();
-            print_r('資料已重複不予處理，請<a href="' . $link . '">回上頁</a>');
+            print_r('資料已重複不予處理，請<a href="' . $backLink . '">回上頁</a>');
+        } else if ($cardId == null) {
+            print_r('無卡號無法退款，請<a href="' . $backLink . '">回上頁</a>');
         } else {
             DBHelper::refund($cardId, $amount);
             return view('balanceDetail', [
@@ -122,7 +124,7 @@ class AccountController extends Controller
         DBHelper::registeclassByPoint($cardId, $point);
         //紀錄花費500 or 300
         DBHelper::insertConsume($cardId, $point, $dt);
-        return redirect('account/' . $cardId);
+        return redirect('account/carddetail' . $cardId);
     }
 
     public function balanceByUser($userId)

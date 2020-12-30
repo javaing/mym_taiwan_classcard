@@ -145,7 +145,8 @@ class LoginController extends Controller
                 'Mobile' => $request->Mobile,
                 'Address' => $request->Address,
                 'Referrer' => $request->Referrer,
-                'Email' => $request->Email
+                'Email' => $request->Email,
+                'PersonalID' => $request->PersonalID,
             );
             HelpersDBHelper::updateUser($uid, $datas);
 
@@ -156,7 +157,7 @@ class LoginController extends Controller
 
 
         $users = HelpersDBHelper::getUsers();
-        //Log::info('alluser=' . $users);
+        //Log::info('userDetail=' . $userDetail);
         return view("alluser")->with(['users' => $users, 'userDetail' => $userDetail]);
     }
 }

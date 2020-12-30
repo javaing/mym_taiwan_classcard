@@ -407,6 +407,7 @@ class DBHelper
             ->insert($newCard);
     }
 
+    //退款
     public static function refund($cardId, $amount)
     {
         //清空點數

@@ -118,7 +118,7 @@ class LoginController extends Controller
         if ($arg1) {
             $detail = HelpersDBHelper::getUser($arg1);
 
-            $check = array('UserName', 'Mobile', 'Address', 'Referrer', 'Email');
+            $check = array('UserName', 'Mobile', 'Address', 'Referrer', 'Email', 'PersonalID');
             foreach ($check as $key) {
                 $this->checkField($key, $detail);
             }

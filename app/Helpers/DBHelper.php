@@ -291,6 +291,7 @@ class DBHelper
                 "Mobile" => "",
                 "Address" => "",
                 "Referrer" => "",
+                "PersonalID" => "",
             ]);
     }
 

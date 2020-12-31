@@ -50,6 +50,42 @@ class AccountController extends Controller
         ]);
     }
 
+    public function balance2(Request $request)
+    {
+        $start = $request->start;
+        $end = $request->end;
+        //Log::info($start);
+        //Log::info($end);
+        if (!$start) {
+            $start = Carbon::now()->startOfMonth()->add(-1, 'month');
+            $end = Carbon::now()->startOfMonth()->add(1, 'month');
+        }
+
+        return view('balance2', [
+            'start' => $start,
+            'end' => $end,
+        ]);
+    }
+
+    public function balance2post(Request $request)
+    {
+        $range = $request->range;
+        if (!$range) {
+            $start = Carbon::now()->startOfMonth()->add(-1, 'month');
+            $end = Carbon::now()->startOfMonth()->add(1, 'month')->add(-1, 'day');
+        } else {
+            $start = Carbon::now()->startOfYear()->add($range * 2 - 2, 'month');
+            $end = Carbon::now()->startOfYear()->add($range * 2, 'month')->add(-1, 'day');
+        }
+
+
+        return view('balance2', [
+            'start' => $start,
+            'end' => $end,
+            'range' => $range
+        ]);
+    }
+
     public function cardDetail($cardId)
     {
         $cardId = base64_decode($cardId);

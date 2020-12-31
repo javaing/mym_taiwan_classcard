@@ -50,6 +50,8 @@ Route::get('account/deposite', 'AccountController@deposite')->name('account.depo
 Route::get('/account/carddetail/{cardId}', 'AccountController@cardDetail')->where('cardId', '[0-9A-Za-z=]+')->name('account.cardDetail');
 Route::get('/balance/byuser/{userId}', 'AccountController@balanceByUser')->where('userId', '[0-9A-Za-z=]+');
 
+Route::get('/account/balance2', 'AccountController@balance2');
+Route::post('/account/balance2', 'AccountController@balance2post');
 
 Auth::routes();
 

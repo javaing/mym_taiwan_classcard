@@ -224,6 +224,21 @@ class DBHelper
             ->update($newdata);
     }
 
+    public static function getPersonalIDMap()
+    {
+        $result =  DB::collection('UserInfo')
+            ->select('PersonalID', 'UserID')
+            ->get();
+        $map = array();
+        foreach ($result as $row) {
+            $map[$row['UserID']] = $row['PersonalID'];
+        }
+        //Log::info('getPersonalIDMap=' . $map);
+        return $map;
+    }
+
+
+
     //[Consume]----------------------------------------------------------
     public static function getConsume($cardId)
     {

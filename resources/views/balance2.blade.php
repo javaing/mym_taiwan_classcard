@@ -17,6 +17,7 @@
             $sumOut += $each['Cost'];
         }
         $map = DBHelper::getPersonalIDMap();
+        $range = $range ?? '';
     }}
 @endphp
 

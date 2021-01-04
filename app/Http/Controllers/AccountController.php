@@ -50,6 +50,11 @@ class AccountController extends Controller
         ]);
     }
 
+    private function getLastMonthRange()
+    {
+        return Carbon::now()->month % 2 == 0 ? -1 : -2; //上個區間;
+    }
+
     public function balance2(Request $request)
     {
         $start = $request->start;
@@ -57,8 +62,9 @@ class AccountController extends Controller
         //Log::info($start);
         //Log::info($end);
         if (!$start) {
-            $start = Carbon::now()->startOfMonth()->add(-1, 'month');
-            $end = Carbon::now()->startOfMonth()->add(1, 'month');
+            $index = $this->getLastMonthRange(); //上個區間;
+            $start = Carbon::now()->startOfMonth()->add($index, 'month');
+            $end = Carbon::now()->startOfMonth()->add($index + 2, 'month')->add(-1, 'day');
         }
 
         return view('balance2', [
@@ -70,11 +76,9 @@ class AccountController extends Controller
     public function balance2post(Request $request)
     {
         $range = $request->range;
-        $startMonth = -1;
-        $endMonth = 1;
-        if (!$range) { //上一個月本月
-            //$start = Carbon::now()->startOfMonth()->add(-1, 'month');
-            //$end = Carbon::now()->startOfMonth()->add(1, 'month')->add(-1, 'day');
+        $startMonth = $this->getLastMonthRange(); //上個區間;
+        $endMonth = $startMonth + 2;
+        if (!$range) { //上個區間;
         } else if ($range == 7) { //去年十一十二月
             $startMonth = $range * 2 - 2 - 14;
             $endMonth = $range * 2 - 14;

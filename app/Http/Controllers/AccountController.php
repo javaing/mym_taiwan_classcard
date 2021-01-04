@@ -100,6 +100,25 @@ class AccountController extends Controller
         ]);
     }
 
+    //查某個人日期區間內的繳款
+    public function cardDetail2(Request $request)
+    {
+        $userId = $request->userId;
+        if (!$userId) {
+            print_r('無法辨識使用者');
+            return;
+        }
+        $start = $request->start;
+        $end = $request->end;
+        $paidArray = DBHelper::getBalanceByUserIn2($userId, $start, $end);
+        Log::info("cardDetail2.paidArray({$paidArray})");
+        return view('balanceDetail2', [
+            'paidArray' => $paidArray,
+            'start' => $start,
+            'end' => $end,
+        ]);
+    }
+
     public function deposite(Request $request)
     {
         $cardId = base64_decode($request->cardId);

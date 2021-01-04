@@ -52,6 +52,7 @@ Route::get('/balance/byuser/{userId}', 'AccountController@balanceByUser')->where
 
 Route::get('/account/balance2', 'AccountController@balance2');
 Route::post('/account/balance2', 'AccountController@balance2post');
+Route::post('/account/carddetail2', 'AccountController@cardDetail2')->name('account.cardDetail2');
 
 Auth::routes();
 

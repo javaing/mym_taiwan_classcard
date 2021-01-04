@@ -8,7 +8,6 @@
 {{
         $arrIn = DBHelper::getBalanceIn($start, $end);
         $arrOut = DBHelper::getBalanceOut($start, $end);
-        Illuminate\Support\Facades\Log::info('$arrIn=' . $arrIn);
         $sumIn=0; $sumOut=0;
         foreach($arrIn as $each) {
             $sumIn += $each['Payment'];
@@ -63,13 +62,22 @@
                 <th>
                     <center>金額</center>
                 </th>
-                <th>身分證</th>
+                <th>
+                    <center>身分證</center>
+                </th>
             </tr>
 
             @foreach($arrIn as $purchase)
             <tr height="30">
                 <td width="100">
-                    <a href="{{ route('account.cardDetail', ['cardId' => base64_encode($purchase['CardID'])   ]) }}">{{DBHelper::getUserName( $purchase['UserID']) }}</a>
+                    <!-- <a href="{{ route('account.cardDetail', ['cardId' => base64_encode($purchase['CardID'])   ]) }}">{{DBHelper::getUserName( $purchase['UserID']) }}</a> -->
+                    <form action="{{url()->action('AccountController@cardDetail2')}}" method="POST">
+                        @csrf
+                        <input type="hidden" name="userId" value="{{$purchase['UserID']}}">
+                        <input type="hidden" name="start" value="{{$start}}">
+                        <input type="hidden" name="end" value="{{$end}}">
+                        <button type="button" class="btn btn-default" onclick="submit();">{{DBHelper::getUserName( $purchase['UserID']) }}</button>
+                    </form>
 
                 </td>
                 <td> {{ DBHelper::toDateStringShort( $purchase['PaymentTime']) }}</td>

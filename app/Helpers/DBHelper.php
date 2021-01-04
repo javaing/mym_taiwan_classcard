@@ -175,6 +175,15 @@ class DBHelper
             ->get();
     }
 
+    public static function getBalanceByUserIn2($userId, $from, $to)
+    {
+        return DB::collection('Purchase')
+            ->where('UserID', $userId)
+            ->where('PaymentTime', '>=', DBHelper::parse($from))
+            ->where('PaymentTime', '<', DBHelper::parse($to))
+            ->get();
+    }
+
     public static function getBalanceByUserIn($userId)
     {
         return DB::collection('Purchase')

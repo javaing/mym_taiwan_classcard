@@ -48,6 +48,7 @@
             <Option @if($range==4) selected="" @endif Value="4">七八月</Option>
             <Option @if($range==5) selected="" @endif Value="5">九十月</Option>
             <Option @if($range==6) selected="" @endif Value="6">十一十二月</Option>
+            <Option @if($range==7) selected="" @endif Value="7">去年十一十二月</Option>
         </Select>
     </form>
 </div>

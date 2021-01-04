@@ -70,13 +70,20 @@ class AccountController extends Controller
     public function balance2post(Request $request)
     {
         $range = $request->range;
-        if (!$range) {
-            $start = Carbon::now()->startOfMonth()->add(-1, 'month');
-            $end = Carbon::now()->startOfMonth()->add(1, 'month')->add(-1, 'day');
+        $startMonth = -1;
+        $endMonth = 1;
+        if (!$range) { //上一個月本月
+            //$start = Carbon::now()->startOfMonth()->add(-1, 'month');
+            //$end = Carbon::now()->startOfMonth()->add(1, 'month')->add(-1, 'day');
+        } else if ($range == 7) { //去年十一十二月
+            $startMonth = $range * 2 - 2 - 14;
+            $endMonth = $range * 2 - 14;
         } else {
-            $start = Carbon::now()->startOfYear()->add($range * 2 - 2, 'month');
-            $end = Carbon::now()->startOfYear()->add($range * 2, 'month')->add(-1, 'day');
+            $startMonth = $range * 2 - 2;
+            $endMonth = $range * 2;
         }
+        $start = Carbon::now()->startOfYear()->add($startMonth, 'month');
+        $end = Carbon::now()->startOfYear()->add($endMonth, 'month')->add(-1, 'day');
 
 
         return view('balance2', [

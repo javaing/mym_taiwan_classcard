@@ -175,7 +175,7 @@ class DBHelper
             ->get();
     }
 
-    public static function getBalanceByUserIn2($userId, $from, $to)
+    public static function getBalanceIn2($userId, $from, $to)
     {
         return DB::collection('Purchase')
             ->where('UserID', $userId)

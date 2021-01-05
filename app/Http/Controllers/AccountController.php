@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-//use App\Services\ClassCardService;
 use App\Helpers\DBHelper as DBHelper;
 use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class AccountController extends Controller
 {
@@ -121,7 +122,7 @@ class AccountController extends Controller
         }
         $start = $request->start;
         $end = $request->end;
-        $paidArray = DBHelper::getBalanceByUserIn2($userId, $start, $end);
+        $paidArray = DBHelper::getBalanceIn2($userId, $start, $end);
         Log::info("cardDetail2.paidArray({$paidArray})");
         return view('balanceDetail2', [
             'paidArray' => $paidArray,
@@ -200,5 +201,45 @@ class AccountController extends Controller
         return view('balancebyuser', [
             'userId' => $userId,
         ]);
+    }
+
+
+    //save data to excel, then download excel
+    public function downloadFile(Request $request)
+    {
+        $file = $request->filename;
+        $file = "Asana付款紀錄_" . $file . "_mymtw.xlsx";
+        $start = $request->start;
+        $end = $request->end;
+        $userId = $request->userId;
+
+        if ($userId) {
+            $arrIn = DBHelper::getBalanceIn2($userId, $start, $end);
+        } else {
+            $arrIn = DBHelper::getBalanceIn($start, $end);
+        }
+        $map = DBHelper::getPersonalIDMap();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', '名字');
+        $sheet->setCellValue('B1', '日期');
+        $sheet->setCellValue('C1', '金額');
+        $sheet->setCellValue('D1', '身分證');
+        for ($i = 0; $i < sizeof($arrIn); $i++) {
+            $j = $i + 2;
+            $sheet->setCellValue('A' . $j, DBHelper::getUserName($arrIn[$i]['UserID']));
+            $sheet->setCellValue('B' . $j, DBHelper::toDateStringShort($arrIn[$i]['PaymentTime']));
+            $sheet->setCellValue('C' . $j,  number_format($arrIn[$i]['Payment']));
+            $sheet->setCellValue('D' . $j, $map[$arrIn[$i]['UserID']]);
+        }
+
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($file);
+
+
+        $path = "..\\public\\" . $file;
+        return response()->download($path, $file);
     }
 }

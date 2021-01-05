@@ -53,6 +53,10 @@ Route::get('/balance/byuser/{userId}', 'AccountController@balanceByUser')->where
 Route::get('/account/balance2', 'AccountController@balance2');
 Route::post('/account/balance2', 'AccountController@balance2post');
 Route::post('/account/carddetail2', 'AccountController@cardDetail2')->name('account.cardDetail2');
+Route::get('/account/toexcel', function () {
+    return view('toexcel');
+});
+Route::post('/download', 'AccountController@downloadFile');
 
 Auth::routes();
 

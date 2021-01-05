@@ -13,3 +13,4 @@ yarn-error.log
 *.lock
 *.example
 package-lock.json
+*.xlsx

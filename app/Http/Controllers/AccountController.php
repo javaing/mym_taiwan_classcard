@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+require '..//vendor//autoload.php';
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\DBHelper as DBHelper;
 use Carbon\Carbon;
-
-require '..//vendor//autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;

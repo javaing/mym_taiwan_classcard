@@ -47,7 +47,7 @@ class ClassCardController extends Controller
         $card = DBHelper::getCard($cardId);
         if (!DBHelper::isExpired($card)) {
             $link = $this->goBackLink();
-            print_r('<h3>此卡尚未逾期，請<a href="' . $link . '">回上頁</a></h3>');
+            print_r('<h3>無資料或此卡尚未逾期，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
 

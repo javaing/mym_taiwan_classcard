@@ -65,26 +65,26 @@ $range = $range ?? '';
                     <center>金額</center>
                 </th>
                 <th>
-                    <center>身分證</center>
+                    <center>種類</center>
                 </th>
             </tr>
 
             @foreach($arrIn as $purchase)
             <tr height="30">
                 <td width="100">
-                    <!-- <a href="{{ route('account.cardDetail', ['cardId' => base64_encode($purchase['CardID'])   ]) }}">{{DBHelper::getUserName( $purchase['UserID']) }}</a> -->
                     <form action="{{url()->action('AccountController@cardDetail2')}}" method="POST">
                         @csrf
                         <input type="hidden" name="userId" value="{{$purchase['UserID']}}">
                         <input type="hidden" name="start" value="{{$start}}">
                         <input type="hidden" name="end" value="{{$end}}">
-                        <button type="button" class="btn btn-default" onclick="submit();">{{DBHelper::getUserName( $purchase['UserID']) }}</button>
+                        <a href="javascript:;" onclick="parentNode.submit();">{{DBHelper::getUserName( $purchase['UserID']) }}</a>
+                        <!-- <button type="button" class="btn btn-default btn-block" onclick="submit();">{{DBHelper::getUserName( $purchase['UserID']) }}</button> -->
                     </form>
 
                 </td>
-                <td> {{ DBHelper::toDateStringShort( $purchase['PaymentTime']) }}</td>
+                <td> {{ DBHelper::toMMDD( $purchase['PaymentTime']) }}</td>
                 <td align="right" width="80"> {{ number_format( $purchase['Payment'])   }}</td>
-                <td align="right" width="100"> {{ $map[ $purchase['UserID']  ]}}</td>
+                <td align="center" width="100"> 體位法</td>
             </tr>
             @endforeach
             <tr>

@@ -223,7 +223,7 @@ class AccountController extends Controller
         }
         $map = DBHelper::getPersonalIDMap();
 
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', '名字');
         $sheet->setCellValue('B1', '日期');
@@ -238,7 +238,7 @@ class AccountController extends Controller
         }
 
 
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $writer = new Xlsx($spreadsheet);
         $writer->save($file);
 
 

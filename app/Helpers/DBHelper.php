@@ -26,6 +26,12 @@ class DBHelper
         return DBHelper::toDateString(Carbon::now());
     }
 
+    public static function toMMDD($dbdate)
+    {
+        if (!$dbdate) return '';
+        return $dbdate->toDateTime()->format('m-d');
+    }
+
     public static function toDateStringShort($dbdate)
     {
         if (!$dbdate) return '';
@@ -154,7 +160,7 @@ class DBHelper
 
     public static function isExpired($card)
     {
-        if ($card['Expired'] == null) return false;
+        if ($card == null || $card['Expired'] == null) return false;
         $dt = DBHelper::getMongoDateNow();
         return ($dt > $card['Expired'] && $card['Points'] > 0);
     }

@@ -38,7 +38,7 @@
             @foreach($arrIn as $each)
             <tr height="40">
                 <td width="100"> {{DBHelper::getUserName( $each['UserID']) }}</td>
-                <td width="40"> {{ DBHelper::toMMDD( $each['PaymentTime']) }}</td>
+                <td width="55"> {{ DBHelper::toMMDD( $each['PaymentTime']) }}</td>
                 <td align="right" width="80"> {{ number_format( $each['Payment'])   }}</td>
                 <td align="right" width="100"> {{ $map[ $each['UserID']  ]}}</td>
             </tr>

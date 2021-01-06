@@ -82,7 +82,7 @@ $range = $range ?? '';
                     </form>
 
                 </td>
-                <td width="40"> {{ DBHelper::toMMDD( $purchase['PaymentTime']) }}</td>
+                <td width="55"> {{ DBHelper::toMMDD( $purchase['PaymentTime']) }}</td>
                 <td align="right" width="80"> {{ number_format( $purchase['Payment'])   }}</td>
                 <td align="center" width="100"> 體位法</td>
             </tr>

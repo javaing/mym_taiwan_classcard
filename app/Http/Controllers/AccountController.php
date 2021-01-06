@@ -242,7 +242,8 @@ class AccountController extends Controller
         $writer->save($file);
 
 
-        $path = "..\\public\\" . $file;
+        //$path = "..\\public\\" . $file;
+        $path = "../public/" . $file;
         return response()->download($path, $file);
     }
 }

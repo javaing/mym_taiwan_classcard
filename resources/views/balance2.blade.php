@@ -39,7 +39,7 @@ $range = $range ?? '';
 <h4>查詢區間{{substr($start,0,10)}}~{{substr($end,0,10)}}</h4>
 <div class="text-left" style="width:200px;">
 
-    <form action="{{url()->action('AccountController@balance2')}}" method="POST">
+    <form action="{{url()->action('Balance2Controller@balance2')}}" method="POST">
         @csrf
         <Select name="range" onchange="javascript:submit()">
             <Option Value=""></Option>
@@ -72,7 +72,7 @@ $range = $range ?? '';
             @foreach($arrIn as $purchase)
             <tr height="30">
                 <td width="100">
-                    <form action="{{url()->action('AccountController@cardDetail2')}}" method="POST">
+                    <form action="{{url()->action('Balance2Controller@cardDetail2')}}" method="POST">
                         @csrf
                         <input type="hidden" name="userId" value="{{$purchase['UserID']}}">
                         <input type="hidden" name="start" value="{{$start}}">

@@ -127,9 +127,9 @@ class LoginController extends Controller
         return view("alluser")->with(['users' => $users, 'userDetail' => $detail]);
     }
 
-    public function checkField($key, $search)
+    public function checkField($key, $lookfor)
     {
-        if (!array_key_exists($key, $search)) $search[$key] = '';
+        if (!array_key_exists($key, $lookfor)) $lookfor[$key] = '';
     }
 
 

@@ -50,13 +50,10 @@ Route::get('account/deposite', 'AccountController@deposite')->name('account.depo
 Route::get('/account/carddetail/{cardId}', 'AccountController@cardDetail')->where('cardId', '[0-9A-Za-z=]+')->name('account.cardDetail');
 Route::get('/balance/byuser/{userId}', 'AccountController@balanceByUser')->where('userId', '[0-9A-Za-z=]+');
 
-Route::get('/account/balance2', 'AccountController@balance2');
-Route::post('/account/balance2', 'AccountController@balance2post');
-Route::post('/account/carddetail2', 'AccountController@cardDetail2')->name('account.cardDetail2');
-Route::get('/account/toexcel', function () {
-    return view('toexcel');
-});
-Route::post('/download', 'AccountController@downloadFile');
+Route::get('/account/balance2', 'Balance2Controller@balance2');
+Route::post('/account/balance2', 'Balance2Controller@balance2post');
+Route::post('/account/carddetail2', 'Balance2Controller@cardDetail2');
+Route::post('/download', 'Balance2Controller@downloadFile');
 
 Auth::routes();
 

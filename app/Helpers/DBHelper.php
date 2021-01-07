@@ -315,7 +315,7 @@ class DBHelper
             ->insert([
                 'UserID' => $user_profile['userId'],
                 "NickName" => $user_profile['displayName'],
-                "UserName" => "",
+                "UserName" => $user_profile['displayName'],
                 "Email" => $user_profile['email'],
                 "PictureUrl" => $user_profile['pictureUrl'],
                 "Mobile" => "",

@@ -7,9 +7,9 @@
     <H4>
         <a href="{{ route('buy.classcard', ['userId' => $userId,'point'=>4]) }}">買新卡</a>
     </H4>
-    <br><br>
+    <br>
     <H4>
-        <a href="{{ route('buy.classcard', ['userId' => $userId,'point'=>4]) }}">買卡但下次繳</a>
+        <a href="{{ route('buy.classcard', ['userId' => $userId,'point'=>1]) }}">買單堂</a>
     </H4>
 </center>
 @endsection

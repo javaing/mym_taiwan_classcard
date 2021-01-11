@@ -4,12 +4,14 @@
 
 @section('content')
 <center>
-    <H4>
-        <a href="{{ route('buy.classcard', ['userId' => $userId,'point'=>4]) }}">買新卡</a>
-    </H4>
+
+    <a href="{{ route('buy.classcard', ['userId' => $userId,'point'=>4]) }}">
+        <p18>買新卡</p18>
+    </a>
     <br>
-    <H4>
-        <a href="{{ route('buy.classcard', ['userId' => $userId,'point'=>1]) }}">買單堂</a>
-    </H4>
+    <br>
+    <a href="{{ route('buy.classcard', ['userId' => $userId,'point'=>1]) }}">
+        <p18>買單堂 </p18>
+    </a>
 </center>
 @endsection

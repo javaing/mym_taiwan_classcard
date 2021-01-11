@@ -76,15 +76,16 @@ class Balance2Controller extends Controller
     //查某個人日期區間內的繳款
     public function cardDetail2(Request $request)
     {
-        $userId = $request->userId;
-        if (!$userId) {
+        $userName = $request->userName;
+        if (!$userName) {
             print_r('無法辨識使用者');
             return;
         }
+        Log::info("cardDetail2.userName({$userName})");
         $start = $request->start;
         $end = $request->end;
-        $paidArray = DBHelper::getBalanceIn2($userId, $start, $end);
-        Log::info("cardDetail2.paidArray({$paidArray})");
+        $paidArray = DBHelper::getBalanceIn2($userName, $start, $end);
+
         return view('balanceDetail2', [
             'paidArray' => $paidArray,
             'start' => $start,
@@ -99,33 +100,32 @@ class Balance2Controller extends Controller
         $file = "Asana付款紀錄_" . $file . "_mymtw.xlsx";
         $start = $request->start;
         $end = $request->end;
-        $userId = $request->userId;
+        $userName = $request->userName;
 
-        if ($userId) {
-            $arrIn = DBHelper::getBalanceIn2($userId, $start, $end);
+
+        if ($userName) {
+            $arrIn = DBHelper::getBalanceIn2($userName, $start, $end);
         } else {
-            $arrIn = DBHelper::getBalanceIn($start, $end);
+            $arrIn = DBHelper::getBalanceInJoin($start, $end);
         }
-        $map = DBHelper::getPersonalIDMap();
+
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', '名字');
         $sheet->setCellValue('B1', '日期');
         $sheet->setCellValue('C1', '金額');
-        $sheet->setCellValue('D1', '身分證');
+        $sheet->setCellValue('D1', '種類');
         for ($i = 0; $i < sizeof($arrIn); $i++) {
             $j = $i + 2;
-            $sheet->setCellValue('A' . $j, DBHelper::getUserName($arrIn[$i]['UserID']));
+            $sheet->setCellValue('A' . $j, $arrIn[$i]['Name']);
             $sheet->setCellValue('B' . $j, DBHelper::toDateStringShort($arrIn[$i]['PaymentTime']));
             $sheet->setCellValue('C' . $j,  number_format($arrIn[$i]['Payment']));
-            $sheet->setCellValue('D' . $j, $map[$arrIn[$i]['UserID']]);
+            $sheet->setCellValue('D' . $j, $arrIn[$i]['Type']);
         }
-
 
         $writer = new Xlsx($spreadsheet);
         $writer->save($file);
-
 
         //$path = "..\\public\\" . $file;
         $path = "../public/" . $file; //這個寫法windows, ubuntu都可接受

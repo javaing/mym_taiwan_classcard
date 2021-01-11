@@ -7,7 +7,7 @@
 @php
 {{
         $arrIn = $paidArray;
-        Illuminate\Support\Facades\Log::info('$arrIn=' . $arrIn);
+        //Illuminate\Support\Facades\Log::info('$arrIn=' . $arrIn);
         $sumIn=0;
         foreach($arrIn as $each) {
             $sumIn += $each['Payment'];
@@ -19,6 +19,7 @@
 <center>
     <div class="text">
         <p>查詢區間{{substr($start,0,10)}}~{{substr($end,0,10)}}</p>
+        身分證ID:{{ $map[ $each['Name']  ]}}
     </div>
     <div>
         <table>
@@ -32,15 +33,16 @@
                     <center>金額</center>
                 </th>
                 <th>
-                    <center>身分證</center>
+                    <center>種類</center>
                 </th>
+
             </tr>
-            @foreach($arrIn as $each)
+            @foreach($arrIn as $record)
             <tr height="40">
-                <td width="100"> {{DBHelper::getUserName( $each['UserID']) }}</td>
-                <td width="55"> {{ DBHelper::toMMDD( $each['PaymentTime']) }}</td>
-                <td align="right" width="80"> {{ number_format( $each['Payment'])   }}</td>
-                <td align="right" width="100"> {{ $map[ $each['UserID']  ]}}</td>
+                <td width="100"> {{ $record['Name'] }}</td>
+                <td width="55"> {{ DBHelper::toMMDD( $record['PaymentTime']) }}</td>
+                <td align="right" width="80"> {{ number_format( $record['Payment'])   }}</td>
+                <td align="center" width="100">{{ $record['Type']}}</td>
             </tr>
             @endforeach
             <tr height="40">

@@ -181,14 +181,116 @@ class DBHelper
             ->get();
     }
 
-    public static function getBalanceIn2($userId, $from, $to)
+    // static function containEmails($str, array $arr)
+    // {
+    //     foreach ($arr as $a) {
+    //         if ($a['Email'] == $str) return true;
+    //     }
+    //     return false;
+    // }
+
+    // static function distinctEmails($dataArray)
+    // {
+    //     $arr = []; //挑email，需distinct
+    //     foreach ($dataArray as $each) {
+    //         $email = DBHelper::getUser($each['UserID'])['Email'];
+    //         if (!DBHelper::containEmails($email, $arr)) {
+    //             $distinct = ['Email' => $email, 'UserID' => $each['UserID']];
+    //             array_push($arr, $distinct);
+    //         }
+    //     }
+    //     return $arr;
+    // }
+
+    public static function isInRange($date, $from, $to)
     {
-        return DB::collection('Purchase')
-            ->where('UserID', $userId)
+        if ($date >= $from && $date <= $to) {
+            return true;
+        }
+        return false;
+    }
+
+    //需確認 activity(StudyGroup)欄位名稱
+    //activity與Purchase如何關聯，Name
+    //各挑各的資料，再轉成一致格式
+    public static function getBalanceInJoin($from, $to)
+    {
+        //挑課卡
+        $purchase = DB::collection('Purchase')
             ->where('PaymentTime', '>=', DBHelper::parse($from))
             ->where('PaymentTime', '<', DBHelper::parse($to))
+            //->where('Payment', '>', 0)
             ->get();
+
+        $totlaRecord = [];
+        foreach ($purchase as $each) {
+            $each['Type'] = '體位法';
+            $each['Name'] = DBHelper::getUserName($each['UserID']);
+            array_push($totlaRecord, $each);
+        }
+
+        //挑讀書會
+        $activity = DB::collection('Activity')
+            ->get();
+        foreach ($activity as $each) {
+            //Log::info('getBalanceInJoin eachActivity=' . $eachActivity['PayDay'] . ':' . strval(DBHelper::parse($eachActivity['PayDay']) < $to));
+            //Log::info('getBalanceInJoin eachActivity=' . $eachActivity['PayDay'] . ':' . strval(DBHelper::parse($eachActivity['PayDay']) > $from));
+
+            if (DBHelper::isInRange(DBHelper::parse($each['PayDay']), $from, $to)) {
+                //$each['Name'] = $each['Name'];//讀書會資訊已有Name
+                $each['Payment'] = $each['Amount'];
+                $each['PaymentTime'] =  DBHelper::parse($each['PayDay']);
+                $each['Type'] = '讀書會';
+                array_push($totlaRecord, $each);
+            }
+        }
+
+
+        return $totlaRecord;
     }
+
+    public static function getBalanceIn2($Name, $from, $to)
+    {
+        Log::info('挑課卡 getUserIdByUserName=' . DBHelper::getUserIdByUserName($Name));
+        //挑課卡
+        $purchase = DB::collection('Purchase')
+            ->where('PaymentTime', '>=', DBHelper::parse($from))
+            ->where('PaymentTime', '<', DBHelper::parse($to))
+            ->where('UserID', DBHelper::getUserIdByUserName($Name))
+            ->get();
+
+
+        $totlaRecord = [];
+        foreach ($purchase as $each) {
+            $each['Type'] = '體位法';
+            $each['Name'] = DBHelper::getUserName($each['UserID']);
+            array_push($totlaRecord, $each);
+        }
+
+        //挑讀書會
+        $activity = DB::collection('Activity')
+            ->get();
+        foreach ($activity as $each) {
+            if (DBHelper::isInRange(DBHelper::parse($each['PayDay']), $from, $to)) {
+                if ($each['Name'] == $Name) {
+                    $each['Payment'] = $each['Amount'];
+                    $each['PaymentTime'] =  DBHelper::parse($each['PayDay']);
+                    $each['Type'] = '讀書會';
+                    array_push($totlaRecord, $each);
+                }
+            }
+        }
+        return $totlaRecord;
+    }
+
+    // public static function getBalanceIn2($userId, $from, $to)
+    // {
+    //     return DB::collection('Purchase')
+    //         ->where('UserID', $userId)
+    //         ->where('PaymentTime', '>=', DBHelper::parse($from))
+    //         ->where('PaymentTime', '<', DBHelper::parse($to))
+    //         ->get();
+    // }
 
     public static function getBalanceByUserIn($userId)
     {
@@ -226,6 +328,11 @@ class DBHelper
         return DB::collection('UserInfo')->where('UserID', $userId)->first()['NickName'];
     }
 
+    public static function getUserIdByUserName($Name)
+    {
+        return DB::collection('UserInfo')->where('UserName', $Name)->first()['UserID'];
+    }
+
     public static function getUsers()
     {
         return  DB::collection('UserInfo')->get();
@@ -242,11 +349,11 @@ class DBHelper
     public static function getPersonalIDMap()
     {
         $result =  DB::collection('UserInfo')
-            ->select('PersonalID', 'UserID')
+            ->select('PersonalID', 'UserName')
             ->get();
         $map = array();
         foreach ($result as $row) {
-            $map[$row['UserID']] = $row['PersonalID'];
+            $map[$row['UserName']] = $row['PersonalID'];
         }
         //Log::info('getPersonalIDMap=' . $map);
         return $map;

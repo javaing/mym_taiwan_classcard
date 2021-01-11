@@ -7,16 +7,11 @@
 
 @php
 
-$arrIn = DBHelper::getBalanceIn($start, $end);
-$arrOut = DBHelper::getBalanceOut($start, $end);
-$sumIn=0; $sumOut=0;
+$arrIn = DBHelper::getBalanceInJoin($start, $end);
+$sumIn=0;
 foreach($arrIn as $each) {
 $sumIn += $each['Payment'];
 }
-foreach($arrOut as $each) {
-$sumOut += $each['Cost'];
-}
-$map = DBHelper::getPersonalIDMap();
 $range = $range ?? '';
 
 @endphp
@@ -69,22 +64,21 @@ $range = $range ?? '';
                 </th>
             </tr>
 
-            @foreach($arrIn as $purchase)
+            @foreach($arrIn as $record)
             <tr height="30">
                 <td width="100">
                     <form action="{{url()->action('Balance2Controller@cardDetail2')}}" method="POST">
                         @csrf
-                        <input type="hidden" name="userId" value="{{$purchase['UserID']}}">
+                        <input type="hidden" name="userName" value="{{$record['Name']}}">
                         <input type="hidden" name="start" value="{{$start}}">
                         <input type="hidden" name="end" value="{{$end}}">
-                        <a href="javascript:;" onclick="parentNode.submit();">{{DBHelper::getUserName( $purchase['UserID']) }}</a>
-                        <!-- <button type="button" class="btn btn-default btn-block" onclick="submit();">{{DBHelper::getUserName( $purchase['UserID']) }}</button> -->
+                        <a href="javascript:;" onclick="parentNode.submit();">{{ $record['Name'] }}</a>
                     </form>
 
                 </td>
-                <td width="55"> {{ DBHelper::toMMDD( $purchase['PaymentTime']) }}</td>
-                <td align="right" width="80"> {{ number_format( $purchase['Payment'])   }}</td>
-                <td align="center" width="100"> 體位法</td>
+                <td width="55"> {{ DBHelper::toMMDD( $record['PaymentTime']) }}</td>
+                <td align="right" width="80"> {{ number_format( $record['Payment'])   }}</td>
+                <td align="center" width="100">{{ $record['Type']}}</td>
             </tr>
             @endforeach
             <tr>

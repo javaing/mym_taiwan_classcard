@@ -7,7 +7,7 @@
 
 @php
 
-$arrIn = DBHelper::getBalanceInJoin($start, $end);
+$arrIn = DBHelper::getBalanceInJoin('ALL', $start, $end);
 $sumIn=0;
 foreach($arrIn as $each) {
 $sumIn += $each['Payment'];

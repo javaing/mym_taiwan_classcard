@@ -219,52 +219,24 @@ class DBHelper
     //需確認 activity(StudyGroup)欄位名稱
     //activity與Purchase如何關聯，Name
     //各挑各的資料，再轉成一致格式
-    public static function getBalanceInJoin($from, $to)
+    public static function getBalanceInJoin($Name, $from, $to)
     {
-        //挑課卡
-        $purchase = DB::collection('Purchase')
-            ->where('PaymentTime', '>=', DBHelper::parse($from))
-            ->where('PaymentTime', '<', DBHelper::parse($to))
-            //->where('Payment', '>', 0)
-            ->get();
-
-        $totlaRecord = [];
-        foreach ($purchase as $each) {
-            $each['Type'] = DBHelper::$tableTypeAsana;
-            $each['Name'] = DBHelper::getUserName($each['UserID']);
-            array_push($totlaRecord, $each);
-        }
-
-        //挑讀書會
-        $activity = DB::collection('Activity')
-            ->get();
-        foreach ($activity as $each) {
-            //Log::info('getBalanceInJoin eachActivity=' . $eachActivity['PayDay'] . ':' . strval(DBHelper::parse($eachActivity['PayDay']) < $to));
-            //Log::info('getBalanceInJoin eachActivity=' . $eachActivity['PayDay'] . ':' . strval(DBHelper::parse($eachActivity['PayDay']) > $from));
-            $payday = DBHelper::parse($each[DBHelper::$tableColumnPayDay]);
-
-            if (DBHelper::isInRange($payday, $from, $to)) {
-                $each['Name'] = $each[DBHelper::$tableColumnCnEnName];
-                $each['Payment'] = $each[DBHelper::$tableColumnAmount];
-                $each['PaymentTime'] = $payday;
-                $each['Type'] =  DBHelper::$tableTypeStudyGroup;
-                array_push($totlaRecord, $each);
-            }
-        }
-
-
-        return $totlaRecord;
-    }
-
-    public static function getBalanceIn2($Name, $from, $to)
-    {
+        $isAllMode = ('ALL' == $Name);
         Log::info('挑課卡 getUserIdByUserName=' . DBHelper::getUserIdByUserName($Name));
         //挑課卡
-        $purchase = DB::collection('Purchase')
-            ->where('PaymentTime', '>=', DBHelper::parse($from))
-            ->where('PaymentTime', '<', DBHelper::parse($to))
-            ->where('UserID', DBHelper::getUserIdByUserName($Name))
-            ->get();
+        if ($isAllMode) {
+            $purchase = DB::collection('Purchase')
+                ->where('PaymentTime', '>=', DBHelper::parse($from))
+                ->where('PaymentTime', '<', DBHelper::parse($to))
+                ->get();
+        } else {
+            $purchase = DB::collection('Purchase')
+                ->where('PaymentTime', '>=', DBHelper::parse($from))
+                ->where('PaymentTime', '<', DBHelper::parse($to))
+                ->where('UserID', DBHelper::getUserIdByUserName($Name))
+                ->get();
+        }
+
 
 
         $totlaRecord = [];
@@ -281,7 +253,7 @@ class DBHelper
             $payday = DBHelper::parse($each[DBHelper::$tableColumnPayDay]);
             if (DBHelper::isInRange($payday, $from, $to)) {
                 $inputName = $each[DBHelper::$tableColumnCnEnName];
-                if ($inputName == $Name) {
+                if ($isAllMode || $inputName == $Name) {
                     $each['Name'] = $inputName;
                     $each['Payment'] = $each[DBHelper::$tableColumnAmount];
                     $each['PaymentTime'] =  $payday;

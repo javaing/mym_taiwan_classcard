@@ -84,7 +84,7 @@ class Balance2Controller extends Controller
         Log::info("cardDetail2.userName({$userName})");
         $start = $request->start;
         $end = $request->end;
-        $paidArray = DBHelper::getBalanceIn2($userName, $start, $end);
+        $paidArray = DBHelper::getBalanceInJoin($userName, $start, $end);
 
         return view('balanceDetail2', [
             'paidArray' => $paidArray,
@@ -103,11 +103,12 @@ class Balance2Controller extends Controller
         $userName = $request->userName;
 
 
-        if ($userName) {
-            $arrIn = DBHelper::getBalanceIn2($userName, $start, $end);
-        } else {
-            $arrIn = DBHelper::getBalanceInJoin($start, $end);
-        }
+        // if ($userName) {
+        //     $arrIn = DBHelper::getBalanceIn2($userName ?: 'ALL', $start, $end);
+        // } else {
+        //     $arrIn = DBHelper::getBalanceIn2('ALL', $start, $end);
+        // }
+        $arrIn = DBHelper::getBalanceInJoin($userName ?: 'ALL', $start, $end);
 
 
         $spreadsheet = new Spreadsheet();

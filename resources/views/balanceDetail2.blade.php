@@ -19,7 +19,7 @@
 <center>
     <div class="text">
         <p>查詢區間{{substr($start,0,10)}}~{{substr($end,0,10)}}</p>
-        身分證ID:{{ $map[ $each['Name']  ]}}
+        身分證ID:{{ array_key_exists( $each['Name'], $map)?  $map[ $each['Name']] : ''}}
     </div>
     <div>
         <table>

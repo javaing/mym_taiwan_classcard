@@ -210,6 +210,12 @@ class DBHelper
         return false;
     }
 
+    static $tableTypeAsana = '體位法';
+    static $tableTypeStudyGroup = '讀書會(測)';
+    static $tableColumnPayDay = '匯(付)款日期';
+    static $tableColumnCnEnName = '中文全名／英文名';
+    static $tableColumnAmount = '匯(付)款總金額';
+
     //需確認 activity(StudyGroup)欄位名稱
     //activity與Purchase如何關聯，Name
     //各挑各的資料，再轉成一致格式
@@ -224,7 +230,7 @@ class DBHelper
 
         $totlaRecord = [];
         foreach ($purchase as $each) {
-            $each['Type'] = '體位法';
+            $each['Type'] = DBHelper::$tableTypeAsana;
             $each['Name'] = DBHelper::getUserName($each['UserID']);
             array_push($totlaRecord, $each);
         }
@@ -235,12 +241,13 @@ class DBHelper
         foreach ($activity as $each) {
             //Log::info('getBalanceInJoin eachActivity=' . $eachActivity['PayDay'] . ':' . strval(DBHelper::parse($eachActivity['PayDay']) < $to));
             //Log::info('getBalanceInJoin eachActivity=' . $eachActivity['PayDay'] . ':' . strval(DBHelper::parse($eachActivity['PayDay']) > $from));
+            $payday = DBHelper::parse($each[DBHelper::$tableColumnPayDay]);
 
-            if (DBHelper::isInRange(DBHelper::parse($each['PayDay']), $from, $to)) {
-                //$each['Name'] = $each['Name'];//讀書會資訊已有Name
-                $each['Payment'] = $each['Amount'];
-                $each['PaymentTime'] =  DBHelper::parse($each['PayDay']);
-                $each['Type'] = '讀書會';
+            if (DBHelper::isInRange($payday, $from, $to)) {
+                $each['Name'] = $each[DBHelper::$tableColumnCnEnName];
+                $each['Payment'] = $each[DBHelper::$tableColumnAmount];
+                $each['PaymentTime'] = $payday;
+                $each['Type'] =  DBHelper::$tableTypeStudyGroup;
                 array_push($totlaRecord, $each);
             }
         }
@@ -262,7 +269,7 @@ class DBHelper
 
         $totlaRecord = [];
         foreach ($purchase as $each) {
-            $each['Type'] = '體位法';
+            $each['Type'] = DBHelper::$tableTypeAsana;
             $each['Name'] = DBHelper::getUserName($each['UserID']);
             array_push($totlaRecord, $each);
         }
@@ -271,11 +278,14 @@ class DBHelper
         $activity = DB::collection('Activity')
             ->get();
         foreach ($activity as $each) {
-            if (DBHelper::isInRange(DBHelper::parse($each['PayDay']), $from, $to)) {
-                if ($each['Name'] == $Name) {
-                    $each['Payment'] = $each['Amount'];
-                    $each['PaymentTime'] =  DBHelper::parse($each['PayDay']);
-                    $each['Type'] = '讀書會';
+            $payday = DBHelper::parse($each[DBHelper::$tableColumnPayDay]);
+            if (DBHelper::isInRange($payday, $from, $to)) {
+                $inputName = $each[DBHelper::$tableColumnCnEnName];
+                if ($inputName == $Name) {
+                    $each['Name'] = $inputName;
+                    $each['Payment'] = $each[DBHelper::$tableColumnAmount];
+                    $each['PaymentTime'] =  $payday;
+                    $each['Type'] = DBHelper::$tableTypeStudyGroup;
                     array_push($totlaRecord, $each);
                 }
             }
@@ -330,7 +340,11 @@ class DBHelper
 
     public static function getUserIdByUserName($Name)
     {
-        return DB::collection('UserInfo')->where('UserName', $Name)->first()['UserID'];
+        $user = DB::collection('UserInfo')->where('UserName', $Name)->first();
+        if ($user != null)
+            return $user['UserID'];
+        else
+            return '';
     }
 
     public static function getUsers()

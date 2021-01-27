@@ -132,7 +132,7 @@ class DBHelper
     {
         $count = DB::collection('Purchase')
             ->where('CardCreateTime', 'like', '%' . date("Y") . '%')
-            ->where('Payment', '>', 0) //因為可能有退卡，是負的要去掉
+            ->where('Payment', '>=', 0) //因為可能有退卡，是負的要去掉
             ->where('Payment', '!=', 200) //逾期補繳的要去掉
             ->count() + 1;
         return date("Y") . str_pad($count, 4, '0', STR_PAD_LEFT);

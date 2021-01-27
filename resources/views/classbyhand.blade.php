@@ -29,7 +29,7 @@
             <option>請選卡</option>
 
             @foreach ($arrIn as $purchase)
-            <option value="{{ $purchase['CardID'] }}">
+            <option value="{{ base64_encode( $purchase['CardID'] )}}">
                 {{ DBHelper::getUserName(    $purchase['UserID']) }}( {{ $purchase['CardID']   }} )
             </option>
             @endforeach

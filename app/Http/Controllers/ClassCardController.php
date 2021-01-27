@@ -20,7 +20,7 @@ class ClassCardController extends Controller
 
     public function registeclassByPoint($point, $cardId)
     {
-        //$cardId = base64_decode($cardId);
+        $cardId = base64_decode($cardId);
         //先檢查一天只能蓋一次
         $exist = DBHelper::isConsume($cardId, $point);
         if ($exist) {

@@ -124,7 +124,7 @@ class AccountController extends Controller
         DBHelper::registeclassByPoint($cardId, $point);
         //紀錄花費500 or 300
         DBHelper::insertConsume($cardId, $point, $dt);
-        return redirect('account/carddetail' . $cardId);
+        return redirect('account/carddetail/' . base64_eecode($cardId));
     }
 
     public function balanceByUser($userId)

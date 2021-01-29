@@ -79,7 +79,7 @@ class ClassCardController extends Controller
         $point = $request->point; //1 or 4
         $buycardPass = $request->buycardPass;
 
-        if(!$buycardPass && strtolower($buycardPass) == 'bhakti') {
+        if($buycardPass=='' || strtolower($buycardPass) != config('line.buy_newcard_pass')) {
           $link = $this->goBackLink();
           print_r('<h3>買卡密碼不正確，請洽工作人員<a href="' . $link . '">回上頁</a></h3>');
           return;
@@ -96,6 +96,11 @@ class ClassCardController extends Controller
         Log::info("buyClassCard({$cardId}, {$point})");
         return redirect('classcard/show/' . base64_encode($cardId));
     }
+
+    public function buyNewCardView(Request $request) {
+      return view("buynewcard")->with('userId', $request->userId);
+    }
+
 
     public function showClassCard($cardId)
     {

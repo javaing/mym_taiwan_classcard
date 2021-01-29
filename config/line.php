@@ -7,4 +7,5 @@ return [
     'verify_token_url' => 'https://api.line.me/oauth2/v2.1/verify',
     'channel_id' => env('LINE_CHANNEL_ID'),
     'secret' => env('LINE_SECRET'),
+    'buy_newcard_pass' => 'bhakti',
 ];

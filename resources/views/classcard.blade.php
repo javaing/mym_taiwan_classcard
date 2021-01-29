@@ -14,7 +14,7 @@
 @php
 {{
     $registArray = DBHelper::getConsume( $card['CardID']);
-   
+
     $listDate = array();
     for ($i = 0; $i < sizeof($registArray); $i++) {
         array_push($listDate, DBHelper::toDateStringJS( $registArray[$i]['PointConsumeTime']));
@@ -170,7 +170,11 @@
 
 @if ($card['Points']==0)
 <div align="center" style="margin-Top: 8px;">
-    <img class="img-responsive center-block" data-toggle="modal" data-target="#exampleModalCentered" type="image" style="width:106px;height:28px;" src="/images/classcard/buy_card.png" />
+
+    <!-- <img class="img-responsive center-block" data-toggle="modal" data-target="#exampleModalCentered" type="image" style="width:106px;height:28px;" src="/images/classcard/buy_card.png" /> -->
+    <a href="{{ route('buy.newcard', ['userId' => $card['UserID'] ] ) }}">
+        <input type="image" style="height:28px;" src="/images/classcard/buy_card.png" alt="" />
+    </a>
 </div>
 
 <!-- 單堂或四堂按鈕 -->

@@ -21,7 +21,7 @@
     <option value="4">買四堂</option>
     <option value="1">買單堂</option>
 </select>
-<input name="buycardPass" type="text" placeholder="請輸入密碼" onkeydown="return ignoreEnter(event);">
+<input name="buycardPass" type="text" placeholder="請輸入購卡密碼" onkeydown="return ignoreEnter(event);">
 <input type="hidden" name="userId" value="{{$userId}}">
 <button class="btn btn-link" type="submit">確定</button>
 </form>

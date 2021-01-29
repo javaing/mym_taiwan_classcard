@@ -409,7 +409,7 @@ class DBHelper
                 'UserID' => $user_profile['userId'],
                 "NickName" => $user_profile['displayName'],
                 "UserName" => $user_profile['displayName'],
-                "Email" => $user_profile['email'],
+                "Email" => $user_profile['email'] ?? "",
                 "PictureUrl" => $user_profile['pictureUrl'],
                 "Mobile" => "",
                 "Address" => "",

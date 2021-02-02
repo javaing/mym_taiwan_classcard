@@ -14,6 +14,19 @@
         <p18>買單堂 </p18>
     </a>
 </center> -->
+<div align="center">
+    <div style="margin-top: 3px;">
+        <p18>Hello!</p18>
+    </div>
+    <div style="margin-top: 3px;margin-bottom: 6px;">
+        <p18>{{ DBHelper::getUserName($userId) }}</p18>
+    </div>
+</div>
+
+
+<div align="center">
+    <img style="margin-bottom: 12px;width:80%;" src="/images/div.png">
+</div>
 <center>
   <br>
 <form action="{{ route('buy.classcardPost') }}" method="POST">

@@ -31,6 +31,8 @@ Route::get('/logout', 'LoginController@logout');
 Route::get('classcard/buy', 'ClassCardController@buyClassCard')->name('buy.classcard');
 Route::post('classcard/buy', 'ClassCardController@buyClassCardPost')->name('buy.classcardPost');
 Route::get('buyNewCard', 'ClassCardController@buyNewCardView')->name('buy.newcard');
+Route::get('classcard/buycardpass', 'ClassCardController@buyCardPass');
+
 //上課紀錄
 Route::get('classcard/history', 'ClassCardController@showClassHistoryByCookie');
 Route::get('classcard/history/{userId}/{index}', 'ClassCardController@showClassHistory')->name('show.classhistory');

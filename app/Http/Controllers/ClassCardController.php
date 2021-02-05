@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\DBHelper as DBHelper;
+use App\Helpers\Tools as Tools;
+use Illuminate\Support\Facades\Auth;
 
 class ClassCardController extends Controller
 {
@@ -77,9 +79,16 @@ class ClassCardController extends Controller
     {
         $userId = $request->userId;
         $point = $request->point; //1 or 4
-        $buycardPass = $request->buycardPass;
+        $buycardPass = strtolower($request->buycardPass);
 
-        if($buycardPass=='' || strtolower($buycardPass) != config('line.buy_newcard_pass')) {
+        if($buycardPass=='') {
+          $link = $this->goBackLink();
+          print_r('<h3>需輸入買卡密碼，請洽工作人員<a href="' . $link . '">回上頁</a></h3>');
+          return;
+        }
+
+Log::info("buyClassCard check pass {$buycardPass}, ".Tools::getBuyCardPassword()      );
+        if($buycardPass != Tools::getBuyCardPassword() && $buycardPass != config('line.buy_newcard_pass')) {
           $link = $this->goBackLink();
           print_r('<h3>買卡密碼不正確，請洽工作人員<a href="' . $link . '">回上頁</a></h3>');
           return;
@@ -99,6 +108,15 @@ class ClassCardController extends Controller
 
     public function buyNewCardView(Request $request) {
       return view("buynewcard")->with('userId', $request->userId);
+    }
+
+    public function buyCardPass() {
+      if (Auth::check()) {
+        echo '購卡密碼是['. Tools::getBuyCardPassword() .']';
+      } else {
+        return redirect('login');
+      }
+
     }
 
 
@@ -144,4 +162,6 @@ class ClassCardController extends Controller
         }
         return $this->showClassHistory($userId, 0);
     }
+
+
 }

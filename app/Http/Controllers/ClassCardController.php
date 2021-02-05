@@ -87,7 +87,7 @@ class ClassCardController extends Controller
           return;
         }
 
-Log::info("buyClassCard check pass {$buycardPass}, ".Tools::getBuyCardPassword()      );
+        //Log::info("buyClassCard check pass {$buycardPass}, ".Tools::getBuyCardPassword()      );
         if($buycardPass != Tools::getBuyCardPassword() && $buycardPass != config('line.buy_newcard_pass')) {
           $link = $this->goBackLink();
           print_r('<h3>買卡密碼不正確，請洽工作人員<a href="' . $link . '">回上頁</a></h3>');
@@ -112,7 +112,7 @@ Log::info("buyClassCard check pass {$buycardPass}, ".Tools::getBuyCardPassword()
 
     public function buyCardPass() {
       if (Auth::check()) {
-        echo '購卡密碼是['. Tools::getBuyCardPassword() .']';
+        echo '<H3>購卡密碼是['. Tools::getBuyCardPassword() .']</H3>';
       } else {
         return redirect('login');
       }

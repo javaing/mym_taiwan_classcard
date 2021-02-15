@@ -112,7 +112,8 @@ class ClassCardController extends Controller
 
     public function buyCardPass() {
       if (Auth::check()) {
-        echo '<H3>購卡密碼是['. Tools::getBuyCardPassword() .']</H3>';
+        //echo '<H3>購卡密碼是['. Tools::getBuyCardPassword() .']</H3>';
+        return view("classcardpass")->with('pass', Tools::getBuyCardPassword());
       } else {
         return redirect('login');
       }

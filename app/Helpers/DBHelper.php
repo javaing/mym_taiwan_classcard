@@ -211,7 +211,8 @@ class DBHelper
     }
 
     static $tableTypeAsana = '體位法';
-    static $tableTypeStudyGroup = '讀書會(測)';
+    static $tableTypeStudyGroup = '讀書會';
+    //static $tableTypeAsanaExtent = '體位法補兩百';
     static $tableColumnPayDay = '匯(付)款日期';
     static $tableColumnCnEnName = '中文全名／英文名';
     static $tableColumnAmount = '匯(付)款總金額';
@@ -262,6 +263,28 @@ class DBHelper
                 }
             }
         }
+
+        //挑體位法補兩百的
+        $activity = DB::collection('AsanaExtend')
+            ->get();
+
+            foreach ($activity as $each) {
+                $payday = DBHelper::parse($each['日期']);
+                if (DBHelper::isInRange($payday, $from, $to)) {
+                    $inputName = $each['學員'];
+                    if ($isAllMode || $inputName == $Name) {
+                        $each['Name'] = $inputName;
+                        $each['Payment'] = '200';
+                        $each['PaymentTime'] =  $payday;
+                        $each['Type'] = '補兩百';
+                        array_push($totlaRecord, $each);
+                    }
+                }
+            }
+
+
+
+
         return $totlaRecord;
     }
 

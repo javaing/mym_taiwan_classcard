@@ -282,7 +282,7 @@ class DBHelper
                 }
             }
 
-            //挑體位法補兩百的
+            //冥想會，台中
             $activity = DB::collection('OtherActivity')
                 ->get();
 
@@ -300,6 +300,23 @@ class DBHelper
                     }
                 }
 
+                //讀書會
+                $activity = DB::collection('StudyGroup')
+                    ->get();
+
+                    foreach ($activity as $each) {
+                        $payday = DBHelper::parse($each['日期']);
+                        if (DBHelper::isInRange($payday, $from, $to)) {
+                            $inputName = $each['中文全名/英文名'];
+                            if ($isAllMode || $inputName == $Name) {
+                                $each['Name'] = $inputName;
+                                $each['Payment'] = $each['費用總計'];
+                                $each['PaymentTime'] =  $payday;
+                                $each['Type'] = '讀書會';
+                                array_push($totlaRecord, $each);
+                            }
+                        }
+                    }
 
         return $totlaRecord;
     }

@@ -97,7 +97,7 @@ class Balance2Controller extends Controller
     public function downloadFile(Request $request)
     {
         $file = $request->filename;
-        $file = "Asana付款紀錄_" . $file . "_mymtw.xlsx";
+        $file = "MYMTW_活動收費紀錄_" . $file . ".xlsx";
         $start = $request->start;
         $end = $request->end;
         $userName = $request->userName;

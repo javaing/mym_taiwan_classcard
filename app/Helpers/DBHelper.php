@@ -282,7 +282,23 @@ class DBHelper
                 }
             }
 
+            //挑體位法補兩百的
+            $activity = DB::collection('OtherActivity')
+                ->get();
 
+                foreach ($activity as $each) {
+                    $payday = DBHelper::parse($each['日期']);
+                    if (DBHelper::isInRange($payday, $from, $to)) {
+                        $inputName = $each['姓名'];
+                        if ($isAllMode || $inputName == $Name) {
+                            $each['Name'] = $inputName;
+                            $each['Payment'] = $each['金額'];
+                            $each['PaymentTime'] =  $payday;
+                            $each['Type'] = $each['事由'];
+                            array_push($totlaRecord, $each);
+                        }
+                    }
+                }
 
 
         return $totlaRecord;

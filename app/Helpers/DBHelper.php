@@ -317,9 +317,9 @@ class DBHelper
                             }
                         }
                     }
-        usort($totlaRecord, function ($item1, $item2) {
-          return $item1['Name'] <=> $item2['Name'];
-        });
+        // usort($totlaRecord, function ($item1, $item2) {
+        //   return $item1['Name'] <=> $item2['Name'];
+        // });
         return $totlaRecord;
     }
 

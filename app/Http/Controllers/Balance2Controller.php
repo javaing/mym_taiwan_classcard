@@ -110,19 +110,23 @@ class Balance2Controller extends Controller
         // }
         $arrIn = DBHelper::getBalanceInJoin($userName ?: 'ALL', $start, $end);
 
+        $pidMap = DBHelper::getPersonalIDMap();
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', '名字');
-        $sheet->setCellValue('B1', '日期');
-        $sheet->setCellValue('C1', '金額');
-        $sheet->setCellValue('D1', '種類');
+        $sheet->setCellValue('B1', '身分證號');
+        $sheet->setCellValue('C1', '日期');
+        $sheet->setCellValue('D1', '金額');
+        $sheet->setCellValue('E1', '種類');
         for ($i = 0; $i < sizeof($arrIn); $i++) {
             $j = $i + 2;
-            $sheet->setCellValue('A' . $j, $arrIn[$i]['Name']);
-            $sheet->setCellValue('B' . $j, DBHelper::toDateStringShort($arrIn[$i]['PaymentTime']));
-            $sheet->setCellValue('C' . $j,  number_format($arrIn[$i]['Payment']));
-            $sheet->setCellValue('D' . $j, $arrIn[$i]['Type']);
+            $name  = $arrIn[$i]['Name'];
+            $sheet->setCellValue('A' . $j, );
+            $sheet->setCellValue('B' . $j, array_key_exists( $name, $pidMap)?  $pidMap[ $name ] : ''   );
+            $sheet->setCellValue('C' . $j, DBHelper::toDateStringShort($arrIn[$i]['PaymentTime']));
+            $sheet->setCellValue('D' . $j,  number_format($arrIn[$i]['Payment']));
+            $sheet->setCellValue('E' . $j, $arrIn[$i]['Type']);
         }
 
         $writer = new Xlsx($spreadsheet);

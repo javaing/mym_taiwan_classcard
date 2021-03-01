@@ -122,7 +122,7 @@ class Balance2Controller extends Controller
         for ($i = 0; $i < sizeof($arrIn); $i++) {
             $j = $i + 2;
             $name  = $arrIn[$i]['Name'];
-            $sheet->setCellValue('A' . $j, );
+            $sheet->setCellValue('A' . $j, $name);
             $sheet->setCellValue('B' . $j, array_key_exists( $name, $pidMap)?  $pidMap[ $name ] : ''   );
             $sheet->setCellValue('C' . $j, DBHelper::toDateStringShort($arrIn[$i]['PaymentTime']));
             $sheet->setCellValue('D' . $j,  number_format($arrIn[$i]['Payment']));

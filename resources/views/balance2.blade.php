@@ -101,6 +101,8 @@ $range = $range ?? '';
     <button class="btn btn-sm btn-default" type="submit">下載報表</button>
 </form>
 
+<br>
+
 <form action="downloadByName" method="POST">
     @csrf
     <input type="hidden" name="filename" value="{{substr($start,0,10)}}_{{substr($end,0,10)}}">

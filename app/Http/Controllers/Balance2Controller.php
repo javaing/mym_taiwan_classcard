@@ -7,6 +7,7 @@ require '..//vendor//autoload.php';
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\DBHelper as DBHelper;
+use App\Helpers\Tools as Tools;
 use Carbon\Carbon;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -136,4 +137,50 @@ class Balance2Controller extends Controller
         $path = "../public/" . $file; //這個寫法windows, ubuntu都可接受
         return response()->download($path, $file);
     }
+
+    //save data to excel, then download excel
+    public function downloadFileGroupByname(Request $request)
+    {
+        $file = $request->filename;
+        $file = "MYMTW_活動收費紀錄_" . $file . "_byName.xlsx";
+        $start = $request->start;
+        $end = $request->end;
+        $userName = $request->userName;
+
+
+        // if ($userName) {
+        //     $arrIn = DBHelper::getBalanceIn2($userName ?: 'ALL', $start, $end);
+        // } else {
+        //     $arrIn = DBHelper::getBalanceIn2('ALL', $start, $end);
+        // }
+        $arrIn = DBHelper::getBalanceInJoin($userName ?: 'ALL', $start, $end);
+        $arrIn = Tools::_group_by($arrIn, 'Name');
+
+        $pidMap = DBHelper::getPersonalIDMap();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', '名字');
+        $sheet->setCellValue('B1', '身分證號');
+        $sheet->setCellValue('C1', '日期');
+        $sheet->setCellValue('D1', '金額');
+        $sheet->setCellValue('E1', '種類');
+        for ($i = 0; $i < sizeof($arrIn); $i++) {
+            $j = $i + 2;
+            $name  = $arrIn[$i]['Name'];
+            $sheet->setCellValue('A' . $j, $name);
+            $sheet->setCellValue('B' . $j, array_key_exists( $name, $pidMap)?  $pidMap[ $name ] : ''   );
+            $sheet->setCellValue('C' . $j, DBHelper::toDateStringShort($arrIn[$i]['PaymentTime']));
+            $sheet->setCellValue('D' . $j,  number_format($arrIn[$i]['Payment']));
+            $sheet->setCellValue('E' . $j, $arrIn[$i]['Type']);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($file);
+
+        //$path = "..\\public\\" . $file;
+        $path = "../public/" . $file; //這個寫法windows, ubuntu都可接受
+        return response()->download($path, $file);
+    }
+
 }

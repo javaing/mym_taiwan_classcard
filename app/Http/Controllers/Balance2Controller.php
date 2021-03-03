@@ -157,17 +157,17 @@ class Balance2Controller extends Controller
 
         $groupBy = array();
         $amountName = 'Payment';
+        $typeName = 'Type';
         foreach ($arrIn as $element) {
           //$newElement = array_search( $element['Name'], $groupBy);
           Log::info('sizeof='.sizeof($groupBy).'  name='.$element['Name'] );
 
           //groupBy裡有舊資料, 則更新
           $nameExist = false;
-          foreach ($groupBy as $eachPerson) {
+          foreach ($groupBy as &$eachPerson) {
             if($eachPerson['Name'] === $element['Name']) {
-              //$index = array_search( $element['Name'], $groupBy);
-              $eachPerson[$amountName] += $element[$amountName];
-              Log::info('bingo! '.$eachPerson['Name'].' amount='.$eachPerson[$amountName]);
+              $eachPerson[$amountName] = $eachPerson[$amountName] + $element[$amountName];
+              $eachPerson[$typeName] = $eachPerson[$typeName] .', '. $element[$typeName];
               $nameExist = true;
               break;
             }
@@ -178,10 +178,6 @@ class Balance2Controller extends Controller
           }
         }
         $arrIn = $groupBy;
-
-
-
-        //return print_r($groupBy);
 
 
         $pidMap = DBHelper::getPersonalIDMap();

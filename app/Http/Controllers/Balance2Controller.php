@@ -106,7 +106,7 @@ class Balance2Controller extends Controller
 
         $arrIn = DBHelper::getBalanceInJoin($userName ?: 'ALL', $start, $end);
 
-        return genFile($arrIn, $file);
+        return $this->genFile($arrIn, $file);
     }
 
     public function genFile($arrIn, $file) {
@@ -174,7 +174,7 @@ class Balance2Controller extends Controller
         }
         $arrIn = $groupBy;
 
-        return genFile($arrIn, $file);
+        return $this->genFile($arrIn, $file);
     }
 
 }

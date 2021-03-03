@@ -155,11 +155,6 @@ class Balance2Controller extends Controller
         // }
         $arrIn = DBHelper::getBalanceInJoin($userName ?: 'ALL', $start, $end);
 
-        Log::info('downloadFile GroupByname 1');
-        $arrIn = Tools::_group_by($arrIn, 'Name');
-
-        Log::info('downloadFile GroupByname 2');
-
         $groupBy = array();
         $amountName = 'Payment';
         foreach ($arrIn as $element) {

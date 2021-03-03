@@ -176,12 +176,8 @@ class Balance2Controller extends Controller
           if(!$nameExist) {
             array_push($groupBy, $element);
           }
-
-
         }
-
-
-        Log::info('downloadFile GroupByname 3');
+        $arrIn = $groupBy;
 
 
 

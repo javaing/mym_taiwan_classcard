@@ -185,34 +185,34 @@ class Balance2Controller extends Controller
 
 
 
-        return print_r($groupBy);
+        //return print_r($groupBy);
 
 
-        // $pidMap = DBHelper::getPersonalIDMap();
-        //
-        // $spreadsheet = new Spreadsheet();
-        // $sheet = $spreadsheet->getActiveSheet();
-        // $sheet->setCellValue('A1', '名字');
-        // $sheet->setCellValue('B1', '身分證號');
-        // $sheet->setCellValue('C1', '日期');
-        // $sheet->setCellValue('D1', '金額');
-        // $sheet->setCellValue('E1', '種類');
-        // for ($i = 0; $i < sizeof($arrIn); $i++) {
-        //     $j = $i + 2;
-        //     $name  = $arrIn[$i]['Name'];
-        //     $sheet->setCellValue('A' . $j, $name);
-        //     $sheet->setCellValue('B' . $j, array_key_exists( $name, $pidMap)?  $pidMap[ $name ] : ''   );
-        //     $sheet->setCellValue('C' . $j, DBHelper::toDateStringShort($arrIn[$i]['PaymentTime']));
-        //     $sheet->setCellValue('D' . $j,  number_format($arrIn[$i]['Payment']));
-        //     $sheet->setCellValue('E' . $j, $arrIn[$i]['Type']);
-        // }
-        //
-        // $writer = new Xlsx($spreadsheet);
-        // $writer->save($file);
-        //
-        // //$path = "..\\public\\" . $file;
-        // $path = "../public/" . $file; //這個寫法windows, ubuntu都可接受
-        // return response()->download($path, $file);
+        $pidMap = DBHelper::getPersonalIDMap();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', '名字');
+        $sheet->setCellValue('B1', '身分證號');
+        $sheet->setCellValue('C1', '日期');
+        $sheet->setCellValue('D1', '金額');
+        $sheet->setCellValue('E1', '種類');
+        for ($i = 0; $i < sizeof($arrIn); $i++) {
+            $j = $i + 2;
+            $name  = $arrIn[$i]['Name'];
+            $sheet->setCellValue('A' . $j, $name);
+            $sheet->setCellValue('B' . $j, array_key_exists( $name, $pidMap)?  $pidMap[ $name ] : ''   );
+            $sheet->setCellValue('C' . $j, DBHelper::toDateStringShort($arrIn[$i]['PaymentTime']));
+            $sheet->setCellValue('D' . $j,  number_format($arrIn[$i]['Payment']));
+            $sheet->setCellValue('E' . $j, $arrIn[$i]['Type']);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($file);
+
+        //$path = "..\\public\\" . $file;
+        $path = "../public/" . $file; //這個寫法windows, ubuntu都可接受
+        return response()->download($path, $file);
     }
 
 }

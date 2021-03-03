@@ -154,33 +154,70 @@ class Balance2Controller extends Controller
         //     $arrIn = DBHelper::getBalanceIn2('ALL', $start, $end);
         // }
         $arrIn = DBHelper::getBalanceInJoin($userName ?: 'ALL', $start, $end);
+
+        Log::info('downloadFile GroupByname 1');
         $arrIn = Tools::_group_by($arrIn, 'Name');
 
-        $pidMap = DBHelper::getPersonalIDMap();
+        Log::info('downloadFile GroupByname 2');
 
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('A1', '名字');
-        $sheet->setCellValue('B1', '身分證號');
-        $sheet->setCellValue('C1', '日期');
-        $sheet->setCellValue('D1', '金額');
-        $sheet->setCellValue('E1', '種類');
-        for ($i = 0; $i < sizeof($arrIn); $i++) {
-            $j = $i + 2;
-            $name  = $arrIn[$i]['Name'];
-            $sheet->setCellValue('A' . $j, $name);
-            $sheet->setCellValue('B' . $j, array_key_exists( $name, $pidMap)?  $pidMap[ $name ] : ''   );
-            $sheet->setCellValue('C' . $j, DBHelper::toDateStringShort($arrIn[$i]['PaymentTime']));
-            $sheet->setCellValue('D' . $j,  number_format($arrIn[$i]['Payment']));
-            $sheet->setCellValue('E' . $j, $arrIn[$i]['Type']);
+        $groupBy = array();
+        $amountName = 'Payment';
+        foreach ($arrIn as $element) {
+          //$newElement = array_search( $element['Name'], $groupBy);
+          Log::info('sizeof='.sizeof($groupBy).'  name='.$element['Name'] );
+
+          //groupBy裡有舊資料, 則更新
+          $nameExist = false;
+          foreach ($groupBy as $eachPerson) {
+            if($eachPerson['Name'] === $element['Name']) {
+              //$index = array_search( $element['Name'], $groupBy);
+              $eachPerson[$amountName] += $element[$amountName];
+              Log::info('bingo! '.$eachPerson['Name'].' amount='.$eachPerson[$amountName]);
+              $nameExist = true;
+              break;
+            }
+          }
+
+          if(!$nameExist) {
+            array_push($groupBy, $element);
+          }
+
+
         }
 
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($file);
 
-        //$path = "..\\public\\" . $file;
-        $path = "../public/" . $file; //這個寫法windows, ubuntu都可接受
-        return response()->download($path, $file);
+        Log::info('downloadFile GroupByname 3');
+
+
+
+        return print_r($groupBy);
+
+
+        // $pidMap = DBHelper::getPersonalIDMap();
+        //
+        // $spreadsheet = new Spreadsheet();
+        // $sheet = $spreadsheet->getActiveSheet();
+        // $sheet->setCellValue('A1', '名字');
+        // $sheet->setCellValue('B1', '身分證號');
+        // $sheet->setCellValue('C1', '日期');
+        // $sheet->setCellValue('D1', '金額');
+        // $sheet->setCellValue('E1', '種類');
+        // for ($i = 0; $i < sizeof($arrIn); $i++) {
+        //     $j = $i + 2;
+        //     $name  = $arrIn[$i]['Name'];
+        //     $sheet->setCellValue('A' . $j, $name);
+        //     $sheet->setCellValue('B' . $j, array_key_exists( $name, $pidMap)?  $pidMap[ $name ] : ''   );
+        //     $sheet->setCellValue('C' . $j, DBHelper::toDateStringShort($arrIn[$i]['PaymentTime']));
+        //     $sheet->setCellValue('D' . $j,  number_format($arrIn[$i]['Payment']));
+        //     $sheet->setCellValue('E' . $j, $arrIn[$i]['Type']);
+        // }
+        //
+        // $writer = new Xlsx($spreadsheet);
+        // $writer->save($file);
+        //
+        // //$path = "..\\public\\" . $file;
+        // $path = "../public/" . $file; //這個寫法windows, ubuntu都可接受
+        // return response()->download($path, $file);
     }
 
 }

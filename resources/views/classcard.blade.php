@@ -157,42 +157,13 @@
     </form>
 </TABLE>
 
-<script>
-    $(function() {
-        $("#buycard1").click(function() {
-            $('#buyNewLink1')[0].click();
-        });
-        $("#buycard4").click(function() {
-            $('#buyNewLink4')[0].click();
-        });
-    });
-</script>
-
 @if ($card['Points']==0)
 <div align="center" style="margin-Top: 8px;">
 
-    <!-- <img class="img-responsive center-block" data-toggle="modal" data-target="#exampleModalCentered" type="image" style="width:106px;height:28px;" src="/images/classcard/buy_card.png" /> -->
     <a href="{{ route('buy.newcard', ['userId' => $card['UserID'] ] ) }}">
         <input type="image" style="height:28px;" src="/images/classcard/buy_card.png" alt="" />
     </a>
 </div>
-
-<!-- 單堂或四堂按鈕 -->
-<div class="modal" id="exampleModalCentered" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenteredLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <button id="buycard1" class="btn btn-primary btn-lg btn-block border-none" style="color:#c59c40;background-color: #FFf9e5;border-color:#FFFFFF">單堂 500元</button>
-                <button id="buycard4" class="btn btn-primary btn-lg btn-block border-none" style="color:#c59c40;background-color: #FFf9e5;border-color:#FFFFFF">四堂 1800元</button>
-                <a id="buyNewLink1" href="{{ route('buy.classcard', ['userId' => $card['UserID'], 'point'=>1] ) }}" />
-                <a id="buyNewLink4" href="{{ route('buy.classcard', ['userId' => $card['UserID'], 'point'=>4] ) }}" />
-            </div>
-        </div>
-    </div>
-</div>
-
-@else
-
 @endif
 
 @if ( DBHelper::isExpired($card) )

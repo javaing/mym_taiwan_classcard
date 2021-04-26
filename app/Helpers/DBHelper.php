@@ -357,6 +357,8 @@ class DBHelper
     public static function getUserName($userId)
     {
         $user = DB::collection('UserInfo')->where('UserID', $userId)->first();
+        if($user==null)
+            return "無此使用者";
         if ($user['UserName'] != '')
             return $user['UserName'];
         else

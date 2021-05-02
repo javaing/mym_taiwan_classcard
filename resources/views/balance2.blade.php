@@ -62,6 +62,7 @@ $range = $range ?? '';
                 <th>
                     <center>種類</center>
                 </th>
+                <th>地區</th>
             </tr>
 
             @foreach($arrIn as $record)
@@ -79,6 +80,7 @@ $range = $range ?? '';
                 <td width="55"> {{ DBHelper::toMMDD( $record['PaymentTime']) }}</td>
                 <td align="right" width="80"> {{ number_format( $record['Payment'])   }}</td>
                 <td align="center" width="100">{{ $record['Type']}}</td>
+                <td width="100"> {{ $record['Location'] }}</td>
             </tr>
             @endforeach
             <tr>

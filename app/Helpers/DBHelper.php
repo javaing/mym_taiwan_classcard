@@ -210,6 +210,8 @@ class DBHelper
         return false;
     }
 
+
+
     static $tableTypeAsana = '體位法';
     static $tableTypeStudyGroup = '讀書會';
     //static $tableTypeAsanaExtent = '體位法補兩百';
@@ -239,11 +241,13 @@ class DBHelper
         }
 
 
+        $locationMap = DBHelper::getLocationMap();
 
         $totlaRecord = [];
         foreach ($purchase as $each) {
             $each['Type'] = DBHelper::$tableTypeAsana;
             $each['Name'] = DBHelper::getUserName($each['UserID']);
+            $each['Location'] =  $locationMap[ $each['Name'] ] ?? null;
             array_push($totlaRecord, $each);
         }
 
@@ -259,6 +263,7 @@ class DBHelper
                     $each['Payment'] = $each[DBHelper::$tableColumnAmount];
                     $each['PaymentTime'] =  $payday;
                     $each['Type'] = DBHelper::$tableTypeStudyGroup;
+                    $each['Location'] = $locationMap[ $each['Name'] ]?? null;
                     array_push($totlaRecord, $each);
                 }
             }
@@ -277,6 +282,7 @@ class DBHelper
                         $each['Payment'] = '200';
                         $each['PaymentTime'] =  $payday;
                         $each['Type'] = '補兩百';
+                        $each['Location'] = $locationMap[ $each['Name'] ]?? null;
                         array_push($totlaRecord, $each);
                     }
                 }
@@ -295,6 +301,7 @@ class DBHelper
                             $each['Payment'] = $each['金額'];
                             $each['PaymentTime'] =  $payday;
                             $each['Type'] = $each['事由'];
+                            $each['Location'] = $locationMap[ $each['Name'] ]?? null;
                             array_push($totlaRecord, $each);
                         }
                     }
@@ -313,13 +320,16 @@ class DBHelper
                                 $each['Payment'] = $each['費用總計'];
                                 $each['PaymentTime'] =  $payday;
                                 $each['Type'] = '讀書會';
+                                $each['Location'] = $locationMap[ $each['Name'] ]?? null;
                                 array_push($totlaRecord, $each);
                             }
                         }
                     }
+
         usort($totlaRecord, function ($item1, $item2) {
           return $item1['Name'] <=> $item2['Name'];
         });
+
         return $totlaRecord;
     }
 
@@ -365,6 +375,17 @@ class DBHelper
             return $user['NickName'];
     }
 
+    public static function getUserLocation($userId)
+    {
+        $user = DB::collection('UserInfo')->where('UserID', $userId)->first();
+        if($user==null)
+            return "N/A";
+        if ($user['Location'] == '')
+            return "N/A";
+        else
+            return $user['Location'];
+    }
+
     public static function getNickName($userId)
     {
         return DB::collection('UserInfo')->where('UserID', $userId)->first()['NickName'];
@@ -400,6 +421,19 @@ class DBHelper
         $map = array();
         foreach ($result as $row) {
             $map[$row['UserName']] = $row['PersonalID'];
+        }
+        //Log::info('getPersonalIDMap=' . $map);
+        return $map;
+    }
+
+    public static function getLocationMap()
+    {
+        $result =  DB::collection('UserInfo')
+            ->select('Location', 'UserName')
+            ->get();
+        $map = array();
+        foreach ($result as $row) {
+            $map[$row['UserName']] = $row['Location'];
         }
         //Log::info('getPersonalIDMap=' . $map);
         return $map;

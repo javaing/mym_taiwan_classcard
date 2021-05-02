@@ -119,6 +119,7 @@ class Balance2Controller extends Controller
       $sheet->setCellValue('B1', '日期');
       $sheet->setCellValue('C1', '金額');
       $sheet->setCellValue('D1', '種類');
+      $sheet->setCellValue('E1', '所在');
       for ($i = 0; $i < sizeof($arrIn); $i++) {
           $j = $i + 2;
           $name  = $arrIn[$i]['Name'];
@@ -127,7 +128,33 @@ class Balance2Controller extends Controller
           $sheet->setCellValue('B' . $j, DBHelper::toDateStringShort($arrIn[$i]['PaymentTime']));
           $sheet->setCellValue('C' . $j,  number_format($arrIn[$i]['Payment']));
           $sheet->setCellValue('D' . $j, $arrIn[$i]['Type']);
+          $sheet->setCellValue('Ｅ' . $j, $arrIn[$i]['Location']);
       }
+
+
+      //$spreadsheet->createSheet();
+      //$spreadsheet->createSheet();
+      $sheet = $spreadsheet->setActiveSheetIndex(1);
+      $spreadsheet->getActiveSheet()->setTitle('台中');
+      $sheet->setCellValue('A1', '名字台中');
+      //$sheet->setCellValue('B1', '身分證號');
+      $sheet->setCellValue('B1', '日期台中');
+      $sheet->setCellValue('C1', '金額台中');
+      $sheet->setCellValue('D1', '種類台中');
+      for ($i = 0; $i < sizeof($arrIn); $i++) {
+          $j = $i + 2;
+          $name  = $arrIn[$i]['Name'];
+          $sheet->setCellValue('A' . $j, $name+"台中");
+          //$sheet->setCellValue('B' . $j, array_key_exists( $name, $pidMap)?  $pidMap[ $name ] : ''   );
+          $sheet->setCellValue('B' . $j, DBHelper::toDateStringShort($arrIn[$i]['PaymentTime']));
+          $sheet->setCellValue('C' . $j,  number_format($arrIn[$i]['Payment']));
+          $sheet->setCellValue('D' . $j, $arrIn[$i]['Type']);
+      }
+
+      $clonedWorksheet = clone $spreadsheet->getSheetByName('Worksheet 1');
+      $clonedWorksheet->setTitle('台中');
+      $spreadsheet->addSheet($clonedWorksheet);
+
 
       $writer = new Xlsx($spreadsheet);
       $writer->save($file);

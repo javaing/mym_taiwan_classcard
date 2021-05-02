@@ -128,7 +128,7 @@ class Balance2Controller extends Controller
           $sheet->setCellValue('B' . $j, DBHelper::toDateStringShort($arrIn[$i]['PaymentTime']));
           $sheet->setCellValue('C' . $j,  number_format($arrIn[$i]['Payment']));
           $sheet->setCellValue('D' . $j, $arrIn[$i]['Type']);
-          $sheet->setCellValue('Ｅ' . $j, $arrIn[$i]['Location']);
+          $sheet->setCellValue('E' . $j, $arrIn[$i]['Location']);
       }
 
 

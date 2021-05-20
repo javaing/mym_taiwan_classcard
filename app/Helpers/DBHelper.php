@@ -32,6 +32,12 @@ class DBHelper
         return $dbdate->toDateTime()->format('m-d');
     }
 
+    public static function toMonth($dbdate)
+    {
+        if (!$dbdate) return '';
+        return $dbdate->toDateTime()->format('m');
+    }
+
     public static function toDateStringShort($dbdate)
     {
         if (!$dbdate) return '';
@@ -356,7 +362,12 @@ class DBHelper
       usort($totlaRecord, function ($item1, $item2) {
         $rdiff = $item1['Type'] <=> $item2['Type'];
         if ($rdiff) return $rdiff;
-        return $item1['Location'] <=> $item2['Location'];
+
+        $rdiff = $item1['Location'] <=> $item2['Location'];
+        if ($rdiff) return $rdiff;
+
+        $rdiff = DBHelper::toMonth($item1['PaymentTime']) <=> DBHelper::toMonth($item2['PaymentTime']);
+        return $rdiff;
       });
 
       return $totlaRecord;

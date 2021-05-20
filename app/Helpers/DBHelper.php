@@ -231,7 +231,7 @@ class DBHelper
     public static function getBalanceInJoin($Name, $from, $to)
     {
         $totlaRecord = DBHelper::genReportData($Name, $from, $to);
-        $totlaRecord = DBHelper::sortByType($totlaRecord, 'Name');
+        $totlaRecord = DBHelper::sortByName($totlaRecord);
 
         return $totlaRecord;
     }
@@ -239,7 +239,7 @@ class DBHelper
     public static function getBalanceInJoinByType($Name, $from, $to)
     {
         $totlaRecord = DBHelper::genReportData($Name, $from, $to);
-        $totlaRecord = DBHelper::sortByType($totlaRecord, 'Type');
+        $totlaRecord = DBHelper::sortByType($totlaRecord);
 
         return $totlaRecord;
     }

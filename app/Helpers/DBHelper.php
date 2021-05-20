@@ -224,113 +224,142 @@ class DBHelper
     //各挑各的資料，再轉成一致格式
     public static function getBalanceInJoin($Name, $from, $to)
     {
-        $isAllMode = ('ALL' == $Name);
-        Log::info('挑課卡 getUserIdByUserName=' . DBHelper::getUserIdByUserName($Name));
-        //挑課卡
-        if ($isAllMode) {
-            $purchase = DB::collection('Purchase')
-                ->where('PaymentTime', '>=', DBHelper::parse($from))
-                ->where('PaymentTime', '<', DBHelper::parse($to))
-                ->get();
-        } else {
-            $purchase = DB::collection('Purchase')
-                ->where('PaymentTime', '>=', DBHelper::parse($from))
-                ->where('PaymentTime', '<', DBHelper::parse($to))
-                ->where('UserID', DBHelper::getUserIdByUserName($Name))
-                ->get();
-        }
-
-
-        $locationMap = DBHelper::getLocationMap();
-
-        $totlaRecord = [];
-        foreach ($purchase as $each) {
-            $each['Type'] = DBHelper::$tableTypeAsana;
-            $each['Name'] = DBHelper::getUserName($each['UserID']);
-            $each['Location'] =  $locationMap[ $each['Name'] ] ?? null;
-            array_push($totlaRecord, $each);
-        }
-
-        //挑讀書會
-        $activity = DB::collection('Activity')
-            ->get();
-        foreach ($activity as $each) {
-            $payday = DBHelper::parse($each[DBHelper::$tableColumnPayDay]);
-            if (DBHelper::isInRange($payday, $from, $to)) {
-                $inputName = $each[DBHelper::$tableColumnCnEnName];
-                if ($isAllMode || $inputName == $Name) {
-                    $each['Name'] = $inputName;
-                    $each['Payment'] = $each[DBHelper::$tableColumnAmount];
-                    $each['PaymentTime'] =  $payday;
-                    $each['Type'] = DBHelper::$tableTypeStudyGroup;
-                    $each['Location'] = $locationMap[ $each['Name'] ]?? null;
-                    array_push($totlaRecord, $each);
-                }
-            }
-        }
-
-        //挑體位法補兩百的
-        $activity = DB::collection('AsanaExtend')
-            ->get();
-
-            foreach ($activity as $each) {
-                $payday = DBHelper::parse($each['日期']);
-                if (DBHelper::isInRange($payday, $from, $to)) {
-                    $inputName = $each['學員'];
-                    if ($isAllMode || $inputName == $Name) {
-                        $each['Name'] = $inputName;
-                        $each['Payment'] = '200';
-                        $each['PaymentTime'] =  $payday;
-                        $each['Type'] = '補兩百';
-                        $each['Location'] = $locationMap[ $each['Name'] ]?? null;
-                        array_push($totlaRecord, $each);
-                    }
-                }
-            }
-
-            //冥想會，台中
-            $activity = DB::collection('OtherActivity')
-                ->get();
-
-                foreach ($activity as $each) {
-                    $payday = DBHelper::parse($each['日期']);
-                    if (DBHelper::isInRange($payday, $from, $to)) {
-                        $inputName = $each['姓名'];
-                        if ($isAllMode || $inputName == $Name) {
-                            $each['Name'] = $inputName;
-                            $each['Payment'] = $each['金額'];
-                            $each['PaymentTime'] =  $payday;
-                            $each['Type'] = $each['事由'];
-                            $each['Location'] = $locationMap[ $each['Name'] ]?? null;
-                            array_push($totlaRecord, $each);
-                        }
-                    }
-                }
-
-                //讀書會
-                $activity = DB::collection('StudyGroup')
-                    ->get();
-
-                    foreach ($activity as $each) {
-                        $payday = DBHelper::parse($each['日期']);
-                        if (DBHelper::isInRange($payday, $from, $to)) {
-                            $inputName = $each['中文全名/英文名'];
-                            if ($isAllMode || $inputName == $Name) {
-                                $each['Name'] = $inputName;
-                                $each['Payment'] = $each['費用總計'];
-                                $each['PaymentTime'] =  $payday;
-                                $each['Type'] = '讀書會';
-                                $each['Location'] = $locationMap[ $each['Name'] ]?? null;
-                                array_push($totlaRecord, $each);
-                            }
-                        }
-                    }
-
-        usort($totlaRecord, function ($item1, $item2) {
-          return $item1['Name'] <=> $item2['Name'];
-        });
+        $totlaRecord = DBHelper::genReportData($Name, $from, $to);
+        $totlaRecord = DBHelper::sortByType($totlaRecord, 'Name');
 
         return $totlaRecord;
+    }
+
+    public static function getBalanceInJoinByType($Name, $from, $to)
+    {
+        $totlaRecord = DBHelper::genReportData($Name, $from, $to);
+        $totlaRecord = DBHelper::sortByType($totlaRecord, 'Type');
+
+        return $totlaRecord;
+    }
+
+    static function genReportData($Name, $from, $to) {
+      $isAllMode = ('ALL' == $Name);
+      Log::info('挑課卡 getUserIdByUserName=' . DBHelper::getUserIdByUserName($Name));
+      //挑課卡
+      if ($isAllMode) {
+          $purchase = DB::collection('Purchase')
+              ->where('PaymentTime', '>=', DBHelper::parse($from))
+              ->where('PaymentTime', '<', DBHelper::parse($to))
+              ->get();
+      } else {
+          $purchase = DB::collection('Purchase')
+              ->where('PaymentTime', '>=', DBHelper::parse($from))
+              ->where('PaymentTime', '<', DBHelper::parse($to))
+              ->where('UserID', DBHelper::getUserIdByUserName($Name))
+              ->get();
+      }
+
+
+      $locationMap = DBHelper::getLocationMap();
+
+      $totlaRecord = [];
+      foreach ($purchase as $each) {
+          $each['Type'] = DBHelper::$tableTypeAsana;
+          $each['Name'] = DBHelper::getUserName($each['UserID']);
+          $each['Location'] =  $locationMap[ $each['Name'] ] ?? null;
+          array_push($totlaRecord, $each);
+      }
+
+      //挑讀書會
+      $activity = DB::collection('Activity')
+          ->get();
+      foreach ($activity as $each) {
+          $payday = DBHelper::parse($each[DBHelper::$tableColumnPayDay]);
+          if (DBHelper::isInRange($payday, $from, $to)) {
+              $inputName = $each[DBHelper::$tableColumnCnEnName];
+              if ($isAllMode || $inputName == $Name) {
+                  $each['Name'] = $inputName;
+                  $each['Payment'] = $each[DBHelper::$tableColumnAmount];
+                  $each['PaymentTime'] =  $payday;
+                  $each['Type'] = DBHelper::$tableTypeStudyGroup;
+                  $each['Location'] = $locationMap[ $each['Name'] ]?? null;
+                  array_push($totlaRecord, $each);
+              }
+          }
+      }
+
+      //挑體位法補兩百的
+      $activity = DB::collection('AsanaExtend')
+          ->get();
+
+          foreach ($activity as $each) {
+              $payday = DBHelper::parse($each['日期']);
+              if (DBHelper::isInRange($payday, $from, $to)) {
+                  $inputName = $each['學員'];
+                  if ($isAllMode || $inputName == $Name) {
+                      $each['Name'] = $inputName;
+                      $each['Payment'] = '200';
+                      $each['PaymentTime'] =  $payday;
+                      $each['Type'] = '補兩百';
+                      $each['Location'] = $locationMap[ $each['Name'] ]?? null;
+                      array_push($totlaRecord, $each);
+                  }
+              }
+          }
+
+          //冥想會，台中
+          $activity = DB::collection('OtherActivity')
+              ->get();
+
+              foreach ($activity as $each) {
+                  $payday = DBHelper::parse($each['日期']);
+                  if (DBHelper::isInRange($payday, $from, $to)) {
+                      $inputName = $each['姓名'];
+                      if ($isAllMode || $inputName == $Name) {
+                          $each['Name'] = $inputName;
+                          $each['Payment'] = $each['金額'];
+                          $each['PaymentTime'] =  $payday;
+                          $each['Type'] = $each['事由'];
+                          $each['Location'] = $locationMap[ $each['Name'] ]?? null;
+                          array_push($totlaRecord, $each);
+                      }
+                  }
+              }
+
+              //讀書會
+              $activity = DB::collection('StudyGroup')
+                  ->get();
+
+                  foreach ($activity as $each) {
+                      $payday = DBHelper::parse($each['日期']);
+                      if (DBHelper::isInRange($payday, $from, $to)) {
+                          $inputName = $each['中文全名/英文名'];
+                          if ($isAllMode || $inputName == $Name) {
+                              $each['Name'] = $inputName;
+                              $each['Payment'] = $each['費用總計'];
+                              $each['PaymentTime'] =  $payday;
+                              $each['Type'] = '讀書會';
+                              $each['Location'] = $locationMap[ $each['Name'] ]?? null;
+                              array_push($totlaRecord, $each);
+                          }
+                      }
+                  }
+
+        return $totlaRecord;
+    }
+
+    public static function sortByName($totlaRecord) {
+      usort($totlaRecord, function ($item1, $item2) {
+        return $item1['Name'] <=> $item2['Name'];
+      });
+
+      return $totlaRecord;
+    }
+
+    public static function sortByType($totlaRecord) {
+      usort($totlaRecord, function ($item1, $item2) {
+        $rdiff = $item1['Type'] <=> $item2['Type'];
+        if ($rdiff) return $rdiff;
+        return $item1['Location'] <=> $item2['Location'];
+      });
+
+      return $totlaRecord;
     }
 
     // public static function getBalanceIn2($userId, $from, $to)

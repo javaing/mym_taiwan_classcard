@@ -111,4 +111,11 @@ $range = $range ?? '';
     <button class="btn btn-sm btn-default" type="submit">報表ByName</button>
 </form>
 
+<form action="downloadByKind" method="POST">
+    @csrf
+    <input type="hidden" name="filename" value="{{substr($start,0,10)}}_{{substr($end,0,10)}}">
+    <input type="hidden" name="start" value="{{$start}}">
+    <input type="hidden" name="end" value="{{$end}}">
+    <button class="btn btn-sm btn-default" type="submit">報表By項目</button>
+</form>
 @endsection

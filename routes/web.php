@@ -59,6 +59,7 @@ Route::post('/account/balance2', 'Balance2Controller@balance2post');
 Route::post('/account/carddetail2', 'Balance2Controller@cardDetail2');
 Route::post('/download', 'Balance2Controller@downloadFile');
 Route::post('/downloadByName', 'Balance2Controller@downloadFileGroupByname');
+Route::post('/downloadByKind', 'Balance2Controller@downloadFileGroupByKind');
 
 Auth::routes();
 

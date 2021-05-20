@@ -182,7 +182,7 @@ class Balance2Controller extends Controller
         $typeName = 'Type';
         foreach ($arrIn as $element) {
           //$newElement = array_search( $element['Name'], $groupBy);
-          Log::info('sizeof='.sizeof($groupBy).'  name='.$element['Name'] );
+          //Log::info('sizeof='.sizeof($groupBy).'  name='.$element['Name'] );
 
           //groupBy裡有舊資料, 則更新
           $nameExist = false;
@@ -200,6 +200,44 @@ class Balance2Controller extends Controller
           }
         }
         $arrIn = $groupBy;
+
+        return $this->genFile($arrIn, $file);
+    }
+
+    public function downloadFileGroupByKind(Request $request)
+    {
+        $file = $request->filename;
+        $file = "MYMTW_活動收費紀錄_" . $file . "_byKind.xlsx";
+        $start = $request->start;
+        $end = $request->end;
+        $userName = $request->userName;
+
+
+        $arrIn = DBHelper::getBalanceInJoinByType($userName ?: 'ALL', $start, $end);
+
+        // $groupBy = array();
+        // $amountName = 'Payment';
+        // $typeName = 'Type';
+        // foreach ($arrIn as $element) {
+        //   //$newElement = array_search( $element['Name'], $groupBy);
+        //   Log::info('sizeof='.sizeof($groupBy).'  name='.$element['Name'] );
+        //
+        //   //groupBy裡有舊資料, 則更新
+        //   $nameExist = false;
+        //   foreach ($groupBy as &$eachPerson) {
+        //     if($eachPerson['Name'] === $element['Name']) {
+        //       $eachPerson[$amountName] = $eachPerson[$amountName] + $element[$amountName];
+        //       $eachPerson[$typeName] = $eachPerson[$typeName] .', '. $element[$typeName];
+        //       $nameExist = true;
+        //       break;
+        //     }
+        //   }
+        //
+        //   if(!$nameExist) {
+        //     array_push($groupBy, $element);
+        //   }
+        // }
+        // $arrIn = $groupBy;
 
         return $this->genFile($arrIn, $file);
     }

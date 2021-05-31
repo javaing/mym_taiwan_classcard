@@ -88,7 +88,7 @@ class OnlineClassController extends Controller
         }
 
         if ($index >= sizeof($arr)) $index = sizeof($arr) - 1;
-        return view('onlinehistory', [
+        return view('onlineHistory', [
             'card' => $arr[$index],
             'index' => $index
         ]);

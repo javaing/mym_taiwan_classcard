@@ -9,10 +9,14 @@ use Carbon\Carbon;
 
 class DBHelper
 {
+    public static function strtoMongoDate($str) {
+        return new \MongoDB\BSON\UTCDateTime(strtotime($str) * 1000);
+    }
+
     public static function getMongoDateNow()
     {
         $created_at = Carbon::now()->toDateTimeString();
-        return new \MongoDB\BSON\UTCDateTime(strtotime($created_at) * 1000);
+        return DBHelper::strtoMongoDate($created_at);
     }
 
     public static function toDateString($dbdate)
@@ -623,7 +627,7 @@ class DBHelper
     {
         $dt = DBHelper::getMongoDateNow();
         $expired_at = Carbon::now()->add(60, 'day')->toDateTimeString();
-        $dt_expired = new \MongoDB\BSON\UTCDateTime(strtotime($expired_at) * 1000);
+        $dt_expired = DBHelper::strtoMongoDate($expired_at);
 
         $newCard = [
             'CardID' => $cardId,
@@ -741,29 +745,14 @@ class DBHelper
             return false;
     }
 
-    // public static function isDeposited($cardId, $cost)
-    // {
-    //     $datas = DB::collection('Consume')
-    //         ->where('CardID', $cardId)
-    //         ->where('UserID', DBHelper::getUserId($cardId))
-    //         ->where('Cost', $cost)
-    //         ->where('PointConsumeTime', '>=', DBHelper::today())
-    //         ->get();
-    //     Log::info('DBHelper::isDeposited =' . sizeof($datas) . ",date=" . DBHelper::today());
-    //     if (sizeof($datas) > 0)
-    //         return true;
-    //     else
-    //         return false;
-    // }
-
     //該卡號有負數的紀錄的話
-    public static function isDeposited($cardId)
+    public static function isRefundable($cardId)
     {
         $datas = DB::collection('Purchase')
             ->where('CardID', $cardId)
             ->where('Payment', '<', 0) //退卡的
             ->get();
-        Log::info('DBHelper::isDeposited size(Payment<0)=' . sizeof($datas));
+        //Log::info('DBHelper::isRefundable size(Payment<0)=' . sizeof($datas));
         if (sizeof($datas) > 0)
             return true;
         else

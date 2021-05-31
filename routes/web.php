@@ -61,6 +61,20 @@ Route::post('/download', 'Balance2Controller@downloadFile');
 Route::post('/downloadByName', 'Balance2Controller@downloadFileGroupByname');
 Route::post('/downloadByKind', 'Balance2Controller@downloadFileGroupByKind');
 
+//購買線上課程
+Route::get('/onlineclass/buy', 'OnlineClassController@list');
+Route::post('/onlineclass/buy', 'OnlineClassController@buy');
+//線上課程明細(含退款功能)
+Route::get('/onlineclass/detail', 'OnlineClassController@cardDetail')->name('onlineclass.cardDetail');
+Route::get('/onlineclass/refund', 'OnlineClassController@refund')->name('onlineclass.refund');
+//蓋課卡(人工扣點)
+Route::get('/onlineclass/byhand', 'OnlineClassController@listByhand');
+Route::Post('/onlineclass/byhand', 'OnlineClassController@registeByhand');
+//線上課程使用紀錄(供學員查詢)
+Route::get('/onlineclass/history', 'OnlineClassController@history');
+Route::get('/onlineclass/history/{userId}/{index}', 'OnlineClassController@historyPick')->name('onlineclass.historyPick');
+
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');

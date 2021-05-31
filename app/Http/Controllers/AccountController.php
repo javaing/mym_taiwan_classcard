@@ -69,7 +69,7 @@ class AccountController extends Controller
         $cardId = base64_decode($request->cardId);
         $amount = $request->amount;
         Log::info("deposite($cardId, $amount)");
-        $exist = DBHelper::isDeposited($cardId);
+        $exist = DBHelper::isRefundable($cardId);
         //Log::info("deposite($exist)");
         //print_r($exist);
         //return;

@@ -76,8 +76,8 @@ use App\Helpers\DBHelperOnline as DBHelperOnline;
                 <p16white>{{DBHelper::toDateString( $registArray[$stampCount-$i]['PointConsumeTime'] ) }}</p16white>
             </div>
             @else
-            <div id="div_used">
-                <p16white>n/a</p16white>
+            <div id="div_unuse">
+                <p16white> </p16white>
             </div>
             @endif
 

@@ -210,6 +210,13 @@ static $OneClassFee = 300;
             ->orderBy('PointConsumeTime')->get();
     }
 
+    public static function getUserId($cardId)
+    {
+        $arr = DB::collection(DBHelperOnline::$CollectPurchase)->where('CardID', $cardId);
+        if ($arr == null) return "";
+        return  $arr->first()['UserID'];
+    }
+
     //退款
     public static function refund($cardId, $amount)
     {
@@ -221,7 +228,7 @@ static $OneClassFee = 300;
 
         $newCard = [
             'CardID' => $cardId,
-            'UserID' => DBHelper::getUserId($cardId),
+            'UserID' => DBHelperOnline::getUserId($cardId),
             'Points' => 0,
             "Expired" => $dt,
             "CardCreateTime" => $dt,

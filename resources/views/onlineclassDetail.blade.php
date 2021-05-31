@@ -122,7 +122,7 @@ use App\Helpers\DBHelperOnline as DBHelperOnline;
         </div><!-- /.modal -->
     </div>
     @else
-    <a href="{{ url()->previous() }}">使用完畢</a>
+    <a href="/onlineclass/byhand">使用完畢</a>
     @endif
 
 </center>

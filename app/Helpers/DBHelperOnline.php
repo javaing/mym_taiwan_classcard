@@ -44,15 +44,6 @@ static $OneClassFee = 300;
           ->get();
     }
 
-
-    public static function getUserId($cardId)
-    {
-        $arr = DB::collection(DBHelperOnline::$CollectPurchase)->where('CardID', $cardId);
-        if ($arr == null) return "";
-        return  $arr->first()['UserID'];
-    }
-
-
     public static function getUsersNoOnlineCard()
     {
         //get()出來就是array

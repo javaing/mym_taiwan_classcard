@@ -159,7 +159,7 @@ static $OneClassFee = 300;
     {
         $datas = DB::collection(DBHelperOnline::$CollectConsume)
             ->where('CardID', $cardId)
-            ->where('UserID', DBHelper::getUserId($cardId))
+            ->where('UserID', DBHelperOnline::getUserId($cardId))
             ->where('PointConsumeTime', '>=', $dt)
             ->get();
         Log::info('DBHelper::isConsume =' . sizeof($datas) . ",date=" . DBHelper::today());
@@ -185,7 +185,7 @@ static $OneClassFee = 300;
     {
         $newCard = [
             'CardID' => $cardId,
-            'UserID' => DBHelper::getUserId($cardId),
+            'UserID' => DBHelperOnline::getUserId($cardId),
             "Cost" => DBHelperOnline::$OneClassFee,
             "PointConsumeTime" => $dt,
         ];

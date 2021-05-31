@@ -11,8 +11,8 @@ use App\Helpers\DBHelperOnline as DBHelperOnline;
     $userId = $card['UserID'];
     $size = sizeof(DBHelperOnline::getOnlineHistory($userId));
     $registArray = DBHelperOnline::getConsumeList( $cardId);
-    $thisYearCount = DBHelper::thisYearCount($userId);
-    $thisMonthCount = DBHelper::thisMonthCount( $userId);
+    $thisYearCount = DBHelperOnline::thisYearCount($userId);
+    $thisMonthCount = DBHelperOnline::thisMonthCount( $userId);
     $stampCount = 4;
     if(DBHelperOnline::isSoloCard($cardId)) $stampCount = 1;
 }}

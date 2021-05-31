@@ -258,4 +258,22 @@ static $OneClassFee = 300;
             ->update($newdata);
     }
 
+    public static function thisYearCount($userId)
+    {
+        $date = date("Y-01-01");
+        return sizeof(DB::collection(DBHelperOnline::$CollectConsume)
+            ->where('UserID', $userId)
+            ->where('PointConsumeTime', '>=', DBHelper::parse($date))
+            ->get());
+    }
+
+    public static function thisMonthCount($userId)
+    {
+        $date = date("Y-m-01");
+        return sizeof(DB::collection(DBHelperOnline::$CollectConsume)
+            ->where('UserID', $userId)
+            ->where('PointConsumeTime', '>=', DBHelper::parse($date))
+            ->get());
+    }
+
 }

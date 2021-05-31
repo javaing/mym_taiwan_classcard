@@ -34,7 +34,7 @@ use App\Helpers\DBHelperOnline as DBHelperOnline;
 
     @if ($index-1>=0 )
 
-    <a href="{{ route('online.history', [
+    <a href="{{ route('onlineclass.historyPick', [
         'userId' => $card['UserID'],
         'index'=>$index-1,
         ] ) }}">
@@ -46,7 +46,7 @@ use App\Helpers\DBHelperOnline as DBHelperOnline;
 
     <p16>上課紀錄</p16>
 
-    @if ($index+1<$size ) <a href="{{ route('online.history', [
+    @if ($index+1<$size ) <a href="{{ route('onlineclass.historyPick', [
         'userId' => $card['UserID'],
         'index'=>$index+1,
         ] ) }}">

@@ -9,10 +9,8 @@ use App\Helpers\DBHelper as DBHelper;
 use App\Helpers\DBHelperOnline as DBHelperOnline;
 {{
     $today = DBHelper::today();
-    $arrIn = DBHelperOnline::getAllCards();
-    Illuminate\Support\Facades\Log::info('$arrIn=' . $arrIn);
-
-    }}
+    $liveCards = DBHelperOnline::getLiveCards();
+}}
 @endphp
 
 <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
@@ -30,7 +28,7 @@ use App\Helpers\DBHelperOnline as DBHelperOnline;
 
             <option>請選卡</option>
 
-            @foreach ($arrIn as $purchase)
+            @foreach ($liveCards as $purchase)
             <option value="{{ base64_encode( $purchase['CardID'] )}}">
                 {{ DBHelper::getUserName(    $purchase['UserID']) }}( {{ $purchase['CardID']   }} )
             </option>
@@ -66,7 +64,7 @@ use App\Helpers\DBHelperOnline as DBHelperOnline;
                 <th>剩餘次數</th>
             </tr>
 
-            @foreach($arrIn as $purchase)
+            @foreach($liveCards as $purchase)
             <tr height="30">
                 <td width="100">
                     <a href="{{ route('onlineclass.cardDetail', ['cardId' => base64_encode($purchase['CardID']) ]) }}">{{$purchase['CardID'] }}</a>

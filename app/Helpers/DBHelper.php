@@ -477,7 +477,9 @@ class DBHelper
             ->get();
         $map = array();
         foreach ($result as $row) {
+          if(array_key_exists('Location', $row)) {
             $map[$row['UserName']] = $row['Location'];
+          }
         }
         //Log::info('getPersonalIDMap=' . $map);
         return $map;

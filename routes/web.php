@@ -71,8 +71,8 @@ Route::get('/onlineclass/refund', 'OnlineClassController@refund')->name('onlinec
 Route::get('/onlineclass/byhand', 'OnlineClassController@listByhand');
 Route::Post('/onlineclass/byhand', 'OnlineClassController@registeByhand');
 //線上課程使用紀錄(供學員查詢)
-Route::get('/onlineclass/history', 'OnlineClassController@history');
-Route::get('/onlineclass/history/{userId}/{index}', 'OnlineClassController@historyPick')->name('onlineclass.historyPick');
+Route::get('/onlineclass/history', 'OnlineClassUserController@history');
+Route::get('/onlineclass/history/{userId}/{index}', 'OnlineClassUserController@historyPick')->name('onlineclass.historyPick');
 
 
 Auth::routes();

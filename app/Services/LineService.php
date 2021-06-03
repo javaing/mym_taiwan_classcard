@@ -16,7 +16,7 @@ class LineService
 
     public function getLoginBaseUrl()
     {
-        return getLoginBaseUrlBy('mym');
+        return $this->getLoginBaseUrlBy('mym');
     }
 
     public function getLoginBaseUrlBy($state)

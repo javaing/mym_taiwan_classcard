@@ -27,18 +27,12 @@ class OnlineClassUserController extends Controller
         return $this->historyPick($userId, 0);
     }
 
-    public function goBackLink()
-    {
-        return $_SERVER['HTTP_REFERER'] ?? '';
-    }
-
     public function historyPick($userId, $index)
     {
         $arr = DBHelperOnline::getOnlineHistory($userId);
         //Log::info("showClassHistory({$userId},index={$index}) data={$arr} ");
         if (count($arr) == 0) {
-            $link = $this->goBackLink();
-            print_r('<h3>無上課紀錄，請<a href="' . $link . '">回上頁</a></h3>');
+            print_r('<h3>無上課紀錄</h3>');
             return;
         }
 

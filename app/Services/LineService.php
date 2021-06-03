@@ -16,13 +16,18 @@ class LineService
 
     public function getLoginBaseUrl()
     {
+        return getLoginBaseUrlBy('mym');
+    }
+
+    public function getLoginBaseUrlBy($state)
+    {
         // 組成 Line Login Url
         $url = config('line.authorize_base_url') . '?';
         $url .= 'response_type=code';
         $url .= '&client_id=' . config('line.channel_id');
         $url .= '&redirect_uri=' . config('app.url') . '/callback/login';
-        $url .= '&state=mym'; // 暫時固定方便測試
-        $url .= '&scope=openid%20profile%20email'; //眉角在這裡，scope要加email
+        $url .= '&state='.$state;
+        $url .= '&scope=openid,profile,email'; //眉角在這裡，scope要加email
 
         return $url;
     }

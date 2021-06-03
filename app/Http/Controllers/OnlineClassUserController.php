@@ -22,7 +22,7 @@ class OnlineClassUserController extends Controller
         if (isset($_COOKIE["userId"])) {
             $userId = $_COOKIE["userId"];
         } else {
-            return app('App\Http\Controllers\LoginController')->pageLine();
+            return app('App\Http\Controllers\LoginController')->onlineclassLogin();
         }
         return $this->historyPick($userId, 0);
     }

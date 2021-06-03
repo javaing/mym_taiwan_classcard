@@ -11,6 +11,7 @@ use App\Services\LineService;
 class LoginController extends Controller
 {
     protected $lineService;
+    protected $ONLINECLASS = 'onlineclass';
 
     public function __construct(LineService $lineService)
     {
@@ -29,7 +30,17 @@ class LoginController extends Controller
 
         return view('line')->with('url', $url);
     }
+    //onlineclassLogin
+    public function onlineclassLogin()
+    {
+        $url = $this->lineService->getLoginBaseUrlBy($this->ONLINECLASS);
+        if (isset($_COOKIE["access_token"])) {
+            $url = 'reuse';
+        }
+        Log::info('pageLine()=' . $url);
 
+        return view('line')->with('url', $url);
+    }
 
     public function logout()
     {
@@ -42,7 +53,7 @@ class LoginController extends Controller
 
     public function saveAccessToken($access)
     {
-        //發送一個28天後過期的cookie 
+        //發送一個28天後過期的cookie
         setcookie('access_token', $access, time() + 3600 * 24 * 28, '/');
         Log::info('save cookie');
         //Log::info($access);
@@ -56,12 +67,17 @@ class LoginController extends Controller
                 throw new Exception($request->all());
             }
             $code = $request->input('code', '');
+            $state = $request->input('state', '');
 
             $response = $this->lineService->getLineToken($code);
             if (array_key_exists('id_token', $response)) {
                 $this->saveAccessToken($response['access_token']);
             }
 
+            if($state==$ONLINECLASS) {
+              $this->saveUserInfo($user_profile);
+              return redirect('/onlineclass/history');
+            }
 
             return $this->askProfile($response['access_token']);
         } catch (Exception $ex) {
@@ -92,6 +108,14 @@ class LoginController extends Controller
         return $this->askProfile($_COOKIE["access_token"]);
     }
 
+    public function saveUserInfo($user_profile) {
+      $userId = $user_profile['userId'];
+      if (!HelpersDBHelper::getUser($userId)) {
+          HelpersDBHelper::insertNewUser($user_profile);
+      }
+      setcookie('userId', $userId, time() + 3600 * 24 * 28, '/');
+    }
+
 
     public function showPoints($user_profile)
     {
@@ -99,10 +123,7 @@ class LoginController extends Controller
         //買新卡 call API
         //仍有剩餘格數 蓋過秀灰色，不可按
         $userId = $user_profile['userId'];
-        if (!HelpersDBHelper::getUser($userId)) {
-            HelpersDBHelper::insertNewUser($user_profile);
-        }
-        setcookie('userId', $userId, time() + 3600 * 24 * 28, '/');
+        $this->saveUserInfo($user_profile);
         $card = HelpersDBHelper::getValidCardNoMatter($userId);
         if (!$card) {
             return view("buynewcard")->with('userId', $userId);

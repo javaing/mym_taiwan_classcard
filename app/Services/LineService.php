@@ -27,7 +27,7 @@ class LineService
         $url .= '&client_id=' . config('line.channel_id');
         $url .= '&redirect_uri=' . config('app.url') . '/callback/login';
         $url .= '&state='.$state;
-        $url .= '&scope=openid,profile,email'; //眉角在這裡，scope要加email
+        $url .= '&scope=openid%20profile%20email'; //眉角在這裡，scope要加email
 
         return $url;
     }

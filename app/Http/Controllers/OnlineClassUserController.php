@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\DBHelperOnline as DBHelperOnline;
+use App\Helpers\DBHelper as DBHelper;
 use Carbon\Carbon;
 
 class OnlineClassUserController extends Controller
@@ -32,8 +33,9 @@ class OnlineClassUserController extends Controller
         $arr = DBHelperOnline::getOnlineHistory($userId);
         //Log::info("showClassHistory({$userId},index={$index}) data={$arr} ");
         if (count($arr) == 0) {
-            print_r('<h3>無上課紀錄</h3>');
-            return;
+            return view('onlineEmptyHistory', [
+                'name' => DBHelper::getUserName($userId)
+            ]);
         }
 
         if ($index >= sizeof($arr)) $index = sizeof($arr) - 1;

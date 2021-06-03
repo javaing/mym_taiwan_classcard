@@ -74,7 +74,7 @@ class LoginController extends Controller
                 $this->saveAccessToken($response['access_token']);
             }
 
-            if($state==$ONLINECLASS) {
+            if($state==$this->ONLINECLASS) {
               $this->saveUserInfo($user_profile);
               return redirect('/onlineclass/history');
             }

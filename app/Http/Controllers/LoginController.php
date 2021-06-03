@@ -74,24 +74,24 @@ class LoginController extends Controller
                 $this->saveAccessToken($response['access_token']);
             }
 
-            if($state==$this->ONLINECLASS) {
-              $this->saveUserInfo($user_profile);
-              return redirect('/onlineclass/history');
-            }
-
-            return $this->askProfile($response['access_token']);
+            return $this->askProfile($response['access_token'], $state);
         } catch (Exception $ex) {
             Log::error($ex);
         }
     }
 
-    public function askProfile($token)
+    public function askProfile($token, $state)
     {
         $user_profile = $this->lineService->getUserProfile($token);
         if (!array_key_exists('email', $user_profile)) {
             $user_profile['email'] = '';
         }
-        return $this->showPoints($user_profile);
+        $this->saveUserInfo($user_profile);
+
+        if($state==$this->ONLINECLASS) {
+          return redirect('/onlineclass/history');
+        }
+        return $this->showPoints($user_profile['userId']);
     }
 
     public function askProfileReuse()
@@ -103,9 +103,9 @@ class LoginController extends Controller
                 "pictureUrl" => "https://profile.line-scdn.net/0hoyldZOXtMFZRHRjzyAdPAW1YPjsmMzYeKXorMnEUb2V9eiAJOn98MXcUamN4KCACbCh-NCYdOWZ8",
                 "statusMessage" => "白露"
             ];
-            return $this->showPoints($user_profile);
+            return $this->showPoints($user_profile['userId']);
         }
-        return $this->askProfile($_COOKIE["access_token"]);
+        return $this->askProfile($_COOKIE["access_token"], ''); //空字串表示走預設
     }
 
     public function saveUserInfo($user_profile) {
@@ -117,13 +117,11 @@ class LoginController extends Controller
     }
 
 
-    public function showPoints($user_profile)
+    public function showPoints($userId)
     {
         //讀取該user狀態 from API
         //買新卡 call API
         //仍有剩餘格數 蓋過秀灰色，不可按
-        $userId = $user_profile['userId'];
-        $this->saveUserInfo($user_profile);
         $card = HelpersDBHelper::getValidCardNoMatter($userId);
         if (!$card) {
             return view("buynewcard")->with('userId', $userId);

@@ -27,6 +27,11 @@ class OnlineClassUserController extends Controller
         return $this->historyPick($userId, 0);
     }
 
+    public function goBackLink()
+    {
+        return $_SERVER['HTTP_REFERER'] ?? '';
+    }
+
     public function historyPick($userId, $index)
     {
         $arr = DBHelperOnline::getOnlineHistory($userId);

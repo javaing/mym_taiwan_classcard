@@ -274,4 +274,14 @@ static $OneClassFee = 300;
             ->get());
     }
 
+    public static function getBalanceIn($from, $to)
+    {
+        //get()出來就是array
+        return DB::collection(DBHelperOnline::$CollectPurchase)
+            ->where('PaymentTime', '>=', DBHelper::parse($from))
+            ->where('PaymentTime', '<', DBHelper::parse($to))
+            //->where('Payment', '>', 0)
+            ->get();
+    }
+
 }

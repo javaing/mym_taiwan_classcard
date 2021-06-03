@@ -5,10 +5,22 @@
 @section('content')
 
 @php
+use App\Helpers\DBHelperOnline as DBHelperOnline;
 {{
         $arrIn = DBHelper::getBalanceIn($start, $end);
+        //Illuminate\Support\Facades\Log::info('$arrIn=' . $arrIn);
+        $arrIn2 = DBHelperOnline::getBalanceIn($start, $end);
+        //$arrIn = array_merge($arrIn, $arrIn2);
+        $sum1And2 = [];
+        foreach($arrIn as $element) {
+          array_push($sum1And2, $element);
+        }
+        foreach($arrIn2 as $element) {
+          array_push($sum1And2, $element);
+        }
+        $arrIn = $sum1And2;
+
         $arrOut = DBHelper::getBalanceOut($start, $end);
-        Illuminate\Support\Facades\Log::info('$arrIn=' . $arrIn);
         $sumIn=0; $sumOut=0;
         foreach($arrIn as $each) {
             $sumIn += $each['Payment'];

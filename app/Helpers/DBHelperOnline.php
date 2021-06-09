@@ -103,7 +103,7 @@ static $OneClassFee = 300;
         ];
         if ($amount) {
             $newCard['Payment'] = $amount;
-            $newCard['PaymentTime'] = DBHelper::strtoMongoDate($buydate);
+            $newCard['PaymentTime'] = DBHelper::strtoMongoDate( substr($buydate,0,11) ."".Carbon::now()->format("H:i") ) ;
         } else {
             $newCard['Payment'] = null;
             $newCard['PaymentTime'] = null;

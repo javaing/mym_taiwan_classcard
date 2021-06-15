@@ -284,4 +284,13 @@ static $OneClassFee = 300;
             ->get();
     }
 
+    public static function getBalanceOut($from, $to)
+    {
+        //get()出來就是array
+        return DB::collection(DBHelperOnline::$CollectConsume)
+            ->where('PointConsumeTime', '>=', DBHelper::parse($from))
+            ->where('PointConsumeTime', '<', DBHelper::parse($to))
+            ->get();
+    }
+
 }

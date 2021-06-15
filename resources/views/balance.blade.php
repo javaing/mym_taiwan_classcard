@@ -21,6 +21,16 @@ use App\Helpers\DBHelperOnline as DBHelperOnline;
         $arrIn = $sum1And2;
 
         $arrOut = DBHelper::getBalanceOut($start, $end);
+        $arrOut2 = DBHelperOnline::getBalanceOut($start, $end);
+        $sum1And2 = [];
+        foreach($arrOut as $element) {
+          array_push($sum1And2, $element);
+        }
+        foreach($arrOut2 as $element) {
+          array_push($sum1And2, $element);
+        }
+        $arrOut = $sum1And2;
+
         $sumIn=0; $sumOut=0;
         foreach($arrIn as $each) {
             $sumIn += $each['Payment'];

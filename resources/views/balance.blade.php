@@ -6,30 +6,16 @@
 
 @php
 use App\Helpers\DBHelperOnline as DBHelperOnline;
+use App\Helpers\Tools as Tools;
 {{
         $arrIn = DBHelper::getBalanceIn($start, $end);
         //Illuminate\Support\Facades\Log::info('$arrIn=' . $arrIn);
         $arrIn2 = DBHelperOnline::getBalanceIn($start, $end);
-        //$arrIn = array_merge($arrIn, $arrIn2);
-        $sum1And2 = [];
-        foreach($arrIn as $element) {
-          array_push($sum1And2, $element);
-        }
-        foreach($arrIn2 as $element) {
-          array_push($sum1And2, $element);
-        }
-        $arrIn = $sum1And2;
+        $arrIn = Tools::merge($arrIn, $arrIn2);
 
         $arrOut = DBHelper::getBalanceOut($start, $end);
         $arrOut2 = DBHelperOnline::getBalanceOut($start, $end);
-        $sum1And2 = [];
-        foreach($arrOut as $element) {
-          array_push($sum1And2, $element);
-        }
-        foreach($arrOut2 as $element) {
-          array_push($sum1And2, $element);
-        }
-        $arrOut = $sum1And2;
+        $arrOut = Tools::merge($arrOut, $arrOut2);
 
         $sumIn=0; $sumOut=0;
         foreach($arrIn as $each) {

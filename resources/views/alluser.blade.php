@@ -51,11 +51,11 @@
         </tr>
         <tr>
             <td width="70" height="36">身分證ID</td>
-            <td><input name="PersonalID" type="text" value="{{$userDetail['PersonalID']}}"> </td>
+            <td><input name="PersonalID" type="text" value="{{  $userDetail['PersonalID'] ?? ''    }}"> </td>
         </tr>
         <tr>
             <td width="60" height="36">所在</td>
-            <td><input name="Location" type="text" value="{{$userDetail['Location']}}"> </td>
+            <td><input name="Location" type="text" value="{{  $userDetail['Location'] ?? '' }}"> </td>
         </tr>
         <tr>
             <input name="UserID" type="hidden" value="{{$userDetail['UserID']}}">

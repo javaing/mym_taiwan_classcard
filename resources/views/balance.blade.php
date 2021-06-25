@@ -81,7 +81,12 @@ use App\Helpers\Tools as Tools;
             @foreach($arrIn as $purchase)
             <tr height="30">
                 <td width="100">
-                    <a href="{{ route('account.cardDetail', ['cardId' => base64_encode($purchase['CardID'])   ]) }}">{{DBHelper::getUserName( $purchase['UserID']) }}</a>
+
+                    @if ($purchase['Payment']==300|| $purchase['Payment']==1200)
+                      <a href="{{ route('onlineclass.cardDetail', ['cardId' => base64_encode($purchase['CardID'])]) }}">{{DBHelper::getUserName( $purchase['UserID']) }}</a>
+                    @else
+                      <a href="{{ route('account.cardDetail', ['cardId' => base64_encode($purchase['CardID'])]) }}">{{DBHelper::getUserName( $purchase['UserID']) }}</a>
+                    @endif
 
                 </td>
                 <td> {{ DBHelper::toDateStringShort( $purchase['PaymentTime']) }}</td>

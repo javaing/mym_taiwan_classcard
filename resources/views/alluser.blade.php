@@ -54,6 +54,10 @@
             <td><input name="PersonalID" type="text" value="{{$userDetail['PersonalID']}}"> </td>
         </tr>
         <tr>
+            <td width="60" height="36">所在</td>
+            <td><input name="Location" type="text" value="{{$userDetail['Location']}}"> </td>
+        </tr>
+        <tr>
             <input name="UserID" type="hidden" value="{{$userDetail['UserID']}}">
             <td COLSPAN=2 align="right"><button class="btn btn-link" type="submit">更新</button>
         </tr>

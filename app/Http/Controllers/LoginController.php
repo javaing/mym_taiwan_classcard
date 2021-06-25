@@ -166,6 +166,7 @@ class LoginController extends Controller
                 'Referrer' => $request->Referrer,
                 'Email' => $request->Email,
                 'PersonalID' => $request->PersonalID,
+                'Location' => $request->Location,
             );
             HelpersDBHelper::updateUser($uid, $datas);
 

@@ -5,7 +5,7 @@ namespace App\Helpers;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-
+use App\Helpers\DBHelperOnline as DBHelperOnline;
 
 class DBHelper
 {
@@ -265,12 +265,34 @@ class DBHelper
               ->get();
       }
 
+      //插入線上課程
+      if ($isAllMode) {
+        $purchase2 = DB::collection(DBHelperOnline::$CollectPurchase)
+            ->where('PaymentTime', '>=', DBHelper::parse($from))
+            ->where('PaymentTime', '<', DBHelper::parse($to))
+            ->get();
+      } else {
+        $purchase2 = DB::collection(DBHelperOnline::$CollectPurchase)
+            ->where('PaymentTime', '>=', DBHelper::parse($from))
+            ->where('PaymentTime', '<', DBHelper::parse($to))
+            ->where('UserID', DBHelper::getUserIdByUserName($Name))
+            ->get();
+      }
+
+
 
       $locationMap = DBHelper::getLocationMap();
 
       $totlaRecord = [];
       foreach ($purchase as $each) {
           $each['Type'] = DBHelper::$tableTypeAsana;
+          $each['Name'] = DBHelper::getUserName($each['UserID']);
+          $each['Location'] =  $locationMap[ $each['Name'] ] ?? null;
+          array_push($totlaRecord, $each);
+      }
+      //插入線上課程
+      foreach ($purchase2 as $each) {
+          $each['Type'] = '線上體位法';
           $each['Name'] = DBHelper::getUserName($each['UserID']);
           $each['Location'] =  $locationMap[ $each['Name'] ] ?? null;
           array_push($totlaRecord, $each);

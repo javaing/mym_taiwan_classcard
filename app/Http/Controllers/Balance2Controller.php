@@ -131,31 +131,6 @@ class Balance2Controller extends Controller
           $sheet->setCellValue('E' . $j, $arrIn[$i]['Location']);
       }
 
-
-      // //$spreadsheet->createSheet();
-      // //$spreadsheet->createSheet();
-      // $sheet = $spreadsheet->setActiveSheetIndex(1);
-      // $spreadsheet->getActiveSheet()->setTitle('台中');
-      // $sheet->setCellValue('A1', '名字台中');
-      // //$sheet->setCellValue('B1', '身分證號');
-      // $sheet->setCellValue('B1', '日期台中');
-      // $sheet->setCellValue('C1', '金額台中');
-      // $sheet->setCellValue('D1', '種類台中');
-      // for ($i = 0; $i < sizeof($arrIn); $i++) {
-      //     $j = $i + 2;
-      //     $name  = $arrIn[$i]['Name'];
-      //     $sheet->setCellValue('A' . $j, $name+"台中");
-      //     //$sheet->setCellValue('B' . $j, array_key_exists( $name, $pidMap)?  $pidMap[ $name ] : ''   );
-      //     $sheet->setCellValue('B' . $j, DBHelper::toDateStringShort($arrIn[$i]['PaymentTime']));
-      //     $sheet->setCellValue('C' . $j,  number_format($arrIn[$i]['Payment']));
-      //     $sheet->setCellValue('D' . $j, $arrIn[$i]['Type']);
-      // }
-      //
-      // $clonedWorksheet = clone $spreadsheet->getSheetByName('Worksheet 1');
-      // $clonedWorksheet->setTitle('台中');
-      // $spreadsheet->addSheet($clonedWorksheet);
-
-
       $writer = new Xlsx($spreadsheet);
       $writer->save($file);
 
@@ -214,30 +189,6 @@ class Balance2Controller extends Controller
 
 
         $arrIn = DBHelper::getBalanceInJoinByType($userName ?: 'ALL', $start, $end);
-
-        // $groupBy = array();
-        // $amountName = 'Payment';
-        // $typeName = 'Type';
-        // foreach ($arrIn as $element) {
-        //   //$newElement = array_search( $element['Name'], $groupBy);
-        //   Log::info('sizeof='.sizeof($groupBy).'  name='.$element['Name'] );
-        //
-        //   //groupBy裡有舊資料, 則更新
-        //   $nameExist = false;
-        //   foreach ($groupBy as &$eachPerson) {
-        //     if($eachPerson['Name'] === $element['Name']) {
-        //       $eachPerson[$amountName] = $eachPerson[$amountName] + $element[$amountName];
-        //       $eachPerson[$typeName] = $eachPerson[$typeName] .', '. $element[$typeName];
-        //       $nameExist = true;
-        //       break;
-        //     }
-        //   }
-        //
-        //   if(!$nameExist) {
-        //     array_push($groupBy, $element);
-        //   }
-        // }
-        // $arrIn = $groupBy;
 
         return $this->genFile($arrIn, $file);
     }

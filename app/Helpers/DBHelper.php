@@ -234,12 +234,6 @@ class DBHelper
     //各挑各的資料，再轉成一致格式
     public static function getBalanceInJoin($Name, $from, $to)
     {
-
-      $from = DBHelper::dateShiftFrom($from);
-      $to = DBHelper::dateShiftTo($to);
-      Log::info('dateShift new from date ' . $from);
-      Log::info('dateShift new to date ' . $to);
-
         $totlaRecord = DBHelper::genReportData($Name, $from, $to);
         $totlaRecord = DBHelper::sortByName($totlaRecord);
 
@@ -248,8 +242,6 @@ class DBHelper
 
     public static function getBalanceInJoinByType($Name, $from, $to)
     {
-      $from = DBHelper::dateShiftFrom($from);
-      $to = DBHelper::dateShiftTo($to);
         $totlaRecord = DBHelper::genReportData($Name, $from, $to);
         $totlaRecord = DBHelper::sortByType($totlaRecord);
 
@@ -265,6 +257,13 @@ class DBHelper
     }
 
     static function genReportData($Name, $from, $to) {
+
+      $from = DBHelper::dateShiftFrom($from);
+      $to = DBHelper::dateShiftTo($to);
+      Log::info('dateShift new from date ' . $from);
+      Log::info('dateShift new to date ' . $to);
+
+
       $isAllMode = ('ALL' == $Name);
       //Log::info('挑課卡 getUserIdByUserName=' . DBHelper::getUserIdByUserName($Name));
       //挑課卡

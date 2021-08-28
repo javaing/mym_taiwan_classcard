@@ -253,7 +253,7 @@ class DBHelper
     }
 
     public static function dateShiftTo($to) {
-      return DBHelper::parse($to)->firstOfMonth()->addDays(24)->format('Y-m-d');
+      return DBHelper::parse($to)->firstOfMonth()->addDays(25)->format('Y-m-d');
     }
 
     static function genReportData($Name, $from, $to) {

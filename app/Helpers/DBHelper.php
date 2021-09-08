@@ -188,6 +188,7 @@ class DBHelper
             ->where('PaymentTime', '>=', DBHelper::parse($from))
             ->where('PaymentTime', '<', DBHelper::parse($to))
             ->where('UserID', '<>', null)
+            ->orderBy('PaymentTime')
             ->get();
     }
 

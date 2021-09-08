@@ -272,6 +272,7 @@ class DBHelper
           $purchase = DB::collection('Purchase')
               ->where('PaymentTime', '>=', DBHelper::parse($from))
               ->where('PaymentTime', '<', DBHelper::parse($to))
+              ->where('UserID', '<>', null)
               ->get();
       } else {
           $purchase = DB::collection('Purchase')

@@ -70,6 +70,11 @@ class ClassCardController extends Controller
             print_r('<h3>還有未使用的卡片(卡號:' . $card['CardID'] . ')，不須買新卡，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
+        if ($userId==null || $userId=="null") {
+            $link = $this->goBackLink();
+            print_r('<h3>無使用者資訊，請<a href="' . $link . '">回上頁</a></h3>');
+            return;
+        }
         $cardId = DBHelper::buyNewCard($userId, $point);
         Log::info("buyClassCard({$cardId}, {$point})");
         return redirect('classcard/show/' . base64_encode($cardId));
@@ -80,6 +85,12 @@ class ClassCardController extends Controller
         $userId = $request->userId;
         $point = $request->point; //1 or 4
         $buycardPass = strtolower($request->buycardPass);
+
+        if ($userId==null || $userId=="null") {
+            $link = $this->goBackLink();
+            print_r('<h3>無使用者資訊，請<a href="' . $link . '">回上頁</a></h3>');
+            return;
+        }
 
         if($buycardPass=='') {
           $link = $this->goBackLink();
@@ -93,6 +104,7 @@ class ClassCardController extends Controller
           print_r('<h3>買卡密碼不正確，請洽工作人員<a href="' . $link . '">回上頁</a></h3>');
           return;
         }
+
 
         //是不是還有未使用的卡片
         $card = DBHelper::getValidCard($userId);

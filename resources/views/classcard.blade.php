@@ -145,7 +145,11 @@
                         @endif
 
                     </div>
-                    <a id="registeLink" href="{{ route('registe.classcard',  [$card['Points'], $cardId] ) }}" />
+                    @if (DBHelper::isExpired($card))
+                    @else
+                      <a id="registeLink" href="{{ route('registe.classcard',  [$card['Points'], $cardId] ) }}" />
+                    @endif
+
 
                     @endif
             </TD>

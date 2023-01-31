@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Personality Test</title>
+  </head>
+  <body>
+    <header>
+      <h1>Personality Test</h1>
+    </header>
+    <main>
+      <form action="submit-test.php" method="post">
+        <fieldset>
+          <legend>Question 1</legend>
+          <p>Do you prefer to spend time alone or with others?</p>
+          <input type="radio" id="alone" name="question1" value="alone">
+          <label for="alone">Alone</label><br>
+          <input type="radio" id="with others" name="question1" value="with others">
+          <label for="with others">With others</label>
+        </fieldset>
+        <fieldset>
+          <legend>Question 2</legend>
+          <p>Do you prefer a structured or flexible schedule?</p>
+          <input type="radio" id="structured" name="question2" value="structured">
+          <label for="structured">Structured</label><br>
+          <input type="radio" id="flexible" name="question2" value="flexible">
+          <label for="flexible">Flexible</label>
+        </fieldset>
+        <input type="submit" value="Submit Test">
+      </form>
+    </main>
+    <footer>
+      <p>Copyright ©2021 Personality Test</p>
+    </footer>
+  </body>
+</html>

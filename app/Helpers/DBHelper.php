@@ -316,22 +316,22 @@ class DBHelper
       }
 
       //挑讀書會
-      $activity = DB::collection('Activity')
-          ->get();
-      foreach ($activity as $each) {
-          $payday = DBHelper::parse($each[DBHelper::$tableColumnPayDay]);
-          if (DBHelper::isInRange($payday, $from, $to)) {
-              $inputName = $each[DBHelper::$tableColumnCnEnName];
-              if ($isAllMode || $inputName == $Name) {
-                  $each['Name'] = $inputName;
-                  $each['Payment'] = $each[DBHelper::$tableColumnAmount];
-                  $each['PaymentTime'] =  $payday;
-                  $each['Type'] = DBHelper::$tableTypeStudyGroup;
-                  $each['Location'] = $locationMap[ $each['Name'] ]?? null;
-                  array_push($totlaRecord, $each);
-              }
-          }
-      }
+      // $activity = DB::collection('Activity')
+      //     ->get();
+      // foreach ($activity as $each) {
+      //     $payday = DBHelper::parse($each[DBHelper::$tableColumnPayDay]);
+      //     if (DBHelper::isInRange($payday, $from, $to)) {
+      //         $inputName = $each[DBHelper::$tableColumnCnEnName];
+      //         if ($isAllMode || $inputName == $Name) {
+      //             $each['Name'] = $inputName;
+      //             $each['Payment'] = $each[DBHelper::$tableColumnAmount];
+      //             $each['PaymentTime'] =  $payday;
+      //             $each['Type'] = DBHelper::$tableTypeStudyGroup;
+      //             $each['Location'] = $locationMap[ $each['Name'] ]?? null;
+      //             array_push($totlaRecord, $each);
+      //         }
+      //     }
+      // }
 
       //挑體位法補兩百的
       $activity = DB::collection('AsanaExtend')

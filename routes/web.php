@@ -56,6 +56,7 @@ Route::get('/balance/byuser/{userId}', 'AccountController@balanceByUser')->where
 
 Route::get('/account/balance2', 'Balance2Controller@balance2');
 Route::post('/account/balance2', 'Balance2Controller@balance2post');
+Route::post('/account/balance2', 'Balance2Controller@balance2FreeRange');
 Route::post('/account/carddetail2', 'Balance2Controller@cardDetail2');
 Route::post('/download', 'Balance2Controller@downloadFile');
 Route::post('/downloadByName', 'Balance2Controller@downloadFileGroupByname');

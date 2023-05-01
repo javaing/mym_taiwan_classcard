@@ -48,6 +48,20 @@ $range = $range ?? '';
         </Select>
     </form>
 </div>
+<div class="text-left" style="width:200px;">
+    <form action="{{url()->action('Balance2Controller@balance2FreeRange')}}" method="POST">
+        @csrf
+        <input class="date form-control" type="text" name="start" value="{{$start}}">
+        <input class="date form-control" type="text" name="end" value="{{$end}}">
+        <script type="text/javascript">
+            $('.date').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true
+            });
+        </script>
+        <button class="btn btn-link" type="submit">查詢</button>
+    </form>
+</div>
 
 
 <div id="myTabContent" class="tab-content">

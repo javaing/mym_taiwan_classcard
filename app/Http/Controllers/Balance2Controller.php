@@ -50,6 +50,19 @@ class Balance2Controller extends Controller
         ]);
     }
 
+    public function balance2FreeRange(Request $request)
+    {
+        $start = $request->start;
+        $end = $request->end;
+        Log::info($start);
+        Log::info($end);
+  
+        return view('balance2', [
+            'start' => $start,
+            'end' => $end,
+        ]);
+    }
+
     public function balance2post(Request $request)
     {
         $range = $request->range;

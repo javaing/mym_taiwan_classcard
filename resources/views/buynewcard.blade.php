@@ -32,15 +32,15 @@
   <br>
 <form action="{{ route('buy.classcardPost') }}" method="POST">
 @csrf
-<select class="form-control" name="point">
+<select class="form-control" name="point" style="height:50px">
     <option value="4">買四堂</option>
     <option value="1">買單堂</option>
 </select>
 <br>
-<input name="buycardPass" type="text" placeholder="請輸入購卡密碼" onkeydown="return ignoreEnter(event);">
+<input name="buycardPass" style="height:50px" type="text" placeholder="請輸入購卡密碼" onkeydown="return ignoreEnter(event);">
 <input type="hidden" name="userId" value="{{$userId}}">
 <br>
-<button class="btn btn-link" type="submit">確定</button>
+<button class="btn btn-link" style="height:50px; margin-top:16px" type="submit">確定</button>
 </form>
 </center>
 @endsection

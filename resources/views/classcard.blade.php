@@ -26,7 +26,7 @@
     if($card['Payment']==500) {$oneOrFourClass=1;}
     $cardId = base64_encode( $card['CardID'] );
     $expiredDate = DBHelper::toDateString($card['Expired']);
-    if($expiredDate=='') {$expiredDate = "無期限";}
+    if($expiredDate=='') {$expiredDate = "限一年內有效";}
 }}
 @endphp
 
@@ -163,7 +163,6 @@
 
 @if ($card['Points']==0)
 <div align="center" style="margin-Top: 8px;">
-
     <a href="{{ route('buy.newcard', ['userId' => $card['UserID'] ] ) }}">
         <input type="image" style="height:28px;" src="/images/classcard/buy_card.png" alt="" />
     </a>
@@ -175,6 +174,10 @@
     <a href="{{ route('extend.classcard', ['userId' => $card['UserID'], 'cardId' => $cardId ]) }}">
         <input type="image" style="height:28px;" src="/images/classcard/class_extend.png" alt="" />
     </a>
+    <div >
+      <p14>限一年內有效</p14>
+
+    </div>
 </div>
 @endif
 

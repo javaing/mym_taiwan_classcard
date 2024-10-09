@@ -589,7 +589,7 @@ class DBHelper
                 "NickName" => $user_profile['displayName'],
                 "UserName" => $user_profile['displayName'],
                 "Email" => $user_profile['email'] ?? "",
-                "PictureUrl" => $user_profile['pictureUrl'],
+                "PictureUrl" => $user_profile['pictureUrl'] ?? "",
                 "Mobile" => "",
                 "Address" => "",
                 "Referrer" => "",

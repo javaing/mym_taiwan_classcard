@@ -13,10 +13,10 @@
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "~6.0",
-        "jenssegers/mongodb": "dev-develop",
+        "jenssegers/mongodb": "^3.6",
         "laravel/framework": "^7.24",
         "laravel/tinker": "^2.0",
-        "laravel/ui": "2.4",
+        "laravel/ui": "^2.4",
         "nesbot/carbon": "^2.39",
         "phpoffice/phpspreadsheet": "^1.16"
     },

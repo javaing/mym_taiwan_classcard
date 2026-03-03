@@ -107,13 +107,17 @@ class Balance2Controller extends Controller
         ]);
     }
 
+    private function buildFileDateRange($start, $end)
+    {
+        return Carbon::parse($start)->format('Y') . Carbon::parse($start)->format('m') . Carbon::parse($end)->format('m');
+    }
+
     //save data to excel, then download excel
     public function downloadFile(Request $request)
     {
-        $file = $request->filename;
-        $file = "MYMTW_活動收費紀錄_" . $file . ".xlsx";
         $start = $request->start;
         $end = $request->end;
+        $file = "MYMTW_活動收費紀錄_" . $this->buildFileDateRange($start, $end) . ".xlsx";
         $userName = $request->userName;
 
 
@@ -156,10 +160,9 @@ class Balance2Controller extends Controller
     //save data to excel, then download excel
     public function downloadFileGroupByname(Request $request)
     {
-        $file = $request->filename;
-        $file = "MYMTW_活動收費紀錄_" . $file . "_byName.xlsx";
         $start = $request->start;
         $end = $request->end;
+        $file = "MYMTW_活動收費紀錄_" . $this->buildFileDateRange($start, $end) . "_byName.xlsx";
         $userName = $request->userName;
 
 
@@ -194,10 +197,9 @@ class Balance2Controller extends Controller
 
     public function downloadFileGroupByKind(Request $request)
     {
-        $file = $request->filename;
-        $file = "MYMTW_活動收費紀錄_" . $file . "_byKind.xlsx";
         $start = $request->start;
         $end = $request->end;
+        $file = "MYMTW_活動收費紀錄_" . $this->buildFileDateRange($start, $end) . "_byKind.xlsx";
         $userName = $request->userName;
 
 

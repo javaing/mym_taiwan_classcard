@@ -8,7 +8,7 @@
     <title>MYM TAIWAN - @yield('title')</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
-    <base href="{{env('APP_URL')}}">
+    <base href="{{ config('app.url') }}">
     <style type="text/css">
         #div_used {
             background-image: url('/images/onlineclass/point_used.png');

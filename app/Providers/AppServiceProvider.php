@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(UrlGenerator $url)
     {
         // Render 等平台在反向代理後終止 TLS，Laravel 需強制 https 避免混合內容
-        if (env('APP_ENV') === 'production') {
+        if (config('app.env') === 'production') {
             $url->forceScheme('https');
         }
     }

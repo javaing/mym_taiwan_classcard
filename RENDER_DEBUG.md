@@ -27,6 +27,7 @@
 | 錯誤關鍵字 | 可能原因 | 處理方式 |
 |-----------|----------|----------|
 | `No application encryption key` | `APP_KEY` 未設定 | 在 Render **Environment** 新增 `APP_KEY`，值為 `php artisan key:generate --show` 的輸出（或既有 .env 的 key）。 |
+| **HTTP 500**（首頁） | storage/bootstrap 權限或缺少環境變數 | 部署腳本已加 `chown`/`chmod`。請到 **Logs** 看 stderr 的例外；並確認 `APP_URL`、`LINE_CHANNEL_ID`、`LINE_SECRET` 已在 Environment 設定。 |
 | `502 Bad Gateway` | 服務未正確監聽 port 或未啟動 | 使用本專案 Dockerfile 時，由映像內建 nginx+php-fpm 監聽，無需自訂 Start Command。若曾改過 Start Command，請清空改回預設。 |
 | `Connection refused` (MongoDB) | 連線字串或網路不允許 | 確認 `DB_HOST`、`DB_USERNAME`、`DB_PASSWORD`、`DB_DATABASE` 在 Render Environment 已設，且 MongoDB Atlas 的 Network Access 允許 Render 的 IP（或 0.0.0.0/0 測試）。 |
 
@@ -38,6 +39,7 @@
 - `APP_DEBUG` = `false`
 - `DB_CONNECTION` = `mongodb+srv`
 - `DB_HOST`、`DB_DATABASE`、`DB_USERNAME`、`DB_PASSWORD`（與 MongoDB Atlas 一致）
+- `LINE_CHANNEL_ID`、`LINE_SECRET`（首頁 LINE 登入用）
 
 ---
 

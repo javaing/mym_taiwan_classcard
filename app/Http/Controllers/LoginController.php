@@ -96,7 +96,7 @@ class LoginController extends Controller
 
     public function askProfileReuse()
     {
-        if (strpos(env('APP_URL'), '127.0.0.1')) {
+        if (strpos(config('app.url', ''), '127.0.0.1') !== false) {
             $user_profile = [
                 "userId" => "Ub3b2f4478935abb4d54969109bac6d23",
                 "displayName" => "art伯勳",

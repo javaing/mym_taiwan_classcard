@@ -3,8 +3,9 @@ set -e
 cd /var/www/html
 
 # Render 預設要求服務監聽 PORT（例如 10000）
+NGINX_CONF="/etc/nginx/conf.d/default.conf"
 if [ -n "${PORT}" ] && [ "${PORT}" != "80" ]; then
-  sed -i "s/listen 80;/listen ${PORT};/" /etc/nginx/http.d/default.conf
+  sed -i "s/listen 80;/listen ${PORT};/" "$NGINX_CONF"
 fi
 
 echo "Caching config..."

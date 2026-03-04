@@ -1,25 +1,25 @@
-# Laravel 7 需在 PHP 7.4 執行（PHP 8 會與 ArrayAccess 回傳型別不相容）
-FROM php:7.4-fpm-alpine
+# Laravel 7 需 PHP 7.4（PHP 8 與 ArrayAccess 不相容）。改用 Debian 基底，gd/mongodb 安裝較穩定
+FROM php:7.4-fpm-bullseye
 
-RUN apk add --no-cache nginx supervisor
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    nginx supervisor \
+    libpng-dev libjpeg-dev libfreetype6-dev \
+    libzip-dev zip unzip curl \
+    libssl-dev pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 
-# PHP 擴展：gd（composer ext-gd）、mongodb（jenssegers/mongodb）
-RUN apk add --no-cache \
-    libpng-dev libjpeg-turbo-dev freetype-dev \
-    autoconf g++ make \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd \
-    && pecl install mongodb \
-    && docker-php-ext-enable mongodb \
-    && apk del autoconf g++ make libpng-dev libjpeg-turbo-dev freetype-dev
+# PHP 擴展：gd、mongodb（PECL 最新版僅支援 PHP 8.1+，7.4 需指定 1.16.x）
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd zip \
+    && pecl install mongodb-1.16.2 \
+    && docker-php-ext-enable mongodb
 
-# Composer（官方 php 映像未內建）
-RUN apk add --no-cache curl \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Nginx：Laravel 使用 public 為 document root
-COPY docker/nginx-default.conf /etc/nginx/http.d/default.conf
-RUN rm -f /etc/nginx/conf.d/default.conf
+COPY docker/nginx-default.conf /etc/nginx/conf.d/default.conf
+RUN rm -f /etc/nginx/sites-enabled/default
 
 COPY docker/supervisord.conf /etc/supervisord.conf
 

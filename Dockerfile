@@ -1,36 +1,41 @@
-FROM php:8.1-fpm-bullseye
+# Laravel 7 需在 PHP 7.4 執行（PHP 8 會與 ArrayAccess 回傳型別不相容）
+FROM php:7.4-fpm-alpine
 
-RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
-    nginx git unzip curl \
-    libpng-dev libonig-dev libxml2-dev \
-    libzip-dev libfreetype6-dev libjpeg62-turbo-dev \
-    libssl-dev pkg-config ca-certificates \
-    && update-ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache nginx supervisor
 
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
+# PHP 擴展：gd（composer ext-gd）、mongodb（jenssegers/mongodb）
+RUN apk add --no-cache \
+    libpng-dev libjpeg-turbo-dev freetype-dev \
+    autoconf g++ make \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd \
+    && pecl install mongodb \
+    && docker-php-ext-enable mongodb \
+    && apk del autoconf g++ make libpng-dev libjpeg-turbo-dev freetype-dev
 
-RUN pecl install mongodb \
-    && docker-php-ext-enable mongodb
+# Composer（官方 php 映像未內建）
+RUN apk add --no-cache curl \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
+# Nginx：Laravel 使用 public 為 document root
+COPY docker/nginx-default.conf /etc/nginx/http.d/default.conf
+RUN rm -f /etc/nginx/conf.d/default.conf
+
+COPY docker/supervisord.conf /etc/supervisord.conf
 
 WORKDIR /var/www/html
+
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs --no-scripts
+RUN composer install --no-dev --no-interaction --optimize-autoloader
 
-COPY nginx.conf /etc/nginx/sites-available/default
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
+ENV APP_ENV=production \
+    APP_DEBUG=false \
+    LOG_CHANNEL=stderr \
+    COMPOSER_ALLOW_SUPERUSER=1
 
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod +x /var/www/html/scripts/01-render-deploy.sh
 
-RUN ln -sf /dev/stdout /var/log/nginx/access.log \
-    && ln -sf /dev/stderr /var/log/nginx/error.log
+EXPOSE 80
 
-EXPOSE 10000
-
-CMD ["/start.sh"]
+CMD /var/www/html/scripts/01-render-deploy.sh && exec /usr/bin/supervisord -c /etc/supervisord.conf

@@ -21,13 +21,15 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 COPY nginx.conf /etc/nginx/sites-available/default
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
-    && ln -sf /dev/stderr /var/www/html/storage/logs/laravel.log
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-EXPOSE 80
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log
 
-CMD sed -i "s/listen 80/listen ${PORT:-80}/g" /etc/nginx/sites-available/default && \
-    service nginx start && \
-    php-fpm
+EXPOSE 10000
+
+CMD ["/start.sh"]

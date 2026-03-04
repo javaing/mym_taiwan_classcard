@@ -1,4 +1,4 @@
-FROM php:8.0-fpm-bullseye
+FROM php:8.1-fpm-bullseye
 
 RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
     nginx git unzip curl \

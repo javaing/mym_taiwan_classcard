@@ -11,7 +11,7 @@ RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
 
-RUN pecl install mongodb-1.16.2 \
+RUN pecl install mongodb \
     && docker-php-ext-enable mongodb
 
 COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
@@ -19,7 +19,7 @@ COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 
 COPY nginx.conf /etc/nginx/sites-available/default
 COPY start.sh /start.sh

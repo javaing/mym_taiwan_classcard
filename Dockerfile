@@ -1,10 +1,11 @@
-FROM php:7.4-fpm-bullseye
+FROM php:8.0-fpm-bullseye
 
 RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
     nginx git unzip curl \
     libpng-dev libonig-dev libxml2-dev \
     libzip-dev libfreetype6-dev libjpeg62-turbo-dev \
-    libssl-dev pkg-config \
+    libssl-dev pkg-config ca-certificates \
+    && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \

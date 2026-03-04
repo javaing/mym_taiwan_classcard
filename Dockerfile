@@ -1,4 +1,5 @@
-# Laravel 7 需 PHP 7.4（PHP 8 與 ArrayAccess 不相容）。改用 Debian 基底，gd/mongodb 安裝較穩定
+# Laravel 7 需 PHP 7.4。使用 Debian 基底（apt-get），勿用 Alpine（apk）。
+# 若 Render 仍報 apk/gd 錯誤，請在 Dashboard 使用 Clear build cache & deploy。
 FROM php:7.4-fpm-bullseye
 
 RUN apt-get update && apt-get install -y --no-install-recommends \

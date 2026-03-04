@@ -19,7 +19,7 @@ COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
+RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs --no-scripts
 
 COPY nginx.conf /etc/nginx/sites-available/default
 COPY start.sh /start.sh

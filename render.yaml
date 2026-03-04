@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: mym-taiwan-classcard
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    branch: master
+    envVars:
+      - key: APP_NAME
+        value: MYM_Taiwan
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        value: base64:Bw7vFpU4Mmx9FgWpVXV4/plNpIH5HcQFv0m26b2yGY=
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        sync: false
+      - key: DB_CONNECTION
+        value: mongodb
+      - key: DB_DSN
+        sync: false
+      - key: DB_DATABASE
+        value: MYMTW_CardInfo
+      - key: LINE_CHANNEL_ID
+        sync: false
+      - key: LINE_SECRET
+        sync: false
+      - key: LINE_CHANNEL_ID2
+        sync: false
+      - key: LINE_SECRET2
+        sync: false
+      - key: PORT
+        value: "80"

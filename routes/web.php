@@ -18,6 +18,10 @@ use Illuminate\Support\Facades\Auth;
 //     return view('welcome');
 // });
 Route::get('/', 'LoginController@pageLine');
+// 部分主機／健康檢查會打 /index.php，導向首頁避免 500
+Route::get('index.php', function () {
+    return redirect('/');
+});
 //Route::get('/class', 'ClassCardController@page');
 //Route::get('/registeclass/{index}', 'ClassCardController@registeclass')->where('index', '[0-9]+');
 Route::get('/line', 'LoginController@pageLine');

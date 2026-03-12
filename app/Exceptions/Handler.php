@@ -36,6 +36,16 @@ class Handler extends ExceptionHandler
      */
     public function report(Throwable $exception)
     {
+        // Render 等雲端看不到 storage/logs，把錯誤打到 stderr 方便在 Logs 看到
+        if (!config('app.debug')) {
+            try {
+                \Illuminate\Support\Facades\Log::channel('stderr')->error(
+                    get_class($exception) . ': ' . $exception->getMessage()
+                );
+            } catch (\Throwable $e) {
+                error_log($exception->getMessage());
+            }
+        }
         parent::report($exception);
     }
 

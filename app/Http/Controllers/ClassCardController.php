@@ -187,17 +187,38 @@ class ClassCardController extends Controller
     }
 
 
-    public function showClassCard($cardId)
+    public function showClassCard(Request $request, $cardId)
     {
+        $stderr = fn ($msg) => Log::channel('stderr')->info('[showClassCard] ' . $msg);
+        $stderr('start cardId(encoded)=' . $cardId);
+
         $cardId = base64_decode($cardId);
+        $stderr('decoded cardId=' . $cardId);
+
         $card = DBHelper::getCard($cardId);
         if (!$card) {
+            $stderr('getCard null');
             $link = $this->goBackLink();
             print_r('<h3>無此課卡，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
+        $stderr('card found CardID=' . ($card['CardID'] ?? '?'));
+
+        $debugConsumeCount = null;
+        if ($request->query('debug')) {
+            try {
+                $consumes = DBHelper::getConsume($cardId);
+                $debugConsumeCount = count($consumes);
+                $stderr('getConsume count=' . $debugConsumeCount);
+            } catch (\Throwable $e) {
+                Log::channel('stderr')->error('[showClassCard] getConsume error: ' . $e->getMessage());
+                Log::channel('stderr')->error((string) $e);
+                throw $e;
+            }
+        }
+
+        $stderr('returning view');
         Log::info("showClassCard({$cardId})");
-        $debugConsumeCount = $request->query('debug') ? count(DBHelper::getConsume($cardId)) : null;
         return view('classcard', [
             'card' => $card,
             'debugConsumeCount' => $debugConsumeCount,

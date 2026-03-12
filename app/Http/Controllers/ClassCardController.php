@@ -205,11 +205,16 @@ class ClassCardController extends Controller
         $stderr('card found CardID=' . ($card['CardID'] ?? '?'));
 
         $debugConsumeCount = null;
+        $debugCardPoints = null;
+        $debugTotalClasses = null;
         if ($request->query('debug')) {
             try {
                 $consumes = DBHelper::getConsume($cardId);
                 $debugConsumeCount = count($consumes);
                 $stderr('getConsume count=' . $debugConsumeCount);
+                $debugCardPoints = $card['Points'] ?? null;
+                $debugTotalClasses = (($card['Payment'] ?? null) == 500) ? 1 : 4;
+                $stderr('card Points=' . ($debugCardPoints ?? 'null') . ', total=' . ($debugTotalClasses ?? 'null'));
             } catch (\Throwable $e) {
                 Log::channel('stderr')->error('[showClassCard] getConsume error: ' . $e->getMessage());
                 Log::channel('stderr')->error((string) $e);
@@ -222,6 +227,8 @@ class ClassCardController extends Controller
         return view('classcard', [
             'card' => $card,
             'debugConsumeCount' => $debugConsumeCount,
+            'debugCardPoints' => $debugCardPoints,
+            'debugTotalClasses' => $debugTotalClasses,
         ]);
     }
 

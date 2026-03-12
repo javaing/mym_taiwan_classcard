@@ -18,6 +18,12 @@ class LoginController extends Controller
         $this->lineService = $lineService;
     }
 
+    /** 部分主機／健康檢查會打 /index.php，導向首頁（供 route:cache 序列化用） */
+    public function redirectToRoot()
+    {
+        return redirect('/');
+    }
+
     //如換domain name，請更新.env APP_URL
     public function pageLine()
     {

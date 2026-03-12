@@ -1,0 +1,17 @@
+{
+  "name": "mongo-sync-to-atlas",
+  "version": "1.0.0",
+  "description": "Sync remote MongoDB to Atlas without re-exporting",
+  "main": "sync-to-atlas.js",
+  "scripts": {
+    "sync": "node sync-to-atlas.js",
+    "count": "node count-atlas.js",
+    "drop": "node drop-atlas-data.js",
+    "fix-cardid": "node fix-atlas-cardid-type.js",
+    "fix-cardid:run": "node fix-atlas-cardid-type.js --run"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "mongodb": "^6.3.0"
+  }
+}

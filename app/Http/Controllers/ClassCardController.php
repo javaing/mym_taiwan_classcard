@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use App\Helpers\DBHelper as DBHelper;
 use App\Helpers\Tools as Tools;
 use Illuminate\Support\Facades\Auth;
@@ -132,6 +133,59 @@ class ClassCardController extends Controller
 
     }
 
+    /**
+     * LINE Pay 收款成功導向：不驗證購卡密碼，依 orderId 完成開卡並導向課卡頁。
+     *
+     * 整合方式：
+     * 1. 發送 LINE Pay Request API 時，confirmUrl 設為此頁網址並帶上 orderId，例如：
+     *    confirmUrl = route('classcard.linepay.confirm') . '?orderId=' . $orderId
+     *    或由 LINE Pay 回傳 orderId 時使用同一 orderId。
+     * 2. 在導向使用者至 LINE Pay 付款前，先將訂單存入 cache，例如：
+     *    Cache::put('linepay_order_' . $orderId, ['userId' => $userId, 'point' => $point], 600);
+     * 3. 使用者付款成功後會被導回此頁，此方法以 orderId 自 cache 取出 userId、point，略過購卡密碼後開卡並導向課卡顯示頁。
+     */
+    public function linePayConfirm(Request $request)
+    {
+        $orderId = $request->query('orderId');
+        $transactionId = $request->query('transactionId');
+
+        if (empty($orderId)) {
+            $link = url('line');
+            print_r('<h3>無效的訂單資訊，請<a href="' . $link . '">回首頁</a></h3>');
+            return;
+        }
+
+        $key = 'linepay_order_' . $orderId;
+        $order = Cache::get($key);
+        if (!$order || empty($order['userId']) || empty($order['point'])) {
+            $link = url('line');
+            print_r('<h3>訂單已過期或無效，請<a href="' . $link . '">回首頁</a></h3>');
+            return;
+        }
+
+        $userId = $order['userId'];
+        $point = (int) $order['point'];
+
+        if ($userId === null || $userId === 'null') {
+            $link = url('line');
+            print_r('<h3>無使用者資訊，請<a href="' . $link . '">回首頁</a></h3>');
+            return;
+        }
+
+        // 與 buyClassCardPost 相同：已有未使用卡則不買
+        $card = DBHelper::getValidCard($userId);
+        if ($card) {
+            Cache::forget($key);
+            return redirect('classcard/show/' . base64_encode($card['CardID']));
+        }
+
+        $cardId = DBHelper::buyNewCard($userId, $point);
+        Log::info("linePayConfirm orderId={$orderId}, buyClassCard({$cardId}, {$point})");
+        Cache::forget($key);
+
+        return redirect('classcard/show/' . base64_encode($cardId));
+    }
+
 
     public function showClassCard($cardId)
     {
@@ -143,8 +197,10 @@ class ClassCardController extends Controller
             return;
         }
         Log::info("showClassCard({$cardId})");
+        $debugConsumeCount = $request->query('debug') ? count(DBHelper::getConsume($cardId)) : null;
         return view('classcard', [
             'card' => $card,
+            'debugConsumeCount' => $debugConsumeCount,
         ]);
     }
 

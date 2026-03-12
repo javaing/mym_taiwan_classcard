@@ -49,6 +49,9 @@
 <div align="center" style="margin-bottom: 24px">
     <p16>{{ $expiredDate }}</p16>
 </div>
+@if(isset($debugConsumeCount))
+<div align="center" style="margin-bottom: 8px; font-size: 12px; color: #666;">[除錯] 此卡 Consume 筆數：{{ $debugConsumeCount }}</div>
+@endif
 
 <script type="text/javascript">
     $(function() {

@@ -32,6 +32,8 @@ Route::get('classcard/buy', 'ClassCardController@buyClassCard')->name('buy.class
 Route::post('classcard/buy', 'ClassCardController@buyClassCardPost')->name('buy.classcardPost');
 Route::get('buyNewCard', 'ClassCardController@buyNewCardView')->name('buy.newcard');
 Route::get('classcard/buycardpass', 'ClassCardController@buyCardPass');
+// LINE Pay 收款成功導向（不驗證購卡密碼，依 orderId 完成開卡）
+Route::get('classcard/linepay/confirm', 'ClassCardController@linePayConfirm')->name('classcard.linepay.confirm');
 
 //上課紀錄
 Route::get('classcard/history', 'ClassCardController@showClassHistoryByCookie');

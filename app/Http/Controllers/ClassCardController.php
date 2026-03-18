@@ -204,6 +204,19 @@ class ClassCardController extends Controller
         }
         $stderr('card found CardID=' . ($card['CardID'] ?? '?'));
 
+        // 僅允許查看本人課卡，避免登入後看到他人卡片（異常 case 卡號 20260019）
+        $currentUserId = $request->cookie('userId');
+        $cardUserId = $card['UserID'] ?? null;
+        if ($currentUserId !== null && $cardUserId !== null && (string) $cardUserId !== (string) $currentUserId) {
+            Log::warning("showClassCard 非本人課卡 cardId={$cardId} cardUser={$cardUserId} currentUser={$currentUserId}");
+            $stderr("ownership mismatch cardUser={$cardUserId} currentUser={$currentUserId}");
+            $myCard = DBHelper::getValidCardNoMatter($currentUserId);
+            if ($myCard) {
+                return redirect('classcard/show/' . base64_encode($myCard['CardID']));
+            }
+            return redirect()->route('buy.newcard', ['userId' => $currentUserId]);
+        }
+
         $debugConsumeCount = null;
         $debugCardPoints = null;
         $debugTotalClasses = null;

@@ -138,16 +138,24 @@ class DBHelper
         return $randomString;
     }
 
+    /**
+     * 產生當年新卡號，格式 YYYYNNNN（如 20260001）。
+     * 以「當年 CardCreateTime 範圍」計數，避免 like '%Y%' 對 BSON 日期無效導致重複卡號。
+     * 併發時仍可能重複，若需絕對唯一可改為 atomic counter（如 _card_seq collection）。
+     */
     public static function getCardId()
     {
+        $year = (int) date('Y');
+        $startOfYear = DBHelper::strtoMongoDate($year . '-01-01 00:00:00');
+        $endOfYear = DBHelper::strtoMongoDate(($year + 1) . '-01-01 00:00:00');
+
         $count = DB::collection('Purchase')
-            ->where('CardCreateTime', 'like', '%' . date("Y") . '%')
+            ->where('CardCreateTime', '>=', $startOfYear)
+            ->where('CardCreateTime', '<', $endOfYear)
             ->where('Payment', '>=', 0) //因為可能有退卡，是負的要去掉
             ->where('Payment', '!=', 200) //逾期補繳的要去掉
             ->count() + 1;
         return date("Y") . str_pad($count, 4, '0', STR_PAD_LEFT);
-
-        //return DBHelper::generateRandomString();
     }
 
     public static function registeclassByPoint($cardId, $point)

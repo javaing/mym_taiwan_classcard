@@ -29,5 +29,7 @@ services:
         sync: false
       - key: LINE_SECRET2
         sync: false
+      - key: SESSION_DRIVER
+        value: cookie
       - key: PORT
         value: "80"

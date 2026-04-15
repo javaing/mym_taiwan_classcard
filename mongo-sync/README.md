@@ -61,7 +61,31 @@ node drop-atlas-data.js --confirm
 
 或：`npm run drop -- --confirm`
 
-## 7. 修正 Atlas 內 CardID 型別（一次性）
+## 7. 備份 Atlas MYMTW_CardInfo 到本機
+
+將 Atlas 連線字串（`.env` 的 `ATLAS_URI`）指向的資料庫，**全部 collection** 匯出到本機資料夾：
+
+```bash
+npm run backup
+```
+
+- 輸出目錄：`mongo-sync/backup/<資料庫名>_<時間戳>/`
+- 每個 collection 一個檔案：`CollectionName.jsonl`（每行一筆 JSON，含 ObjectId、Date 等型別的 EJSON 格式）
+- 另有 `_backup_meta.json` 記錄匯出時間與 collection 清單
+
+**還原到 Atlas**（會 upsert 到 `.env` 的 `ATLAS_URI` 指向的 DB，請先確認連線）：
+
+```bash
+# 先看會處理哪些檔（不寫入）
+node restore-from-backup.js ./backup/MYMTW_CardInfo_2026-04-15T12-00-00 --dry-run
+
+# 實際寫入
+node restore-from-backup.js ./backup/MYMTW_CardInfo_2026-04-15T12-00-00
+```
+
+`backup/` 已列入 `.gitignore`，避免把資料備份誤 push 到 GitHub。
+
+## 8. 修正 Atlas 內 CardID 型別（一次性，選用）
 
 若同步後課卡頁只顯示部分蓋章紀錄，常是 Atlas 裡 `Consume` / `Purchase` 的 `CardID` 被存成數字，而程式預期字串。可將 Atlas 內該欄位統一改為字串：
 

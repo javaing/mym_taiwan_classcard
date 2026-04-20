@@ -61,7 +61,7 @@ use App\Helpers\DBHelperOnline as DBHelperOnline;
     <div style="margin-top: 3px;">
         <p18>Online課卡一覽(卡片明細可退款)</p18>
     </div>
-    <div class="tab-pane fade in active" id="prepaid">
+    <div class="tab-pane show active" id="prepaid">
         <table>
             <tr height="30">
                 <th>卡號</th>

@@ -53,7 +53,7 @@
     <div style="margin-top: 3px;">
         <p18>課卡一覽</p18>
     </div>
-    <div class="tab-pane fade in active" id="prepaid">
+    <div class="tab-pane show active" id="prepaid">
         <table>
             <tr height="30">
                 <th>卡號</th>

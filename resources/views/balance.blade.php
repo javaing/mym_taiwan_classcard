@@ -68,7 +68,7 @@ use App\Helpers\Tools as Tools;
     <li><a href="#used" data-toggle="tab">學員上課</a></li>
 </ul>
 <div id="myTabContent" class="tab-content">
-    <div class="tab-pane fade in active" id="prepaid">
+    <div class="tab-pane show active" id="prepaid">
         <table>
             <tr height="30">
                 <th>名字</th>

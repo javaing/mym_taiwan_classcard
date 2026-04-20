@@ -13,6 +13,9 @@ foreach($arrIn as $each) {
 $sumIn += $each['Payment'];
 }
 $range = $range ?? '';
+$dbFrom = DBHelper::dateShiftFrom($start);
+$dbTo   = DBHelper::dateShiftTo($end);
+$rowCount = count($arrIn);
 
 @endphp
 
@@ -31,7 +34,11 @@ $range = $range ?? '';
         changeBackground();
     })();
 </script>
-<h4>查詢區間{{substr($start,0,10)}}~{{substr($end,0,10)}}</h4>
+<h4>查詢區間 {{substr($start,0,10)}} ~ {{substr($end,0,10)}}</h4>
+<div style="background:#fff;border:1px solid #e5c27a;padding:6px 10px;margin:4px 0;display:inline-block;border-radius:4px;font-size:14px;">
+    <div>實際查詢資料庫區間：<b>{{ $dbFrom }} ~ {{ $dbTo }}</b>（PaymentTime &gt;= from 且 &lt; to）</div>
+    <div>資料筆數：<b>{{ $rowCount }}</b> 筆，小計金額：<b>{{ number_format($sumIn) }}</b></div>
+</div>
 <div class="text-left" style="width:200px;">
 
     <form action="{{url()->action('Balance2Controller@balance2')}}" method="POST">

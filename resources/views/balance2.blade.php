@@ -78,7 +78,7 @@ $rowCount = count($arrIn);
 
 
 <div id="myTabContent" class="tab-content">
-    <div class="tab-pane fade in active" id="prepaid">
+    <div class="tab-pane show active" id="prepaid">
         <table>
             <tr height="30">
                 <th>名字</th>

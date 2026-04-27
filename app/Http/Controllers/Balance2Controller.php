@@ -32,6 +32,18 @@ class Balance2Controller extends Controller
         return Carbon::now()->month % 2 == 0 ? -1 : -2; //上個區間;
     }
 
+    private function resolveDownloadRange(Request $request)
+    {
+        if ($request->start && $request->end) {
+            return [$request->start, $request->end];
+        }
+
+        $index = $this->getLastMonthRange();
+        $start = Carbon::now()->startOfMonth()->add($index, 'month');
+        $end = Carbon::now()->startOfMonth()->add($index + 2, 'month')->add(-1, 'day');
+        return [$start, $end];
+    }
+
     public function balance2(Request $request)
     {
         $start = $request->start;
@@ -115,8 +127,7 @@ class Balance2Controller extends Controller
     //save data to excel, then download excel
     public function downloadFile(Request $request)
     {
-        $start = $request->start;
-        $end = $request->end;
+        [$start, $end] = $this->resolveDownloadRange($request);
         $file = "MYMTW_活動收費紀錄_" . $this->buildFileDateRange($start, $end) . ".xlsx";
         $userName = $request->userName;
 
@@ -201,8 +212,7 @@ class Balance2Controller extends Controller
     //save data to excel, then download excel
     public function downloadFileGroupByname(Request $request)
     {
-        $start = $request->start;
-        $end = $request->end;
+        [$start, $end] = $this->resolveDownloadRange($request);
         $file = "MYMTW_活動收費紀錄_" . $this->buildFileDateRange($start, $end) . "_byName.xlsx";
         $userName = $request->userName;
 
@@ -238,8 +248,7 @@ class Balance2Controller extends Controller
 
     public function downloadFileGroupByKind(Request $request)
     {
-        $start = $request->start;
-        $end = $request->end;
+        [$start, $end] = $this->resolveDownloadRange($request);
         $file = "MYMTW_活動收費紀錄_" . $this->buildFileDateRange($start, $end) . "_byKind.xlsx";
         $userName = $request->userName;
 
@@ -251,8 +260,7 @@ class Balance2Controller extends Controller
 
     public function downloadFileGroupByLocationKind(Request $request)
     {
-        $start = $request->start;
-        $end = $request->end;
+        [$start, $end] = $this->resolveDownloadRange($request);
         $file = "MYMTW_活動收費紀錄_" . $this->buildFileDateRange($start, $end) . "_byLocationKind.xlsx";
         $userName = $request->userName;
 

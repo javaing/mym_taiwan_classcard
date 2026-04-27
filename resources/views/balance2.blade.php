@@ -143,29 +143,25 @@ $rowCount = count($arrIn);
 
 </div>
 
-<form action="download" method="POST">
-    @csrf
+<form action="download" method="GET">
     <input type="hidden" name="start" value="{{$start}}">
     <input type="hidden" name="end" value="{{$end}}">
     <button class="btn btn-sm btn-default" type="submit">下載報表</button>
 </form>
 
-<form action="downloadByName" method="POST">
-    @csrf
+<form action="downloadByName" method="GET">
     <input type="hidden" name="start" value="{{$start}}">
     <input type="hidden" name="end" value="{{$end}}">
     <button class="btn btn-sm btn-default" type="submit">報表ByName</button>
 </form>
 
-<form action="downloadByKind" method="POST">
-    @csrf
+<form action="downloadByKind" method="GET">
     <input type="hidden" name="start" value="{{$start}}">
     <input type="hidden" name="end" value="{{$end}}">
     <button class="btn btn-sm btn-default" type="submit">報表By項目</button>
 </form>
 
-<form action="downloadByLocationKind" method="POST">
-    @csrf
+<form action="downloadByLocationKind" method="GET">
     <input type="hidden" name="start" value="{{$start}}">
     <input type="hidden" name="end" value="{{$end}}">
     <button class="btn btn-sm btn-default" type="submit">報表By地區項目</button>

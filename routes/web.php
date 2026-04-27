@@ -62,10 +62,10 @@ Route::get('/account/balance2', 'Balance2Controller@balance2');
 Route::post('/account/balance2', 'Balance2Controller@balance2post');
 Route::post('/account/balance2', 'Balance2Controller@balance2FreeRange');
 Route::post('/account/carddetail2', 'Balance2Controller@cardDetail2');
-Route::post('/download', 'Balance2Controller@downloadFile');
-Route::post('/downloadByName', 'Balance2Controller@downloadFileGroupByname');
-Route::post('/downloadByKind', 'Balance2Controller@downloadFileGroupByKind');
-Route::post('/downloadByLocationKind', 'Balance2Controller@downloadFileGroupByLocationKind');
+Route::match(['get', 'post'], '/download', 'Balance2Controller@downloadFile');
+Route::match(['get', 'post'], '/downloadByName', 'Balance2Controller@downloadFileGroupByname');
+Route::match(['get', 'post'], '/downloadByKind', 'Balance2Controller@downloadFileGroupByKind');
+Route::match(['get', 'post'], '/downloadByLocationKind', 'Balance2Controller@downloadFileGroupByLocationKind');
 
 //購買線上課程
 Route::get('/onlineclass/buy', 'OnlineClassController@list');

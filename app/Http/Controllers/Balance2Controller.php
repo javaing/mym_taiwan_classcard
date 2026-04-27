@@ -206,6 +206,13 @@ class Balance2Controller extends Controller
               continue;
           }
 
+          if (($record['__total'] ?? false) === true) {
+              $sheet->setCellValue('C' . $rowNumber, '總計');
+              $sheet->setCellValue('D' . $rowNumber, number_format($record['Payment']));
+              $rowNumber++;
+              continue;
+          }
+
           $this->writeRecord($sheet, $rowNumber, $record);
           $rowNumber++;
       }
@@ -274,40 +281,40 @@ class Balance2Controller extends Controller
         $userName = $request->userName;
 
         $arrIn = DBHelper::getBalanceInJoinByType($userName ?: 'ALL', $start, $end);
-        $grouped = [];
-        foreach ($arrIn as $record) {
-            $location = $record['Location'] ?: '未分類';
-            if (!array_key_exists($location, $grouped)) {
-                $grouped[$location] = [
-                    'asana' => [],
-                    'others' => [],
-                ];
-            }
+        $asana = [];
+        $others = [];
+        $asanaTotal = 0;
+        $othersTotal = 0;
 
+        foreach ($arrIn as $record) {
             if ($record['Type'] === DBHelper::$tableTypeAsana) {
-                array_push($grouped[$location]['asana'], $record);
+                array_push($asana, $record);
+                $asanaTotal += $record['Payment'];
             } else {
-                array_push($grouped[$location]['others'], $record);
+                array_push($others, $record);
+                $othersTotal += $record['Payment'];
             }
         }
 
-        ksort($grouped);
-
         $output = [];
-        foreach ($grouped as $location => $groups) {
-            foreach ($groups['asana'] as $record) {
-                array_push($output, $record);
-            }
+        foreach ($asana as $record) {
+            array_push($output, $record);
+        }
 
-            if (sizeof($groups['asana']) > 0 && sizeof($groups['others']) > 0) {
-                array_push($output, ['__blank' => true]);
-            }
+        if (sizeof($asana) > 0) {
+            array_push($output, ['__total' => true, 'Payment' => $asanaTotal]);
+        }
 
-            foreach ($groups['others'] as $record) {
-                array_push($output, $record);
-            }
-
+        if (sizeof($asana) > 0 && sizeof($others) > 0) {
             array_push($output, ['__blank' => true]);
+        }
+
+        foreach ($others as $record) {
+            array_push($output, $record);
+        }
+
+        if (sizeof($others) > 0) {
+            array_push($output, ['__total' => true, 'Payment' => $othersTotal]);
         }
 
         return $this->genFileWithBlankRows($output, $file);

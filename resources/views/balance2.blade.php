@@ -164,6 +164,6 @@ $rowCount = count($arrIn);
 <form action="downloadByLocationKind" method="GET">
     <input type="hidden" name="start" value="{{$start}}">
     <input type="hidden" name="end" value="{{$end}}">
-    <button class="btn btn-sm btn-default" type="submit">報表By地區項目</button>
+    <button class="btn btn-sm btn-default" type="submit">報表By項目地區</button>
 </form>
 @endsection

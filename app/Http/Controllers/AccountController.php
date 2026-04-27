@@ -29,6 +29,11 @@ class AccountController extends Controller
         $request = new Request();
         $request->start = DBHelper::toDateString($start);
         $request->end = DBHelper::toDateString($end);
+        Log::info('account.balance.create', [
+            'start' => $request->start,
+            'end' => $request->end,
+            'path' => request()->path(),
+        ]);
         return $this->balance($request);
     }
 
@@ -42,6 +47,12 @@ class AccountController extends Controller
             $start = Carbon::now()->startOfMonth()->add(-1, 'month');
             $end = Carbon::now()->startOfMonth()->add(1, 'month');
         }
+        Log::info('account.balance.render', [
+            'start' => (string) $start,
+            'end' => (string) $end,
+            'method' => $request->method(),
+            'url' => $request->fullUrl(),
+        ]);
 
         return view('balance', [
             'start' => $start,
@@ -51,8 +62,15 @@ class AccountController extends Controller
 
     public function cardDetail($cardId)
     {
+        $encodedCardId = $cardId;
         $cardId = base64_decode($cardId);
         $card = DBHelper::getCard($cardId);
+        Log::info('account.cardDetail.open', [
+            'encodedCardId' => $encodedCardId,
+            'cardId' => $cardId,
+            'found' => $card != null,
+            'referer' => request()->headers->get('referer'),
+        ]);
         if (!$card) {
             print_r('無此課卡');
             return;

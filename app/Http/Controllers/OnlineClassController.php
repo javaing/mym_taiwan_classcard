@@ -56,6 +56,12 @@ class OnlineClassController extends Controller
     {
         $cardId = base64_decode($request->cardId);
         $card = DBHelperOnline::getCardOnline($cardId);
+        Log::info('onlineclass.cardDetail.open', [
+            'encodedCardId' => $request->cardId,
+            'cardId' => $cardId,
+            'found' => $card != null,
+            'referer' => $request->headers->get('referer'),
+        ]);
         if (!$card) {
             print_r('無此課卡');
             return;

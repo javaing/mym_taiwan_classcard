@@ -124,6 +124,16 @@ class Balance2Controller extends Controller
         return Carbon::parse($start)->format('Y') . Carbon::parse($start)->format('m') . Carbon::parse($end)->format('m');
     }
 
+    private function buildDownloadPath($file)
+    {
+        $dir = storage_path('app/downloads');
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        return $dir . DIRECTORY_SEPARATOR . $file;
+    }
+
     //save data to excel, then download excel
     public function downloadFile(Request $request)
     {
@@ -160,11 +170,10 @@ class Balance2Controller extends Controller
       }
 
       $writer = new Xlsx($spreadsheet);
-      $writer->save($file);
+      $path = $this->buildDownloadPath($file);
+      $writer->save($path);
 
-      //$path = "..\\public\\" . $file;
-      $path = "../public/" . $file; //這個寫法windows, ubuntu都可接受
-      return response()->download($path, $file);
+      return response()->download($path, $file)->deleteFileAfterSend(true);
     }
 
     private function writeHeader($sheet)
@@ -202,10 +211,10 @@ class Balance2Controller extends Controller
       }
 
       $writer = new Xlsx($spreadsheet);
-      $writer->save($file);
+      $path = $this->buildDownloadPath($file);
+      $writer->save($path);
 
-      $path = "../public/" . $file;
-      return response()->download($path, $file);
+      return response()->download($path, $file)->deleteFileAfterSend(true);
     }
 
 

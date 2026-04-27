@@ -46,6 +46,7 @@ class DBHelper
     public static function toDateStringShort($dbdate)
     {
         if (!$dbdate) return '';
+        if ($dbdate instanceof \DateTimeInterface) return $dbdate->format('y-m-d');
         return $dbdate->toDateTime()->format('y-m-d');
     }
 

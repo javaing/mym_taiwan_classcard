@@ -156,6 +156,47 @@ class Balance2Controller extends Controller
       return response()->download($path, $file);
     }
 
+    private function writeHeader($sheet)
+    {
+      $sheet->setCellValue('A1', '名字');
+      $sheet->setCellValue('B1', '日期');
+      $sheet->setCellValue('C1', '金額');
+      $sheet->setCellValue('D1', '種類');
+      $sheet->setCellValue('E1', '所在');
+    }
+
+    private function writeRecord($sheet, $rowNumber, $record)
+    {
+      $sheet->setCellValue('A' . $rowNumber, $record['Name']);
+      $sheet->setCellValue('B' . $rowNumber, DBHelper::toDateStringShort($record['PaymentTime']));
+      $sheet->setCellValue('C' . $rowNumber, number_format($record['Payment']));
+      $sheet->setCellValue('D' . $rowNumber, $record['Type']);
+      $sheet->setCellValue('E' . $rowNumber, $record['Location']);
+    }
+
+    public function genFileWithBlankRows($arrIn, $file) {
+      $spreadsheet = new Spreadsheet();
+      $sheet = $spreadsheet->getActiveSheet();
+      $this->writeHeader($sheet);
+
+      $rowNumber = 2;
+      foreach ($arrIn as $record) {
+          if (($record['__blank'] ?? false) === true) {
+              $rowNumber++;
+              continue;
+          }
+
+          $this->writeRecord($sheet, $rowNumber, $record);
+          $rowNumber++;
+      }
+
+      $writer = new Xlsx($spreadsheet);
+      $writer->save($file);
+
+      $path = "../public/" . $file;
+      return response()->download($path, $file);
+    }
+
 
     //save data to excel, then download excel
     public function downloadFileGroupByname(Request $request)
@@ -206,6 +247,53 @@ class Balance2Controller extends Controller
         $arrIn = DBHelper::getBalanceInJoinByType($userName ?: 'ALL', $start, $end);
 
         return $this->genFile($arrIn, $file);
+    }
+
+    public function downloadFileGroupByLocationKind(Request $request)
+    {
+        $start = $request->start;
+        $end = $request->end;
+        $file = "MYMTW_活動收費紀錄_" . $this->buildFileDateRange($start, $end) . "_byLocationKind.xlsx";
+        $userName = $request->userName;
+
+        $arrIn = DBHelper::getBalanceInJoinByType($userName ?: 'ALL', $start, $end);
+        $grouped = [];
+        foreach ($arrIn as $record) {
+            $location = $record['Location'] ?: '未分類';
+            if (!array_key_exists($location, $grouped)) {
+                $grouped[$location] = [
+                    'asana' => [],
+                    'others' => [],
+                ];
+            }
+
+            if ($record['Type'] === DBHelper::$tableTypeAsana) {
+                array_push($grouped[$location]['asana'], $record);
+            } else {
+                array_push($grouped[$location]['others'], $record);
+            }
+        }
+
+        ksort($grouped);
+
+        $output = [];
+        foreach ($grouped as $location => $groups) {
+            foreach ($groups['asana'] as $record) {
+                array_push($output, $record);
+            }
+
+            if (sizeof($groups['asana']) > 0 && sizeof($groups['others']) > 0) {
+                array_push($output, ['__blank' => true]);
+            }
+
+            foreach ($groups['others'] as $record) {
+                array_push($output, $record);
+            }
+
+            array_push($output, ['__blank' => true]);
+        }
+
+        return $this->genFileWithBlankRows($output, $file);
     }
 
 }

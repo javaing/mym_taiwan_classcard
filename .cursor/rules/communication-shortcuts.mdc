@@ -1,0 +1,8 @@
+---
+description: User communication shortcuts for this project
+alwaysApply: true
+---
+
+# Communication Shortcuts
+
+- When the user says `candp`, treat it as `commit and push`.

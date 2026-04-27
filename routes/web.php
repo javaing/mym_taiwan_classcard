@@ -65,6 +65,7 @@ Route::post('/account/carddetail2', 'Balance2Controller@cardDetail2');
 Route::post('/download', 'Balance2Controller@downloadFile');
 Route::post('/downloadByName', 'Balance2Controller@downloadFileGroupByname');
 Route::post('/downloadByKind', 'Balance2Controller@downloadFileGroupByKind');
+Route::post('/downloadByLocationKind', 'Balance2Controller@downloadFileGroupByLocationKind');
 
 //購買線上課程
 Route::get('/onlineclass/buy', 'OnlineClassController@list');

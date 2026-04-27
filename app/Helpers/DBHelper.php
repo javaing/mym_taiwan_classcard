@@ -22,6 +22,7 @@ class DBHelper
     public static function toDateString($dbdate)
     {
         if (!$dbdate) return '';
+        if ($dbdate instanceof \DateTimeInterface) return $dbdate->format('Y/m/d');
         return $dbdate->toDateTime()->format('Y/m/d');
     }
 

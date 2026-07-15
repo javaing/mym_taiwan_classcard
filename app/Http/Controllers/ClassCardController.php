@@ -83,7 +83,7 @@ class ClassCardController extends Controller
     {
         $userId = $request->userId;
         $point = $request->point; //1 or 4
-        $buycardPass = strtolower($request->buycardPass);
+        $buycardPass = strtolower(trim($request->buycardPass));
 
         if ($userId==null || $userId=="null") {
             $link = $this->goBackLink();
@@ -97,7 +97,7 @@ class ClassCardController extends Controller
           return;
         }
 
-        //Log::info("buyClassCard check pass {$buycardPass}, ".Tools::getBuyCardPassword()      );
+        Log::info("buyClassCard check pass input={$buycardPass}, expectedDaily=".Tools::getBuyCardPassword());
         if($buycardPass != Tools::getBuyCardPassword() && $buycardPass != config('line.buy_newcard_pass')) {
           $link = $this->goBackLink();
           print_r('<h3>買卡密碼不正確，請洽工作人員<a href="' . $link . '">回上頁</a></h3>');

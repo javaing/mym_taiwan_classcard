@@ -172,6 +172,25 @@ class DBHelper
             ->update($newdata);
     }
 
+    /**
+     * 以樂觀鎖定(compare-and-swap)方式扣一點：
+     * 只有資料庫當下的 Points 仍等於呼叫端讀到的 $currentPoints 時才會扣成功，
+     * 避免(a)同時多次請求(連點、QR重複掃、網路重試)造成重複扣點/重複寫入消費紀錄，
+     * 以及(b)呼叫端拿著過期的點數快照(例如舊的QR連結)誤把點數蓋回錯誤的值。
+     * 呼叫端仍須自行先檢查 $currentPoints > 0，此函式不會擋「已無點數」的情況。
+     * @return bool 是否扣點成功
+     */
+    public static function tryConsumePoint($cardId, $currentPoints)
+    {
+        $updated = DB::collection('Purchase')
+            ->where('CardID', $cardId)
+            ->where('Payment', '>', 0) //因為可能有退卡，是負的要去掉
+            ->where('Payment', '!=', 200) //逾期補繳的要去掉
+            ->where('Points', $currentPoints)
+            ->update(['$set' => ['Points' => $currentPoints - 1]]);
+        return $updated > 0;
+    }
+
     public static function isSingleClassCard($cardId)
     {
         $card = DB::collection('Purchase')->where('CardID', $cardId)->first();

@@ -181,6 +181,23 @@ static $OneClassFee = 300;
             ->update($newdata);
     }
 
+    /**
+     * 以樂觀鎖定(compare-and-swap)方式扣一點，作法同 DBHelper::tryConsumePoint()。
+     * 只有資料庫當下的 Points 仍等於呼叫端讀到的 $currentPoints 時才會扣成功，
+     * 避免重複請求造成重複扣點/重複消費紀錄，或點數已用完仍被繼續扣成負數。
+     * 呼叫端仍須自行先檢查 $currentPoints > 0，此函式不會擋「已無點數」的情況。
+     * @return bool 是否扣點成功
+     */
+    public static function tryConsumePoint($cardId, $currentPoints)
+    {
+        $updated = DB::collection(DBHelperOnline::$CollectPurchase)
+            ->where('CardID', $cardId)
+            ->where('Payment', '>', 0) //因為可能有退卡，是負的要去掉
+            ->where('Points', $currentPoints)
+            ->update(['$set' => ['Points' => $currentPoints - 1]]);
+        return $updated > 0;
+    }
+
     public static function insertConsume($cardId, $point, $dt)
     {
         $newCard = [

@@ -116,32 +116,46 @@ class AccountController extends Controller
     {
         $cardId = base64_decode($request->cardId);
         //Log::info("registeclassByhand cardId($cardId)");
-        if (DBHelper::getCard($cardId) == null) {
+        $card = DBHelper::getCard($cardId);
+        if ($card == null) {
             $link = $this->goBackLink();
             print_r('<h3>尚未選卡，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
+        if ($card['Points'] <= 0) {
+            Log::warning("registeclassByhand blocked: no points. cardId={$cardId}");
+            $link = $this->goBackLink();
+            print_r('<h3>此卡已無可用點數，請<a href="' . $link . '">回上頁</a></h3>');
+            return;
+        }
 
-
-        $point = DBHelper::getCard($cardId)['Points']; //1 or 4
         $dt = $request->registedate;
         //Log::info("registeclassByhand dt($dt)");
         $timezone_ms = 8 * 60 * 60 * 1000;
         $dt = new \MongoDB\BSON\UTCDateTime(strtotime($dt) * 1000 + $timezone_ms);
 
 
-        //先檢查一天只能蓋一次
+        //先檢查該日期是否已蓋過章
         $exist = DBHelper::isConsumeByDate($cardId, $dt);
         if ($exist) {
+            Log::warning("registeclassByhand blocked: already consumed that date. cardId={$cardId}");
             $link = $this->goBackLink();
             print_r('<h3>今日已蓋章，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
 
-        //扣點數
-        DBHelper::registeclassByPoint($cardId, $point);
+        //扣點數(compare-and-swap，避免點數已用完仍被手動補登蓋過頭)
+        $currentPoints = $card['Points'];
+        if (!DBHelper::tryConsumePoint($cardId, $currentPoints)) {
+            Log::warning("registeclassByhand blocked: CAS conflict. cardId={$cardId}, expectedPoints={$currentPoints}");
+            $link = $this->goBackLink();
+            print_r('<h3>資料已被更新，請<a href="' . $link . '">回上頁</a>後重新整理再試</h3>');
+            return;
+        }
+
+        Log::info("registeclassByhand success. cardId={$cardId}, points {$currentPoints}->" . ($currentPoints - 1));
         //紀錄花費500 or 300
-        DBHelper::insertConsume($cardId, $point, $dt);
+        DBHelper::insertConsume($cardId, $currentPoints, $dt);
         return redirect('account/carddetail/' . base64_encode($cardId));
     }
 

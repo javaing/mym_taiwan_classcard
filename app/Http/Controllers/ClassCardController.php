@@ -24,18 +24,37 @@ class ClassCardController extends Controller
     public function registeclassByPoint($point, $cardId)
     {
         $cardId = base64_decode($cardId);
+
+        //每次都重新讀取當下的點數，不信任URL/連結裡可能過期的$point
+        $card = DBHelper::getCard($cardId);
+        if (!$card || $card['Points'] <= 0) {
+            Log::warning("registeclassByPoint blocked: no points. cardId={$cardId}");
+            $link = $this->goBackLink();
+            print_r('<h3>此卡已無可用點數，請<a href="' . $link . '">回上頁</a></h3>');
+            return;
+        }
+
         //先檢查一天只能蓋一次
-        $exist = DBHelper::isConsume($cardId, $point);
+        $exist = DBHelper::isConsume($cardId);
         if ($exist) {
+            Log::warning("registeclassByPoint blocked: already consumed today. cardId={$cardId}");
             $link = $this->goBackLink();
             print_r('<h3>今日已蓋章，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
 
-        //扣點數
-        DBHelper::registeclassByPoint($cardId, $point);
+        //扣點數(compare-and-swap，避免連點/重複請求造成重複扣點與重複消費紀錄)
+        $currentPoints = $card['Points'];
+        if (!DBHelper::tryConsumePoint($cardId, $currentPoints)) {
+            Log::warning("registeclassByPoint blocked: CAS conflict. cardId={$cardId}, expectedPoints={$currentPoints}");
+            $link = $this->goBackLink();
+            print_r('<h3>資料已被更新，請<a href="' . $link . '">回上頁</a>後重新整理再試</h3>');
+            return;
+        }
+
+        Log::info("registeclassByPoint success. cardId={$cardId}, points {$currentPoints}->" . ($currentPoints - 1));
         //紀錄花費500 or 300
-        DBHelper::insertConsumeToday($cardId, $point);
+        DBHelper::insertConsumeToday($cardId, $currentPoints);
         return redirect('classcard/show/' . base64_encode($cardId));
     }
 

@@ -80,6 +80,9 @@ Route::Post('/onlineclass/byhand', 'OnlineClassController@registeByhand');
 Route::get('/onlineclass/history', 'OnlineClassUserController@history');
 Route::get('/onlineclass/history/{userId}/{index}', 'OnlineClassUserController@historyPick')->name('onlineclass.historyPick');
 
+//台中活動介面試作（僅視覺展示，不寫入資料）
+Route::get('/taichung/preview/buttons', 'TaichungPreviewController@buttons')->name('taichung.preview.buttons');
+Route::get('/taichung/preview/select', 'TaichungPreviewController@select')->name('taichung.preview.select');
 
 Auth::routes();
 

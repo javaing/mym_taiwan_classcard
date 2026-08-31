@@ -50,6 +50,20 @@
         border-color: #a87b20;
         text-decoration: none;
     }
+
+    .location-login__copyright {
+        position: absolute;
+        right: 25%;
+        bottom: 8%;
+        left: 25%;
+        padding: 4px 0;
+        background: #fff9e5;
+        color: #c99c3b;
+        font-size: clamp(13px, 3.6vw, 20px);
+        letter-spacing: 1px;
+        text-align: center;
+        white-space: nowrap;
+    }
 </style>
 
 <div class="location-login">
@@ -63,5 +77,7 @@
         <a class="location-login__button" href="{{ $taipeiUrl }}">台北</a>
         <a class="location-login__button" href="{{ $taichungUrl }}">台中</a>
     </nav>
+
+    <div class="location-login__copyright">MYM TAIWAN ©{{ date('Y') }}</div>
 </div>
 @endsection

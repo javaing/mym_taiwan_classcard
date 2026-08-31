@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Services\LineService;
+use Carbon\Carbon;
 
 class LoginController extends Controller
 {
@@ -34,7 +35,28 @@ class LoginController extends Controller
         }
         Log::info('pageLine()=' . $url);
 
+        if ($this->shouldShowLocationHome()) {
+            $taipeiUrl = $url === 'reuse' ? route('reuse.line') : $url;
+
+            return view('line-location', [
+                'taipeiUrl' => $taipeiUrl,
+                'taichungUrl' => route('taichung.preview.buttons'),
+            ]);
+        }
+
         return view('line')->with('url', $url);
+    }
+
+    /**
+     * 測試期間於台灣時間週二、週六以外的 07:00～11:59 顯示新首頁。
+     */
+    private function shouldShowLocationHome()
+    {
+        $now = Carbon::now('Asia/Taipei');
+
+        return !in_array($now->dayOfWeekIso, [2, 6], true)
+            && $now->hour >= 7
+            && $now->hour < 12;
     }
     //onlineclassLogin
     public function onlineclassLogin()

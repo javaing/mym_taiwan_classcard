@@ -66,6 +66,23 @@
             box-shadow: 0 2px 8px rgba(111, 100, 54, 0.12);
         }
 
+        .activity-button:disabled {
+            border-color: #c9c9c9;
+            background: #f2f2f2;
+            color: #888;
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.78;
+        }
+
+        .activity-button:disabled .activity-price {
+            color: #888;
+        }
+
+        .activity-form {
+            margin: 0;
+        }
+
         .activity-name {
             display: block;
             font-size: 24px;
@@ -126,6 +143,16 @@
             line-height: 1.5;
         }
 
+        .preview-message.is-visible {
+            display: block;
+            margin-bottom: 22px;
+        }
+
+        .preview-message.is-warning {
+            background: #fff1cf;
+            color: #8a6420;
+        }
+
         .preview-note {
             margin-top: 24px;
             color: #8f8567;
@@ -138,10 +165,11 @@
         <h1 class="greeting">{{ $greetingName }}，你好</h1>
         <p class="date">{{ $displayDate }}</p>
 
+        @yield('status-message')
         @yield('activity-control')
 
         <div id="previewMessage" class="preview-message" role="status" aria-live="polite"></div>
-        <p class="preview-note">此為介面試作，不會新增報到或收款紀錄。</p>
+        <p class="preview-note">@yield('footer-note', '此為介面試作，不會新增報到或收款紀錄。')</p>
     </main>
 
     @yield('scripts')

@@ -325,6 +325,20 @@ class DBHelper
             ->get();
       }
 
+      //插入台中現金活動報到收入
+      if ($isAllMode) {
+        $taichungCheckins = DB::collection(DBHelperTaichung::$collection)
+            ->where('CheckinTime', '>=', DBHelper::parse($from))
+            ->where('CheckinTime', '<', DBHelper::parse($to))
+            ->get();
+      } else {
+        $taichungCheckins = DB::collection(DBHelperTaichung::$collection)
+            ->where('CheckinTime', '>=', DBHelper::parse($from))
+            ->where('CheckinTime', '<', DBHelper::parse($to))
+            ->where('UserID', DBHelper::getUserIdByUserName($Name))
+            ->get();
+      }
+
 
 
       $locationMap = DBHelper::getLocationMap();
@@ -341,6 +355,15 @@ class DBHelper
           $each['Type'] = '線上體位法';
           $each['Name'] = DBHelper::getUserName($each['UserID']);
           $each['Location'] =  $locationMap[ $each['Name'] ] ?? null;
+          array_push($totlaRecord, $each);
+      }
+      //插入台中現金活動
+      foreach ($taichungCheckins as $each) {
+          $each['Name'] = DBHelper::getUserName($each['UserID']);
+          $each['Payment'] = $each['Amount'];
+          $each['PaymentTime'] = $each['CheckinTime'];
+          $each['Type'] = $each['ActivityName'];
+          $each['Location'] = config('taichung.branch_label');
           array_push($totlaRecord, $each);
       }
 

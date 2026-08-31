@@ -22,7 +22,7 @@
             class="activity-form"
             method="POST"
             action="{{ route('taichung.checkin', ['activityType' => $activityType]) }}"
-            onsubmit="return confirm('請確認已將現金交給工作人員，再完成{{ $activity['label'] }}報到。');"
+            onsubmit="return confirm('確定完成{{ $activity['label'] }}報到？');"
         >
             @csrf
             <button class="activity-button" type="submit" @if($checked) disabled @endif>
@@ -40,8 +40,10 @@
             </button>
         </form>
     @endforeach
+
+    <a class="secondary-link" href="{{ route('taichung.activities') }}">重新選擇活動</a>
 @endsection
 
 @section('footer-note')
-請先將現金交給工作人員，再點選活動完成報到。每項活動每日限一次。
+點選已購活動完成報到；同一活動每日限一次。
 @endsection

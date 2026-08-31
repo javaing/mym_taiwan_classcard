@@ -82,9 +82,13 @@ Route::get('/onlineclass/history/{userId}/{index}', 'OnlineClassUserController@h
 
 //台中活動：共用LINE會員，現金繳費後自助報到
 Route::get('/taichung', 'LoginController@taichungLogin')->name('taichung.login');
-Route::get('/taichung/activities', 'TaichungActivityController@index')->name('taichung.activities');
+Route::get('/taichung/activities', 'TaichungActivityController@purchase')->name('taichung.activities');
+Route::post('/taichung/activities', 'TaichungActivityController@authorizeActivity')
+    ->middleware('throttle:5,1')
+    ->name('taichung.authorize');
+Route::get('/taichung/activity', 'TaichungActivityController@activity')->name('taichung.activity');
 Route::post('/taichung/checkin/{activityType}', 'TaichungActivityController@store')
-    ->where('activityType', 'asana|chanting')
+    ->where('activityType', '[a-z]+')
     ->name('taichung.checkin');
 
 //台中活動介面試作（僅視覺展示，不寫入資料）

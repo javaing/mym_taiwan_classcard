@@ -108,7 +108,8 @@
             margin-bottom: 18px;
         }
 
-        .activity-select {
+        .activity-select,
+        .activity-input {
             width: 100%;
             height: 54px;
             padding: 0 14px;
@@ -117,6 +118,10 @@
             background: #fff;
             color: #5f532f;
             font-size: 18px;
+        }
+
+        .activity-input {
+            margin-top: 14px;
         }
 
         .confirm-button {
@@ -157,6 +162,14 @@
             margin-top: 24px;
             color: #8f8567;
             font-size: 14px;
+        }
+
+        .secondary-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #8c6f2d;
+            font-size: 15px;
+            text-decoration: underline;
         }
     </style>
 </head>

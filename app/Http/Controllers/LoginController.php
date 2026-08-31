@@ -82,7 +82,11 @@ class LoginController extends Controller
             } catch (ClientException $exception) {
                 Log::warning('Taichung LINE token expired; restart login');
                 setcookie('access_token', '', $this->cookieOptions(time() - 3600));
-                $request->session()->forget(['line_user_id', 'taichung_authenticated']);
+                $request->session()->forget([
+                    'line_user_id',
+                    'taichung_authenticated',
+                    'taichung_activity_authorization',
+                ]);
             }
         }
 
@@ -96,7 +100,12 @@ class LoginController extends Controller
     {
         $accessToken = $_COOKIE['access_token'] ?? null;
 
-        $request->session()->forget(['line_user_id', 'line_oauth_state', 'taichung_authenticated']);
+        $request->session()->forget([
+            'line_user_id',
+            'line_oauth_state',
+            'taichung_authenticated',
+            'taichung_activity_authorization',
+        ]);
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         setcookie('access_token', '', $this->cookieOptions(time() - 3600));
@@ -162,6 +171,8 @@ class LoginController extends Controller
           return redirect('/onlineclass/history');
         }
         if ($state == $this->TAICHUNG) {
+            request()->session()->forget('taichung_activity_authorization');
+            request()->session()->regenerate();
             session([
                 'line_user_id' => $user_profile['userId'],
                 'taichung_authenticated' => true,

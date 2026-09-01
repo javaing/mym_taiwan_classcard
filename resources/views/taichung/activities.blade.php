@@ -22,7 +22,6 @@
             class="activity-form"
             method="POST"
             action="{{ route('taichung.checkin', ['activityType' => $activityType]) }}"
-            onsubmit="return confirm('確定完成{{ $activity['label'] }}報到？');"
         >
             @csrf
             <button class="activity-button" type="submit" @if($checked) disabled @endif>

@@ -6,12 +6,15 @@
 
 @php
 use App\Helpers\DBHelperOnline as DBHelperOnline;
+use App\Helpers\DBHelperTaichung as DBHelperTaichung;
 use App\Helpers\Tools as Tools;
 {{
         $arrIn = DBHelper::getBalanceIn($start, $end);
         //Illuminate\Support\Facades\Log::info('$arrIn=' . $arrIn);
         $arrIn2 = DBHelperOnline::getBalanceIn($start, $end);
         $arrIn = Tools::merge($arrIn, $arrIn2);
+        $arrIn3 = DBHelperTaichung::getBalanceIn($start, $end);
+        $arrIn = Tools::merge($arrIn, $arrIn3);
 
         $arrOut = DBHelper::getBalanceOut($start, $end);
         $arrOut2 = DBHelperOnline::getBalanceOut($start, $end);
@@ -115,7 +118,9 @@ use App\Helpers\Tools as Tools;
             <tr height="30">
                 <td width="100">
 
-                    @if ($purchase['Payment']==300|| $purchase['Payment']==1200)
+                    @if (!empty($purchase['ActivityType']))
+                      <a href="/alluser/{{ $purchase['UserID'] }}">{{ DBHelper::getUserName($purchase['UserID']) }}（台中{{ $purchase['ActivityName'] }}）</a>
+                    @elseif ($purchase['Payment']==300|| $purchase['Payment']==1200)
                       <a class="js-prepaid-card-link" data-card-id="{{ $purchase['CardID'] }}" data-payment="{{ $purchase['Payment'] }}" href="{{ route('onlineclass.cardDetail', ['cardId' => base64_encode($purchase['CardID'])]) }}">{{DBHelper::getUserName( $purchase['UserID']) }}</a>
                     @else
                       <a class="js-prepaid-card-link" data-card-id="{{ $purchase['CardID'] }}" data-payment="{{ $purchase['Payment'] }}" href="{{ route('account.cardDetail', ['cardId' => base64_encode($purchase['CardID'])]) }}">{{DBHelper::getUserName( $purchase['UserID']) }}</a>

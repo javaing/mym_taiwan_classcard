@@ -325,18 +325,18 @@ class DBHelper
             ->get();
       }
 
-      //插入台中現金活動報到收入
+      //插入台中現金活動預收
       if ($isAllMode) {
-        $taichungCheckins = DB::collection(DBHelperTaichung::$collection)
-            ->where('CheckinTime', '>=', DBHelper::parse($from))
-            ->where('CheckinTime', '<', DBHelper::parse($to))
-            ->get();
+        $taichungCheckins = DBHelperTaichung::getPrepaidInRange(
+            DBHelper::parse($from),
+            DBHelper::parse($to)
+        );
       } else {
-        $taichungCheckins = DB::collection(DBHelperTaichung::$collection)
-            ->where('CheckinTime', '>=', DBHelper::parse($from))
-            ->where('CheckinTime', '<', DBHelper::parse($to))
-            ->where('UserID', DBHelper::getUserIdByUserName($Name))
-            ->get();
+        $taichungCheckins = DBHelperTaichung::getPrepaidInRange(
+            DBHelper::parse($from),
+            DBHelper::parse($to),
+            DBHelper::getUserIdByUserName($Name)
+        );
       }
 
 
@@ -361,7 +361,7 @@ class DBHelper
       foreach ($taichungCheckins as $each) {
           $each['Name'] = DBHelper::getUserName($each['UserID']);
           $each['Payment'] = $each['Amount'];
-          $each['PaymentTime'] = $each['CheckinTime'];
+          $each['PaymentTime'] = $each['PaidAt'] ?? $each['CheckinTime'];
           $each['Type'] = $each['ActivityName'];
           $each['Location'] = config('taichung.branch_label');
           array_push($totlaRecord, $each);

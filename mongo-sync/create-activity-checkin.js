@@ -1,5 +1,6 @@
 /**
- * 建立台中活動報到 collection、欄位驗證與同日防重唯一索引。
+ * 建立台中活動 collection、欄位驗證與同日防重唯一索引。
+ * 一筆紀錄先預收（PaidAt），再蓋點（CheckinTime，可空）。
  *
  * 使用方式（mongo-sync 目錄）：
  *   node create-activity-checkin.js        # 只檢查，不寫入
@@ -18,56 +19,82 @@ if (!ATLAS_URI) {
   process.exit(1);
 }
 
-const validator = {
-  $and: [
-    {
-      $jsonSchema: {
-        bsonType: 'object',
-        required: [
-          'UserID',
-          'Branch',
-          'ActivityType',
-          'ActivityName',
-          'Amount',
-          'PaymentMethod',
-          'BusinessDate',
-          'CheckinTime',
-          'Source',
-          'CreatedAt',
-        ],
-        properties: {
-          UserID: { bsonType: 'string' },
-          Branch: { enum: ['taichung'] },
-          ActivityType: { enum: ['asana', 'chanting'] },
-          ActivityName: { bsonType: 'string' },
-          Amount: { bsonType: ['int', 'long', 'double', 'decimal'], minimum: 0 },
-          PaymentMethod: { enum: ['cash'] },
-          BusinessDate: {
-            bsonType: 'string',
-            pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+function buildValidator() {
+  return {
+    $and: [
+      {
+        $jsonSchema: {
+          bsonType: 'object',
+          required: [
+            'UserID',
+            'Branch',
+            'ActivityType',
+            'ActivityName',
+            'Amount',
+            'PaymentMethod',
+            'BusinessDate',
+            'Source',
+            'CreatedAt',
+          ],
+          properties: {
+            UserID: { bsonType: 'string' },
+            Branch: { enum: ['taichung'] },
+            ActivityType: { enum: ['asana', 'chanting'] },
+            ActivityName: { bsonType: 'string' },
+            Amount: { bsonType: ['int', 'long', 'double', 'decimal'], minimum: 0 },
+            PaymentMethod: { enum: ['cash'] },
+            BusinessDate: {
+              bsonType: 'string',
+              pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+            },
+            PaidAt: { bsonType: 'date' },
+            CheckinTime: { bsonType: ['date', 'null'] },
+            Source: { bsonType: 'string' },
+            CreatedAt: { bsonType: 'date' },
           },
-          CheckinTime: { bsonType: 'date' },
-          Source: { bsonType: 'string' },
-          CreatedAt: { bsonType: 'date' },
         },
       },
-    },
-    {
-      $or: [
-        {
-          ActivityType: 'asana',
-          ActivityName: '體位法',
-          Amount: 300,
-        },
-        {
-          ActivityType: 'chanting',
-          ActivityName: '梵唱',
-          Amount: 100,
-        },
-      ],
-    },
-  ],
-};
+      {
+        $or: [
+          {
+            ActivityType: 'asana',
+            ActivityName: '體位法',
+            Amount: 300,
+          },
+          {
+            ActivityType: 'chanting',
+            ActivityName: '梵唱',
+            Amount: 100,
+          },
+        ],
+      },
+    ],
+  };
+}
+
+async function applyValidator(db, validator, label) {
+  const exists = await db
+    .listCollections({ name: COLLECTION }, { nameOnly: true })
+    .hasNext();
+
+  if (!exists) {
+    await db.createCollection(COLLECTION, {
+      validator,
+      validationLevel: 'strict',
+      validationAction: 'error',
+    });
+    console.log('已建立 collection 與 validator（' + label + '）。');
+    return;
+  }
+
+  await db.command({
+    collMod: COLLECTION,
+    validator,
+    validationLevel: 'strict',
+    validationAction: 'error',
+  });
+  console.log('已更新 collection validator（' + label + '）。');
+}
 
 async function main() {
   const client = new MongoClient(ATLAS_URI);
@@ -85,27 +112,28 @@ async function main() {
     if (isDryRun) {
       if (exists) {
         const indexes = await db.collection(COLLECTION).indexes();
+        const missingPaidAt = await db.collection(COLLECTION).countDocuments({
+          PaidAt: { $exists: false },
+        });
         console.log('現有 indexes:', indexes.map((index) => index.name).join(', '));
+        console.log('缺少 PaidAt 的舊資料:', missingPaidAt, '筆');
       }
       console.log('預覽模式：加上 --run 才會建立 collection、validator 與唯一索引。');
       return;
     }
 
-    if (!exists) {
-      await db.createCollection(COLLECTION, {
-        validator,
-        validationLevel: 'strict',
-        validationAction: 'error',
-      });
-      console.log('已建立 collection 與 validator。');
-    } else {
-      await db.command({
-        collMod: COLLECTION,
-        validator,
-        validationLevel: 'strict',
-        validationAction: 'error',
-      });
-      console.log('已更新 collection validator。');
+    await applyValidator(db, buildValidator(), 'PaidAt 可選、CheckinTime 可空');
+
+    const collectionExists = await db
+      .listCollections({ name: COLLECTION }, { nameOnly: true })
+      .hasNext();
+
+    if (collectionExists) {
+      const backfill = await db.collection(COLLECTION).updateMany(
+        { PaidAt: { $exists: false } },
+        [{ $set: { PaidAt: { $ifNull: ['$CheckinTime', '$CreatedAt'] } } }],
+      );
+      console.log('已補 PaidAt:', backfill.modifiedCount, '筆');
     }
 
     const indexName = await db.collection(COLLECTION).createIndex(

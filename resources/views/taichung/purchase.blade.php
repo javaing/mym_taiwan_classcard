@@ -43,5 +43,5 @@
 @endsection
 
 @section('footer-note')
-請先將現金交給工作人員，選擇活動並輸入今日密碼。
+請先將現金交給工作人員，選擇活動並輸入今日密碼完成預收。
 @endsection

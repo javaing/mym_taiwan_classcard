@@ -32,7 +32,7 @@
                         @if($checked)
                             今日已完成
                         @else
-                            {{ number_format($activity['amount']) }} 元
+                            完成報到
                         @endif
                     </span>
                 </span>
@@ -44,5 +44,5 @@
 @endsection
 
 @section('footer-note')
-點選已購活動完成報到；同一活動每日限一次。
+已預收後點選完成報到；同一活動每日限一次。
 @endsection

@@ -53,13 +53,43 @@ class TaichungActivityController extends Controller
         }
 
         $businessDate = Carbon::now('Asia/Taipei')->format('Y-m-d');
+        $activity = $activities[$activityType];
+        $record = DBHelperTaichung::getTodayRecord($userId, $activityType, $businessDate);
+
+        if (!$record) {
+            $created = DBHelperTaichung::insertCashPrepaid(
+                $userId,
+                $activityType,
+                $activity,
+                $businessDate
+            );
+            $record = DBHelperTaichung::getTodayRecord($userId, $activityType, $businessDate);
+            if ($created) {
+                Log::info('Taichung activity prepaid', [
+                    'userId' => $userId,
+                    'activityType' => $activityType,
+                    'amount' => $activity['amount'],
+                    'businessDate' => $businessDate,
+                ]);
+            }
+        }
+
         $request->session()->put('taichung_activity_authorization', [
             'user_id' => $userId,
             'activity_type' => $activityType,
             'business_date' => $businessDate,
         ]);
 
-        return redirect()->route('taichung.activity');
+        if (DBHelperTaichung::isCheckedIn($record)) {
+            return redirect()
+                ->route('taichung.activity')
+                ->with('warning', '今天已完成「' . $activity['label'] . '」報到，不可重複點選。');
+        }
+
+        return redirect()
+            ->route('taichung.activity')
+            ->with('success', '已預收「' . $activity['label'] . '」'
+                . number_format($activity['amount']) . ' 元，請點選完成報到。');
     }
 
     public function activity(Request $request)
@@ -84,14 +114,22 @@ class TaichungActivityController extends Controller
         }
 
         $today = Carbon::now('Asia/Taipei');
+        $businessDate = $today->format('Y-m-d');
+        $record = DBHelperTaichung::getTodayRecord($userId, $activityType, $businessDate);
+        if (!$record) {
+            $request->session()->forget('taichung_activity_authorization');
+            return redirect()
+                ->route('taichung.activities')
+                ->with('warning', '請先選擇活動並輸入今日密碼完成預收。');
+        }
 
         return view('taichung.activities', [
             'greetingName' => DBHelper::getUserName($userId),
             'displayDate' => $today->year . '年' . $today->month . '月' . $today->day . '日',
             'activities' => [$activityType => $activities[$activityType]],
-            'checkedActivityTypes' => DBHelperTaichung::getTodayActivityTypes(
+            'checkedActivityTypes' => DBHelperTaichung::getTodayCheckedActivityTypes(
                 $userId,
-                $today->format('Y-m-d')
+                $businessDate
             ),
         ]);
     }
@@ -118,18 +156,17 @@ class TaichungActivityController extends Controller
 
         $activity = $activities[$activityType];
 
+        if (!DBHelperTaichung::hasPrepaid($userId, $activityType, $businessDate)) {
+            return redirect()
+                ->route('taichung.activities')
+                ->with('warning', '請先選擇活動並輸入今日密碼完成預收。');
+        }
+
         if (DBHelperTaichung::hasCheckedIn($userId, $activityType, $businessDate)) {
             return $this->duplicateResponse($userId, $activityType, $activity, $businessDate);
         }
 
-        $inserted = DBHelperTaichung::insertCashCheckin(
-            $userId,
-            $activityType,
-            $activity,
-            $businessDate
-        );
-
-        if (!$inserted) {
+        if (!DBHelperTaichung::tryCheckin($userId, $activityType, $businessDate)) {
             return $this->duplicateResponse($userId, $activityType, $activity, $businessDate);
         }
 
@@ -142,8 +179,7 @@ class TaichungActivityController extends Controller
 
         return redirect()
             ->route('taichung.activity')
-            ->with('success', '已完成「' . $activity['label'] . '」報到，現金 '
-                . number_format($activity['amount']) . ' 元。');
+            ->with('success', '已完成「' . $activity['label'] . '」報到。');
     }
 
     private function duplicateResponse($userId, $activityType, $activity, $businessDate)

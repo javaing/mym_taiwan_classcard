@@ -18,6 +18,16 @@ class DBHelperTaichung
             ->first();
     }
 
+    public static function getTodayActivityTypes($userId, $businessDate)
+    {
+        return DB::collection(self::$collection)
+            ->where('Branch', config('taichung.branch'))
+            ->where('UserID', $userId)
+            ->where('BusinessDate', $businessDate)
+            ->pluck('ActivityType')
+            ->all();
+    }
+
     public static function getTodayCheckedActivityTypes($userId, $businessDate)
     {
         return DB::collection(self::$collection)

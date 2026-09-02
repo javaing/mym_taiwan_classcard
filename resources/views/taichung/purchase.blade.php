@@ -55,8 +55,19 @@
     @if(count($purchasedTypes) > 0)
         <p class="preview-note" style="margin-top: 18px;">
             今日已購：
-            @foreach($purchasedTypes as $activityType)
-                {{ $allActivities[$activityType]['label'] ?? $activityType }}@if(!in_array($activityType, $checkedTypes, true))（尚未報到）@endif@if(!$loop->last)、@endif
+            @foreach($purchasedTypes as $index => $activityType)
+                @php
+                    $purchasedLabel = isset($allActivities[$activityType])
+                        ? $allActivities[$activityType]['label']
+                        : $activityType;
+                @endphp
+                {{ $purchasedLabel }}
+                @if(!in_array($activityType, $checkedTypes, true))
+                    （尚未報到）
+                @endif
+                @if($index < count($purchasedTypes) - 1)
+                    、
+                @endif
             @endforeach
         </p>
     @endif

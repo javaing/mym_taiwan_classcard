@@ -75,21 +75,8 @@ class TaichungActivityController extends Controller
         $businessDate = Carbon::now('Asia/Taipei')->format('Y-m-d');
         $activity = $activities[$activityType];
         $record = DBHelperTaichung::getTodayRecord($userId, $activityType, $businessDate);
-        $resumeCheckin = $request->input('resumeCheckin') === '1';
 
         if ($record) {
-            if ($resumeCheckin && !DBHelperTaichung::isCheckedIn($record)) {
-                $request->session()->put('taichung_activity_authorization', [
-                    'user_id' => $userId,
-                    'activity_type' => $activityType,
-                    'business_date' => $businessDate,
-                ]);
-
-                return redirect()
-                    ->route('taichung.activity')
-                    ->with('success', '「' . $activity['label'] . '」今日已預收，請點選完成報到。');
-            }
-
             Log::warning('Taichung activity purchase blocked: already prepaid today', [
                 'userId' => $userId,
                 'activityType' => $activityType,
@@ -189,14 +176,8 @@ class TaichungActivityController extends Controller
         }
 
         $businessDate = Carbon::now('Asia/Taipei')->format('Y-m-d');
-        $authorization = $this->currentAuthorization($request, $userId);
-        if (!$authorization || $authorization['activity_type'] !== $activityType) {
-            return redirect()
-                ->route('taichung.activities')
-                ->with('warning', '請先選擇活動並輸入今日密碼。');
-        }
-
         $activity = $activities[$activityType];
+        $fromPurchase = $request->input('from') === 'purchase';
 
         if (!DBHelperTaichung::hasPrepaid($userId, $activityType, $businessDate)) {
             return redirect()
@@ -204,12 +185,21 @@ class TaichungActivityController extends Controller
                 ->with('warning', '請先選擇活動並輸入今日密碼完成預收。');
         }
 
+        $authorization = $this->currentAuthorization($request, $userId);
+        if (!$authorization || $authorization['activity_type'] !== $activityType) {
+            $request->session()->put('taichung_activity_authorization', [
+                'user_id' => $userId,
+                'activity_type' => $activityType,
+                'business_date' => $businessDate,
+            ]);
+        }
+
         if (DBHelperTaichung::hasCheckedIn($userId, $activityType, $businessDate)) {
-            return $this->duplicateResponse($userId, $activityType, $activity, $businessDate);
+            return $this->duplicateResponse($userId, $activityType, $activity, $businessDate, $fromPurchase);
         }
 
         if (!DBHelperTaichung::tryCheckin($userId, $activityType, $businessDate)) {
-            return $this->duplicateResponse($userId, $activityType, $activity, $businessDate);
+            return $this->duplicateResponse($userId, $activityType, $activity, $businessDate, $fromPurchase);
         }
 
         Log::info('Taichung activity check-in created', [
@@ -219,12 +209,12 @@ class TaichungActivityController extends Controller
             'businessDate' => $businessDate,
         ]);
 
-        return redirect()
-            ->route('taichung.activity')
-            ->with('success', '已完成「' . $activity['label'] . '」報到。');
+        $redirect = redirect()->route($fromPurchase ? 'taichung.activities' : 'taichung.activity');
+
+        return $redirect->with('success', '已完成「' . $activity['label'] . '」報到。');
     }
 
-    private function duplicateResponse($userId, $activityType, $activity, $businessDate)
+    private function duplicateResponse($userId, $activityType, $activity, $businessDate, $fromPurchase = false)
     {
         Log::warning('Taichung activity check-in blocked: duplicate', [
             'userId' => $userId,
@@ -232,9 +222,9 @@ class TaichungActivityController extends Controller
             'businessDate' => $businessDate,
         ]);
 
-        return redirect()
-            ->route('taichung.activity')
-            ->with('warning', '今天已完成「' . $activity['label'] . '」報到，不可重複點選。');
+        $redirect = redirect()->route($fromPurchase ? 'taichung.activities' : 'taichung.activity');
+
+        return $redirect->with('warning', '今天已完成「' . $activity['label'] . '」報到，不可重複點選。');
     }
 
     private function pageData($userId)

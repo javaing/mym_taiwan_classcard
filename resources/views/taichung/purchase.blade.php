@@ -73,23 +73,15 @@
     @endif
 
     @foreach($pendingCheckin as $activityType => $activity)
-        <form class="preview-card" method="POST" action="{{ route('taichung.authorize') }}" style="margin-top: 18px;">
+        <form
+            class="preview-card"
+            method="POST"
+            action="{{ route('taichung.checkin', ['activityType' => $activityType]) }}"
+            style="margin-top: 18px;"
+        >
             @csrf
-            <input type="hidden" name="activityType" value="{{ $activityType }}">
-            <input type="hidden" name="resumeCheckin" value="1">
+            <input type="hidden" name="from" value="purchase">
             <p class="activity-name" style="margin-bottom: 14px;">{{ $activity['label'] }} 完成報到</p>
-            <input
-                class="activity-input"
-                type="password"
-                name="buyActivityPass"
-                placeholder="請輸入今日密碼"
-                inputmode="numeric"
-                pattern="[0-9]{4}"
-                maxlength="4"
-                autocomplete="off"
-                required
-                style="margin-top: 0;"
-            >
             <button class="confirm-button" type="submit">完成報到</button>
         </form>
     @endforeach

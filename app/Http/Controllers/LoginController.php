@@ -51,15 +51,13 @@ class LoginController extends Controller
     }
 
     /**
-     * 測試期間於台灣時間週二、週六以外的 07:00～11:59 顯示新首頁。
+     * 台灣時間週二、週六以外顯示台北／台中選擇頁。
      */
     private function shouldShowLocationHome()
     {
         $now = Carbon::now('Asia/Taipei');
 
-        return !in_array($now->dayOfWeekIso, [2, 6], true)
-            && $now->hour >= 7
-            && $now->hour < 12;
+        return !in_array($now->dayOfWeekIso, [2, 6], true);
     }
     //onlineclassLogin
     public function onlineclassLogin()

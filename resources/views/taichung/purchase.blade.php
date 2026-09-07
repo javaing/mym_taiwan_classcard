@@ -19,7 +19,7 @@
 
             <img class="activity-icon" src="/images/onlineclass/point_unuse.png" alt="">
 
-            <label for="activityType" class="activity-name" style="margin-bottom: 14px;">購活動清單</label>
+            <label for="activityType" class="activity-name" style="margin-bottom: 14px;">購課選單</label>
             <select id="activityType" class="activity-select" name="activityType" required>
                 @foreach($availableActivities as $activityType => $activity)
                     <option

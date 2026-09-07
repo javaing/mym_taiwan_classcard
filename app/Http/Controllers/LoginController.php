@@ -234,7 +234,7 @@ class LoginController extends Controller
         if ($arg1) {
             $detail = HelpersDBHelper::getUser($arg1);
 
-            $check = array('UserName', 'Mobile', 'Address', 'Referrer', 'Email', 'PersonalID');
+            $check = array('NickName', 'UserName', 'Mobile', 'Address', 'Referrer', 'Email', 'PersonalID', 'Location');
             foreach ($check as $key) {
                 $this->checkField($key, $detail);
             }
@@ -243,38 +243,37 @@ class LoginController extends Controller
         return view("alluser")->with(['users' => $users, 'userDetail' => $detail]);
     }
 
-    public function checkField($key, $lookfor)
+    public function checkField($key, &$lookfor)
     {
-        if (!array_key_exists($key, $lookfor)) $lookfor[$key] = '';
+        if (!is_array($lookfor)) {
+            return;
+        }
+        if (!array_key_exists($key, $lookfor)) {
+            $lookfor[$key] = '';
+        }
     }
 
 
     public function updateUser(Request $request)
     {
-        $userDetail = null;
         $uid = $request->UserID;
-        if ($uid) {
-            //update userinfo
-            $datas = array(
-                'NickName' => $request->NickName,
-                'UserName' => $request->UserName,
-                'Mobile' => $request->Mobile,
-                'Address' => $request->Address,
-                'Referrer' => $request->Referrer,
-                'Email' => $request->Email,
-                'PersonalID' => $request->PersonalID,
-                'Location' => $request->Location,
-            );
-            HelpersDBHelper::updateUser($uid, $datas);
-
-            $userDetail = HelpersDBHelper::getUser($uid);
-        } else {
+        if (!$uid) {
             Log::info('No userId to update!');
+            return redirect('/alluser');
         }
 
+        $datas = array(
+            'NickName' => $request->NickName,
+            'UserName' => $request->UserName,
+            'Mobile' => $request->Mobile,
+            'Address' => $request->Address,
+            'Referrer' => $request->Referrer,
+            'Email' => $request->Email,
+            'PersonalID' => $request->PersonalID,
+            'Location' => $request->Location,
+        );
+        HelpersDBHelper::updateUser($uid, $datas);
 
-        $users = HelpersDBHelper::getUsers();
-        //Log::info('userDetail=' . $userDetail);
-        return view("alluser")->with(['users' => $users, 'userDetail' => $userDetail]);
+        return redirect('/alluser/' . $uid)->with('status', '已更新');
     }
 }

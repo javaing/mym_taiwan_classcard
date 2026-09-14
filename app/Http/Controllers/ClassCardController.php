@@ -21,7 +21,7 @@ class ClassCardController extends Controller
     }
 
 
-    public function registeclassByPoint($point, $cardId)
+    public function registeclassByPoint(Request $request, $point, $cardId)
     {
         $cardId = base64_decode($cardId);
 
@@ -31,6 +31,22 @@ class ClassCardController extends Controller
             Log::warning("registeclassByPoint blocked: no points. cardId={$cardId}");
             $link = $this->goBackLink();
             print_r('<h3>此卡已無可用點數，請<a href="' . $link . '">回上頁</a></h3>');
+            return;
+        }
+
+        if (DBHelper::isExpired($card)) {
+            Log::warning("registeclassByPoint blocked: expired. cardId={$cardId}");
+            $link = $this->goBackLink();
+            print_r('<h3>此卡已逾期，無法蓋章，請<a href="' . $link . '">回上頁</a></h3>');
+            return;
+        }
+
+        $totalClasses = (($card['Payment'] ?? null) == 500) ? 1 : 4;
+        $consumeCount = count(DBHelper::getConsume($cardId));
+        if ($consumeCount >= $totalClasses) {
+            Log::warning("registeclassByPoint blocked: consume records full. cardId={$cardId}, consumes={$consumeCount}, total={$totalClasses}");
+            $link = $this->goBackLink();
+            print_r('<h3>此卡已使用完畢，請<a href="' . $link . '">回上頁</a></h3>');
             return;
         }
 

@@ -66,23 +66,21 @@ class DBHelper
     //[Purchase]------------------------------------------------------------------
     public static function getValidCard($userId)
     {
-        $dt = Carbon::now();
         $cards = DB::collection('Purchase')
             ->where('UserID', $userId)
-            ->where('Expired', '>', $dt)
             ->where('Points', '>', 0)
+            ->where('Payment', '>', 0)
+            ->where('Payment', '!=', 200)
             ->orderBy('CardCreateTime', 'desc')
-            ->first();
-        if ($cards != null) {
-            return $cards;
+            ->get();
+
+        foreach ($cards as $card) {
+            if (!DBHelper::isExpired($card)) {
+                return $card;
+            }
         }
 
-        return DB::collection('Purchase')
-            ->where('UserID', $userId)
-            ->where('Expired', '=', null)
-            ->where('Points', '>', 0)
-            ->orderBy('CardCreateTime', 'desc')
-            ->first();
+        return null;
     }
 
     public static function getValidCardNoMatter($userId)
@@ -107,7 +105,12 @@ class DBHelper
 
     public static function getCard($cardId)
     {
-        return DB::collection('Purchase')->where('CardID', $cardId)->first();
+        return DB::collection('Purchase')
+            ->where('CardID', $cardId)
+            ->where('Payment', '>', 0)
+            ->where('Payment', '!=', 200)
+            ->orderBy('CardCreateTime', 'desc')
+            ->first();
     }
     public static function getCardHistory($cardId)
     {
@@ -199,15 +202,55 @@ class DBHelper
 
     public static function isExpired($card)
     {
-        if ($card == null || $card['Expired'] == null) return false;
-        $dt = DBHelper::getMongoDateNow();
-        return ($dt > $card['Expired'] && $card['Points'] > 0);
+        $expiration = DBHelper::getEffectiveExpiration($card);
+        if ($expiration === null) return false;
+
+        return DBHelper::getMongoDateNow() > $expiration;
+    }
+
+    /**
+     * 舊版四堂課卡可能沒有寫 Expired；這類卡依畫面規則以建卡日起一年為期限。
+     * 單堂卡，以及已有補差額 Payment=200 紀錄的展期卡，維持無期限。
+     */
+    public static function getEffectiveExpiration($card)
+    {
+        if ($card == null) return null;
+
+        if (!empty($card['Expired'])) {
+            return $card['Expired'];
+        }
+
+        $payment = (int)($card['Payment'] ?? 0);
+        if ($payment === 500 || DBHelper::hasExtensionPayment($card['CardID'] ?? null)) {
+            return null;
+        }
+
+        $start = $card['CardCreateTime'] ?? ($card['PaymentTime'] ?? null);
+        // 一般四堂卡若連起始日期都缺少，採 fail-closed，避免被當成永久有效。
+        if (!$start) return DBHelper::strtoMongoDate('1970-01-01 00:00:00');
+
+        if ($start instanceof \MongoDB\BSON\UTCDateTime) {
+            $start = Carbon::instance($start->toDateTime());
+        } else {
+            $start = Carbon::parse($start);
+        }
+
+        return DBHelper::strtoMongoDate($start->copy()->addYear()->toDateTimeString());
+    }
+
+    public static function hasExtensionPayment($cardId)
+    {
+        if (!$cardId) return false;
+
+        return DB::collection('Purchase')
+            ->where('CardID', $cardId)
+            ->where('Payment', 200)
+            ->first() != null;
     }
 
     public static function isExtendCard($cardId)
     {
-        $card = DB::collection('Purchase')->where('CardID', $cardId)->first();
-        return ($card['Expired'] == null);
+        return DBHelper::hasExtensionPayment($cardId);
     }
 
     public static function getBalanceIn($from, $to)

@@ -25,8 +25,13 @@
     $oneOrFourClass = 4;
     if($card['Payment']==500) {$oneOrFourClass=1;}
     $cardId = base64_encode( $card['CardID'] );
-    $expiredDate = DBHelper::toDateString($card['Expired']);
-    if($expiredDate=='') {$expiredDate = "限一年內有效";}
+    $effectiveExpiration = DBHelper::getEffectiveExpiration($card);
+    $expiredDate = DBHelper::toDateString($effectiveExpiration);
+    if($expiredDate=='') {$expiredDate = "無使用期限";}
+    $consumeCount = min(sizeof($registArray), $oneOrFourClass);
+    $cardIsUsable = !DBHelper::isExpired($card)
+        && $card['Points'] > 0
+        && $consumeCount < $oneOrFourClass;
 }}
 @endphp
 
@@ -86,7 +91,11 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-body">
-                抱歉，已逾期須補差額
+                @if (DBHelper::isExpired($card))
+                    抱歉，此課卡已逾期，須補差額後才能使用
+                @else
+                    此課卡目前無法繼續蓋章
+                @endif
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -108,11 +117,12 @@
             @else
             @endif
             <TD align="center">
-                @if ($i> $card['Points'])
+                @php($slotIndex = $oneOrFourClass - $i)
+                @if ($slotIndex < $consumeCount)
 
-                @if ($registArray && sizeof($registArray)>($oneOrFourClass-$i))
+                @if ($registArray && sizeof($registArray)>$slotIndex)
                 <div id="div_used">
-                    <p16white>{{DBHelper::toDateString( $registArray[$oneOrFourClass-$i]['PointConsumeTime'] ) }}</p16white>
+                    <p16white>{{DBHelper::toDateString( $registArray[$slotIndex]['PointConsumeTime'] ) }}</p16white>
                 </div>
                 @else
                 <div id="div_used">
@@ -122,7 +132,7 @@
 
                 @else
 
-                @if (DBHelper::isExpired($card))
+                @if (!$cardIsUsable)
                 <div id="div_unuse" data-toggle="modal" data-target="#expiredHint">
                     @else
                     <div id="div_unuse">
@@ -152,7 +162,7 @@
                         @endif
 
                     </div>
-                    @if (DBHelper::isExpired($card))
+                    @if (!$cardIsUsable)
                     @else
                       <a id="registeLink" href="{{ route('registe.classcard',  [$card['Points'], $cardId] ) }}" />
                     @endif

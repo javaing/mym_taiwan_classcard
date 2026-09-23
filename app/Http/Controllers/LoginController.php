@@ -7,7 +7,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Services\LineService;
-use Carbon\Carbon;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Str;
 
@@ -38,26 +37,12 @@ class LoginController extends Controller
         }
         Log::info('pageLine()=' . $url);
 
-        if ($this->shouldShowLocationHome()) {
-            $taipeiUrl = $url === 'reuse' ? route('reuse.line') : $url;
+        $taipeiUrl = $url === 'reuse' ? route('reuse.line') : $url;
 
-            return view('line-location', [
-                'taipeiUrl' => $taipeiUrl,
-                'taichungUrl' => route('taichung.login'),
-            ]);
-        }
-
-        return view('line')->with('url', $url);
-    }
-
-    /**
-     * 台灣時間週二、週六以外顯示台北／台中選擇頁。
-     */
-    private function shouldShowLocationHome()
-    {
-        $now = Carbon::now('Asia/Taipei');
-
-        return !in_array($now->dayOfWeekIso, [2, 6], true);
+        return view('line-location', [
+            'taipeiUrl' => $taipeiUrl,
+            'taichungUrl' => route('taichung.login'),
+        ]);
     }
     //onlineclassLogin
     public function onlineclassLogin()

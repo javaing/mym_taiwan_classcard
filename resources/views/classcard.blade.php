@@ -64,9 +64,13 @@
 
 <script type="text/javascript">
     $(function() {
-        $("#div_unuse img").click(function() {
+        var isSubmitting = false;
+        $(".div_unuse img").click(function() {
             var str = document.getElementById('abcId').value;
-            var todayDate = new Date().toISOString().slice(0, 10);
+            var now = new Date();
+            var todayDate = now.getFullYear() + '-'
+                + String(now.getMonth() + 1).padStart(2, '0') + '-'
+                + String(now.getDate()).padStart(2, '0');
             //alert(str);
             //alert(todayDate);
             //alert(str.includes(todayDate));
@@ -78,7 +82,9 @@
                     $("#SS" + N).attr("src", "/images/classcard/point_" + N + ".png");
                 }, 2000);
             } else {
-                $('#registeLink')[0].click();
+                if (isSubmitting) return;
+                isSubmitting = true;
+                $('#registeForm').submit();
             }
 
         });
@@ -105,11 +111,12 @@
 </div>
 
 
+@if ($cardIsUsable)
+<form id="registeForm" method="POST" action="{{ route('registe.classcard', [$card['Points'], $cardId]) }}">
+    @csrf
+@endif
+<input type="hidden" id="abcId" value="{{ implode(', ', $listDate) }}" />
 <TABLE BORDER=0 align="center">
-    <form>
-        <input type=hidden id="abcId" value="{{implode( ", ", $listDate )}}" />
-
-
         @for ($i = $oneOrFourClass; $i >= 1; $i--)
 
         @if ($i%2==0 )
@@ -133,9 +140,9 @@
                 @else
 
                 @if (!$cardIsUsable)
-                <div id="div_unuse" data-toggle="modal" data-target="#expiredHint">
+                <div class="div_unuse" data-toggle="modal" data-target="#expiredHint">
                     @else
-                    <div id="div_unuse">
+                    <div class="div_unuse">
                         @endif
 
 
@@ -162,12 +169,6 @@
                         @endif
 
                     </div>
-                    @if (!$cardIsUsable)
-                    @else
-                      <a id="registeLink" href="{{ route('registe.classcard',  [$card['Points'], $cardId] ) }}" />
-                    @endif
-
-
                     @endif
             </TD>
             @if ($i%2==1 )
@@ -175,8 +176,10 @@
         @else
         @endif
         @endfor
-    </form>
 </TABLE>
+@if ($cardIsUsable)
+</form>
+@endif
 
 @if ($card['Points']==0)
 <div align="center" style="margin-Top: 8px;">

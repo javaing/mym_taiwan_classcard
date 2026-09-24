@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Helpers\DBHelper as DBHelper;
 use App\Helpers\Tools as Tools;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class ClassCardController extends Controller
 {
@@ -61,7 +62,8 @@ class ClassCardController extends Controller
 
         //扣點數(compare-and-swap，避免連點/重複請求造成重複扣點與重複消費紀錄)
         $currentPoints = $card['Points'];
-        if (!DBHelper::tryConsumePoint($cardId, $currentPoints)) {
+        $consumeDate = Carbon::now('Asia/Taipei')->format('Y-m-d');
+        if (!DBHelper::tryConsumePoint($card, $currentPoints, $consumeDate)) {
             Log::warning("registeclassByPoint blocked: CAS conflict. cardId={$cardId}, expectedPoints={$currentPoints}");
             $link = $this->goBackLink();
             print_r('<h3>資料已被更新，請<a href="' . $link . '">回上頁</a>後重新整理再試</h3>');
@@ -70,7 +72,7 @@ class ClassCardController extends Controller
 
         Log::info("registeclassByPoint success. cardId={$cardId}, points {$currentPoints}->" . ($currentPoints - 1));
         //紀錄花費500 or 300
-        DBHelper::insertConsumeToday($cardId, $currentPoints);
+        DBHelper::insertConsumeToday($cardId, $currentPoints, $consumeDate);
         return redirect('classcard/show/' . base64_encode($cardId));
     }
 

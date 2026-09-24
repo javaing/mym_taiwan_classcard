@@ -154,13 +154,15 @@ class DBHelper
         $startOfYear = DBHelper::strtoMongoDate($year . '-01-01 00:00:00');
         $endOfYear = DBHelper::strtoMongoDate(($year + 1) . '-01-01 00:00:00');
 
-        $count = DB::collection('Purchase')
+        $latest = DB::collection('Purchase')
             ->where('CardCreateTime', '>=', $startOfYear)
             ->where('CardCreateTime', '<', $endOfYear)
-            ->where('Payment', '>=', 0) //因為可能有退卡，是負的要去掉
-            ->where('Payment', '!=', 200) //逾期補繳的要去掉
-            ->count() + 1;
-        return date("Y") . str_pad($count, 4, '0', STR_PAD_LEFT);
+            ->where('Payment', '>', 200) //排除退款與補繳紀錄
+            ->orderBy('CardID', 'desc')
+            ->first();
+
+        $sequence = $latest ? ((int)substr((string)$latest['CardID'], 4) + 1) : 1;
+        return date("Y") . str_pad($sequence, 4, '0', STR_PAD_LEFT);
     }
 
     public static function registeclassByPoint($cardId, $point)
@@ -183,14 +185,19 @@ class DBHelper
      * 呼叫端仍須自行先檢查 $currentPoints > 0，此函式不會擋「已無點數」的情況。
      * @return bool 是否扣點成功
      */
-    public static function tryConsumePoint($cardId, $currentPoints)
+    public static function tryConsumePoint($card, $currentPoints, $consumeDate)
     {
         $updated = DB::collection('Purchase')
-            ->where('CardID', $cardId)
-            ->where('Payment', '>', 0) //因為可能有退卡，是負的要去掉
-            ->where('Payment', '!=', 200) //逾期補繳的要去掉
+            ->where('_id', $card['_id'])
             ->where('Points', $currentPoints)
-            ->update(['$set' => ['Points' => $currentPoints - 1]]);
+            ->where('ConsumeDates', '!=', $consumeDate)
+            ->update([
+                '$set' => [
+                    'Points' => $currentPoints - 1,
+                    'LastConsumeDate' => $consumeDate,
+                ],
+                '$addToSet' => ['ConsumeDates' => $consumeDate],
+            ]);
         return $updated > 0;
     }
 
@@ -694,12 +701,25 @@ class DBHelper
 
     public static function buyNewCard($userId, $point)
     {
-        $cardId = DBHelper::getCardId();
-        if ($point == 1)
-            DBHelper::insertPurchaseNoExpired($cardId, $userId, 500, $point);
-        else
-            DBHelper::insertPurchase($cardId, $userId, 1800, $point);
-        return $cardId;
+        for ($attempt = 0; $attempt < 3; $attempt++) {
+            $cardId = DBHelper::getCardId();
+            try {
+                if ($point == 1) {
+                    DBHelper::insertPurchaseNoExpired($cardId, $userId, 500, $point);
+                } else {
+                    DBHelper::insertPurchase($cardId, $userId, 1800, $point);
+                }
+                return $cardId;
+            } catch (\MongoDB\Driver\Exception\BulkWriteException $e) {
+                if ($e->getCode() != 11000) throw $e;
+
+                // 同一購卡動作被重送時，唯一索引只允許一筆；直接沿用已建立的有效卡。
+                $existing = DBHelper::getValidCard($userId);
+                if ($existing) return $existing['CardID'];
+            }
+        }
+
+        throw new \RuntimeException('無法產生唯一課卡編號，請稍後再試');
     }
 
     public static function clearPoints($cardId)
@@ -828,12 +848,12 @@ class DBHelper
             ->insert($newCard);
     }
 
-    public static function insertConsumeToday($cardId, $point)
+    public static function insertConsumeToday($cardId, $point, $consumeDate)
     {
-        DBHelper::insertConsume($cardId, $point, DBHelper::getMongoDateNow());
+        DBHelper::insertConsume($cardId, $point, DBHelper::getMongoDateNow(), $consumeDate);
     }
 
-    public static function insertConsume($cardId, $point, $dt)
+    public static function insertConsume($cardId, $point, $dt, $consumeDate = null)
     {
         $cost = 500;
         if ($point == 1) {
@@ -850,14 +870,16 @@ class DBHelper
             "Cost" => $cost,
             "PointConsumeTime" => $dt,
         ];
+        if ($consumeDate !== null) {
+            $newCard['ConsumeDate'] = $consumeDate;
+        }
         DB::collection('Consume')
             ->insert($newCard);
     }
 
     public static function today()
     {
-        $today = date("Y-m-d");
-        return DBHelper::parse($today);
+        return Carbon::now('Asia/Taipei')->startOfDay()->utc();
     }
 
 

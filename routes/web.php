@@ -43,7 +43,7 @@ Route::get('classcard/history/{userId}/{index}', 'ClassCardController@showClassH
 //顯示課卡
 Route::get('classcard/show/{cardId}', 'ClassCardController@showClassCard')->where('cardId', '[0-9A-Za-z=]+');
 //蓋課卡
-Route::get('/registe/{point}/{cardId}', 'ClassCardController@registeclassByPoint')
+Route::post('/registe/{point}/{cardId}', 'ClassCardController@registeclassByPoint')
     ->where(['point' => '[0-9]+', 'cardId' => '[0-9A-Za-z=]+'])->name('registe.classcard');
 //補繳
 Route::get('classcard/extend', 'ClassCardController@extendCard')->name('extend.classcard');

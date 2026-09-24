@@ -129,7 +129,8 @@ class AccountController extends Controller
             return;
         }
 
-        $dt = $request->registedate;
+        $consumeDate = $request->registedate;
+        $dt = $consumeDate;
         //Log::info("registeclassByhand dt($dt)");
         $timezone_ms = 8 * 60 * 60 * 1000;
         $dt = new \MongoDB\BSON\UTCDateTime(strtotime($dt) * 1000 + $timezone_ms);
@@ -146,7 +147,7 @@ class AccountController extends Controller
 
         //扣點數(compare-and-swap，避免點數已用完仍被手動補登蓋過頭)
         $currentPoints = $card['Points'];
-        if (!DBHelper::tryConsumePoint($cardId, $currentPoints)) {
+        if (!DBHelper::tryConsumePoint($card, $currentPoints, $consumeDate)) {
             Log::warning("registeclassByhand blocked: CAS conflict. cardId={$cardId}, expectedPoints={$currentPoints}");
             $link = $this->goBackLink();
             print_r('<h3>資料已被更新，請<a href="' . $link . '">回上頁</a>後重新整理再試</h3>');
@@ -155,7 +156,7 @@ class AccountController extends Controller
 
         Log::info("registeclassByhand success. cardId={$cardId}, points {$currentPoints}->" . ($currentPoints - 1));
         //紀錄花費500 or 300
-        DBHelper::insertConsume($cardId, $currentPoints, $dt);
+        DBHelper::insertConsume($cardId, $currentPoints, $dt, $consumeDate);
         return redirect('account/carddetail/' . base64_encode($cardId));
     }
 

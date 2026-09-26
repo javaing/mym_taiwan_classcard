@@ -33,6 +33,16 @@
             margin: 4px;
         }
 
+        /* Keep the card artwork at the 100px size of its wrapper. A percentage
+           width inside an auto-layout table can otherwise use the image's
+           543px intrinsic width and expand the whole card grid. */
+        #div_unuse img {
+            width: 100px !important;
+            height: 100px !important;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
         #div_btn_border {
             background-image: url('/images/classcard/border_normal.png');
             background-repeat: no-repeat;

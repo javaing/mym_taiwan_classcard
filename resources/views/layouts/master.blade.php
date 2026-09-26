@@ -22,7 +22,7 @@
             margin: 4px;
         }
 
-        #div_unuse {
+        .div_unuse {
             background-repeat: no-repeat;
             background-size: contain;
             height: 100px;
@@ -36,7 +36,7 @@
         /* Keep the card artwork at the 100px size of its wrapper. A percentage
            width inside an auto-layout table can otherwise use the image's
            543px intrinsic width and expand the whole card grid. */
-        #div_unuse img {
+        .div_unuse img {
             width: 100px !important;
             height: 100px !important;
             max-width: 100%;

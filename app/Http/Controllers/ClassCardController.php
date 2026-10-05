@@ -155,6 +155,73 @@ class ClassCardController extends Controller
       return view("buynewcard")->with('userId', $request->userId);
     }
 
+    public function buyForUserView()
+    {
+        return view('buycardbyname', ['candidates' => []]);
+    }
+
+    public function buyForUser(Request $request)
+    {
+        $fullName = trim((string) $request->input('fullName'));
+        $point = (int) $request->input('point');
+        $dailyPassword = trim((string) $request->input('dailyPassword'));
+
+        if (!in_array($point, [1, 4], true)) {
+            return back()->withInput($request->except('dailyPassword'))
+                ->with('warning', '請選擇單堂或四堂課卡。');
+        }
+
+        if (!preg_match('/^[\x{3400}-\x{9FFF}·．•]{2,20}$/u', $fullName)) {
+            return back()->withInput($request->except('dailyPassword'))
+                ->with('warning', '請輸入 2 至 20 字的中文全名。');
+        }
+
+        if ($dailyPassword === '' || !hash_equals((string) Tools::getBuyCardPassword(), $dailyPassword)) {
+            return back()->withInput($request->except('dailyPassword'))
+                ->with('warning', '今日密碼不正確，請洽工作人員。');
+        }
+
+        $candidates = DBHelper::getUsersByUserName($fullName);
+        if ($candidates->count() === 0) {
+            return back()->withInput($request->except('dailyPassword'))
+                ->with('warning', '查無此中文全名，請先確認會員資料。');
+        }
+
+        $selectedUserId = (string) $request->input('selectedUserId');
+        $selectedUser = null;
+        if ($selectedUserId !== '') {
+            $selectedUser = $candidates->first(function ($candidate) use ($selectedUserId) {
+                return (string) $candidate['UserID'] === $selectedUserId;
+            });
+            if (!$selectedUser) {
+                return back()->withInput($request->except('dailyPassword'))
+                    ->with('warning', '選擇的學員與中文全名不符，請重新確認。');
+            }
+        } elseif ($candidates->count() === 1) {
+            $selectedUser = $candidates->first();
+        } else {
+            return view('buycardbyname', [
+                'candidates' => $candidates,
+                'warning' => '找到多位同名學員，請選擇正確的人並重新輸入今日密碼。',
+                'fullName' => $fullName,
+                'point' => $point,
+            ]);
+        }
+
+        $userId = $selectedUser['UserID'];
+        $card = DBHelper::getValidCard($userId);
+        if ($card) {
+            return redirect('classcard/show/' . base64_encode($card['CardID']))
+                ->with('warning', $fullName . ' 已有可用課卡，未重複購買。');
+        }
+
+        $cardId = DBHelper::buyNewCard($userId, $point, 'staff_purchase_by_name');
+        Log::info("buyForUser success. userId={$userId}, cardId={$cardId}, points={$point}");
+
+        return redirect('classcard/show/' . base64_encode($cardId))
+            ->with('status', '已為 ' . $fullName . ' 購買' . ($point === 1 ? '單堂' : '四堂') . '課卡。');
+    }
+
     public function buyCardPass() {
       if (Auth::check()) {
         //echo '<H3>購卡密碼是['. Tools::getBuyCardPassword() .']</H3>';

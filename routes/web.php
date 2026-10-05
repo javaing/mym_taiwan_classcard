@@ -33,6 +33,8 @@ Route::get('/logout', 'LoginController@logout');
 Route::get('classcard/buy', 'ClassCardController@buyClassCard')->name('buy.classcard');
 Route::post('classcard/buy', 'ClassCardController@buyClassCardPost')->name('buy.classcardPost');
 Route::get('buyNewCard', 'ClassCardController@buyNewCardView')->name('buy.newcard');
+Route::get('classcard/buy-for-user', 'ClassCardController@buyForUserView')->name('buy.forUser');
+Route::post('classcard/buy-for-user', 'ClassCardController@buyForUser')->name('buy.forUserPost');
 Route::get('classcard/buycardpass', 'ClassCardController@buyCardPass');
 // LINE Pay 收款成功導向（不驗證購卡密碼，依 orderId 完成開卡）
 Route::get('classcard/linepay/confirm', 'ClassCardController@linePayConfirm')->name('classcard.linepay.confirm');

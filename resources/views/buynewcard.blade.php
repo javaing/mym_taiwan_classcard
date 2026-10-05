@@ -42,5 +42,8 @@
 <br>
 <button class="btn btn-link" style="height:50px; margin-top:16px" type="submit">確定</button>
 </form>
+<div style="margin-top:20px">
+    <a href="{{ route('buy.forUser') }}">幫其他學員購買新卡</a>
+</div>
 </center>
 @endsection

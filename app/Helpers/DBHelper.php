@@ -585,6 +585,14 @@ class DBHelper
             return '';
     }
 
+    public static function getUsersByUserName($name)
+    {
+        return DB::collection('UserInfo')
+            ->where('UserName', $name)
+            ->orderBy('NickName')
+            ->get();
+    }
+
     public static function getUsers()
     {
         return  DB::collection('UserInfo')->get();
@@ -699,15 +707,15 @@ class DBHelper
             ]);
     }
 
-    public static function buyNewCard($userId, $point)
+    public static function buyNewCard($userId, $point, $source = null)
     {
         for ($attempt = 0; $attempt < 3; $attempt++) {
             $cardId = DBHelper::getCardId();
             try {
                 if ($point == 1) {
-                    DBHelper::insertPurchaseNoExpired($cardId, $userId, 500, $point);
+                    DBHelper::insertPurchaseNoExpired($cardId, $userId, 500, $point, $source);
                 } else {
-                    DBHelper::insertPurchase($cardId, $userId, 1800, $point);
+                    DBHelper::insertPurchase($cardId, $userId, 1800, $point, $source);
                 }
                 return $cardId;
             } catch (\MongoDB\Driver\Exception\BulkWriteException $e) {
@@ -779,7 +787,7 @@ class DBHelper
             ->update($newdata);
     }
 
-    public static function insertPurchase($cardId, $id, $amount, $point)
+    public static function insertPurchase($cardId, $id, $amount, $point, $source = null)
     {
         $dt = DBHelper::getMongoDateNow();
         $expired_at = Carbon::now()->add(60, 'day')->toDateTimeString();
@@ -799,6 +807,9 @@ class DBHelper
             $newCard['Payment'] = null;
             $newCard['PaymentTime'] = null;
         }
+        if ($source !== null) {
+            $newCard['PurchaseSource'] = $source;
+        }
 
         Log::info('insertPurchase =' . json_encode($newCard));
 
@@ -806,7 +817,7 @@ class DBHelper
             ->insert($newCard);
     }
 
-    public static function insertPurchaseNoExpired($cardId, $userId, $amount, $point)
+    public static function insertPurchaseNoExpired($cardId, $userId, $amount, $point, $source = null)
     {
         $dt = DBHelper::getMongoDateNow();
         $newCard = [
@@ -818,6 +829,9 @@ class DBHelper
             'Payment' => $amount,
             'PaymentTime' => $dt,
         ];
+        if ($source !== null) {
+            $newCard['PurchaseSource'] = $source;
+        }
 
         Log::info('insertPurchaseNoExpired =' . json_encode($newCard));
 

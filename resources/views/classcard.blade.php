@@ -11,6 +11,12 @@
 
 
 @section('content')
+@if(session('status'))
+<div class="alert alert-success text-center">{{ session('status') }}</div>
+@endif
+@if(session('warning'))
+<div class="alert alert-warning text-center">{{ session('warning') }}</div>
+@endif
 @php
 {{
     $registArray = DBHelper::getConsume( $card['CardID']);

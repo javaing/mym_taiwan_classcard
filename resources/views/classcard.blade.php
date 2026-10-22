@@ -89,13 +89,102 @@
                 }, 2000);
             } else {
                 if (isSubmitting) return;
+                if (!document.getElementById('registeForm')) return;
                 isSubmitting = true;
+                showStampProgress();
                 $('#registeForm').submit();
             }
 
         });
+
+        //蓋章送出後顯示前景progress，避免重按；逾時則停止等待並提示，免得網路不通時一直轉
+        var STAMP_TIMEOUT_MS = 15000;
+        var stampTimer = null;
+
+        function showStampProgress() {
+            $('#stampTimeoutMsg').hide();
+            $('#stampSpinner, #stampLoadingMsg').show();
+            $('#stampOverlay').css('display', 'flex');
+            stampTimer = window.setTimeout(onStampTimeout, STAMP_TIMEOUT_MS);
+        }
+
+        function onStampTimeout() {
+            if (window.stop) window.stop();
+            $('#stampSpinner, #stampLoadingMsg').hide();
+            $('#stampTimeoutMsg').show();
+        }
+
+        function hideStampProgress() {
+            window.clearTimeout(stampTimer);
+            $('#stampOverlay').hide();
+            isSubmitting = false;
+        }
+
+        $('#stampReload').click(function() {
+            window.location.reload();
+        });
+        $('#stampClose').click(hideStampProgress);
+
+        //從上一頁返回(bfcache)時，把遮罩收掉
+        $(window).on('pageshow', function(e) {
+            if (e.originalEvent && e.originalEvent.persisted) hideStampProgress();
+        });
     });
 </script>
+
+<style>
+    #stampOverlay {
+        display: none;
+        position: fixed;
+        top: 0; right: 0; bottom: 0; left: 0;
+        z-index: 2000;
+        background: rgba(0, 0, 0, 0.35);
+        align-items: center;
+        justify-content: center;
+    }
+    #stampOverlay .stamp-box {
+        background: #fff9e8;
+        border-radius: 12px;
+        padding: 24px 28px;
+        width: 260px;
+        text-align: center;
+        color: #b8963e;
+        font-size: 16px;
+    }
+    #stampSpinner {
+        width: 40px;
+        height: 40px;
+        margin: 0 auto 12px;
+        border: 4px solid #f0e2bd;
+        border-top-color: #c4a043;
+        border-radius: 50%;
+        animation: stamp-spin 0.8s linear infinite;
+    }
+    @keyframes stamp-spin { to { transform: rotate(360deg); } }
+    #stampTimeoutMsg { display: none; }
+    #stampTimeoutMsg button {
+        margin: 12px 4px 0;
+        padding: 6px 14px;
+        border: 1px solid #c4a043;
+        border-radius: 16px;
+        background: #fff;
+        color: #b8963e;
+    }
+    #stampTimeoutMsg button.primary { background: #c4a043; color: #fff; }
+</style>
+
+<div id="stampOverlay" role="alertdialog" aria-live="assertive">
+    <div class="stamp-box">
+        <div id="stampSpinner"></div>
+        <div id="stampLoadingMsg">蓋章中，請稍候…</div>
+        <div id="stampTimeoutMsg">
+            <div>網路回應逾時</div>
+            <div style="font-size: 14px; margin-top: 6px;">可能已蓋章成功，請重新整理確認，避免重複蓋章</div>
+            <button type="button" id="stampClose">關閉</button>
+            <button type="button" id="stampReload" class="primary">重新整理</button>
+        </div>
+    </div>
+</div>
 
 
 <!-- Modal -->

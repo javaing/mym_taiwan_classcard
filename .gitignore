@@ -14,3 +14,4 @@ yarn-error.log
 *.example
 package-lock.json
 *.xlsx
+.env.remote

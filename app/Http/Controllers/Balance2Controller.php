@@ -207,6 +207,7 @@ class Balance2Controller extends Controller
           }
 
           if (($record['__total'] ?? false) === true) {
+              $sheet->setCellValue('B' . $rowNumber, $record['Location'] ?? '');
               $sheet->setCellValue('C' . $rowNumber, '總計');
               $sheet->setCellValue('D' . $rowNumber, number_format($record['Payment']));
               $rowNumber++;
@@ -274,6 +275,20 @@ class Balance2Controller extends Controller
         return $this->genFile($arrIn, $file);
     }
 
+    /**
+     * 台北課卡：體位法 1800／500／200（含補兩百）。其餘（台中活動、團練、梵唱等）算台中。
+     */
+    private function isTaipeiAsanaRecord($record)
+    {
+        $payment = (int) ($record['Payment'] ?? 0);
+        if (!in_array($payment, [1800, 500, 200], true)) {
+            return false;
+        }
+
+        $type = $record['Type'] ?? '';
+        return $type === DBHelper::$tableTypeAsana || $type === '補兩百';
+    }
+
     public function downloadFileGroupByLocationKind(Request $request)
     {
         [$start, $end] = $this->resolveDownloadRange($request);
@@ -281,40 +296,40 @@ class Balance2Controller extends Controller
         $userName = $request->userName;
 
         $arrIn = DBHelper::getBalanceInJoinByType($userName ?: 'ALL', $start, $end);
-        $asana = [];
-        $others = [];
-        $asanaTotal = 0;
-        $othersTotal = 0;
+        $taipei = [];
+        $taichung = [];
+        $taipeiTotal = 0;
+        $taichungTotal = 0;
 
         foreach ($arrIn as $record) {
-            if ($record['Type'] === DBHelper::$tableTypeAsana) {
-                array_push($asana, $record);
-                $asanaTotal += $record['Payment'];
+            if ($this->isTaipeiAsanaRecord($record)) {
+                array_push($taipei, $record);
+                $taipeiTotal += $record['Payment'];
             } else {
-                array_push($others, $record);
-                $othersTotal += $record['Payment'];
+                array_push($taichung, $record);
+                $taichungTotal += $record['Payment'];
             }
         }
 
         $output = [];
-        foreach ($asana as $record) {
+        foreach ($taipei as $record) {
             array_push($output, $record);
         }
 
-        if (sizeof($asana) > 0) {
-            array_push($output, ['__total' => true, 'Payment' => $asanaTotal]);
+        if (sizeof($taipei) > 0) {
+            array_push($output, ['__total' => true, 'Payment' => $taipeiTotal, 'Location' => '台北']);
         }
 
-        if (sizeof($asana) > 0 && sizeof($others) > 0) {
+        if (sizeof($taipei) > 0 && sizeof($taichung) > 0) {
             array_push($output, ['__blank' => true]);
         }
 
-        foreach ($others as $record) {
+        foreach ($taichung as $record) {
             array_push($output, $record);
         }
 
-        if (sizeof($others) > 0) {
-            array_push($output, ['__total' => true, 'Payment' => $othersTotal]);
+        if (sizeof($taichung) > 0) {
+            array_push($output, ['__total' => true, 'Payment' => $taichungTotal, 'Location' => '台中']);
         }
 
         return $this->genFileWithBlankRows($output, $file);

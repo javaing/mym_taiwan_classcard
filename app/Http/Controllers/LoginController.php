@@ -189,12 +189,22 @@ class LoginController extends Controller
 
     private function cookieOptions($expires)
     {
+        $sameSite = strtolower((string) config('session.same_site', 'lax'));
+        if ($sameSite === 'none') {
+            $sameSite = 'None';
+        } elseif ($sameSite === 'strict') {
+            $sameSite = 'Strict';
+        } else {
+            $sameSite = 'Lax';
+        }
+
         return [
             'expires' => $expires,
             'path' => '/',
-            'secure' => Str::startsWith(config('app.url', ''), 'https://'),
+            'secure' => Str::startsWith(config('app.url', ''), 'https://')
+                || (bool) config('session.secure'),
             'httponly' => true,
-            'samesite' => 'Lax',
+            'samesite' => $sameSite,
         ];
     }
 

@@ -31,5 +31,11 @@ services:
         sync: false
       - key: SESSION_DRIVER
         value: cookie
+      # HTTPS + LINE iOS WebView：Secure 必須開。不要設 SESSION_DOMAIN
+      #（.onrender.com 會把 cookie 洩到其他 Render 站台）。
+      - key: SESSION_SECURE_COOKIE
+        value: "true"
+      - key: SESSION_SAME_SITE
+        value: "none"
       - key: PORT
         value: "80"

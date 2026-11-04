@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\DBHelper as DBHelper;
+use App\Helpers\DBHelperTaichung as DBHelperTaichung;
 use Carbon\Carbon;
 
 class AccountController extends Controller
@@ -21,14 +22,21 @@ class AccountController extends Controller
         return $_SERVER['HTTP_REFERER'] ?? '';
     }
 
+    private function defaultBalanceRange()
+    {
+        $today = Carbon::now('Asia/Taipei');
+        $start = $today->copy()->startOfMonth()->subMonth()->format('Y-m-d');
+        $end = $today->copy()->startOfMonth()->subDay()->format('Y-m-d');
+        return [$start, $end];
+    }
+
     public function create()
     {
-        $start = Carbon::now()->startOfMonth()->add(-1, 'month');
-        $end = Carbon::now()->startOfMonth()->add(1, 'month');
+        [$start, $end] = $this->defaultBalanceRange();
 
         $request = new Request();
-        $request->start = DBHelper::toDateString($start);
-        $request->end = DBHelper::toDateString($end);
+        $request->start = $start;
+        $request->end = $end;
         Log::info('account.balance.create', [
             'start' => $request->start,
             'end' => $request->end,
@@ -44,8 +52,7 @@ class AccountController extends Controller
         //Log::info($start);
         //Log::info($end);
         if (!$start) {
-            $start = Carbon::now()->startOfMonth()->add(-1, 'month');
-            $end = Carbon::now()->startOfMonth()->add(1, 'month');
+            [$start, $end] = $this->defaultBalanceRange();
         }
         Log::info('account.balance.render', [
             'start' => (string) $start,
@@ -158,6 +165,50 @@ class AccountController extends Controller
         //紀錄花費500 or 300
         DBHelper::insertConsume($cardId, $currentPoints, $dt, $consumeDate);
         return redirect('account/carddetail/' . base64_encode($cardId));
+    }
+
+    public function taichungByhand(Request $request)
+    {
+        $userId = $request->input('userId');
+        $activityType = $request->input('activityType');
+        $businessDate = $request->input('registedate');
+        $activities = config('taichung.activities');
+
+        if (!$userId || !DBHelper::getUser($userId)) {
+            return redirect('classcard/byhand')->with('warning', '請選擇學員。');
+        }
+        if (!is_string($activityType) || !isset($activities[$activityType])) {
+            return redirect('classcard/byhand')->with('warning', '請選擇台中活動。');
+        }
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $businessDate)) {
+            return redirect('classcard/byhand')->with('warning', '請選擇日期。');
+        }
+
+        $result = DBHelperTaichung::staffPrepaidAndCheckin($userId, $activityType, $businessDate);
+        $label = $activities[$activityType]['label'];
+        $name = DBHelper::getUserName($userId);
+
+        if ($result === 'duplicate') {
+            return redirect('classcard/byhand')->with(
+                'warning',
+                $name . ' 在 ' . $businessDate . ' 已有「' . $label . '」紀錄。'
+            );
+        }
+        if ($result === 'invalid') {
+            return redirect('classcard/byhand')->with('warning', '請選擇台中活動。');
+        }
+
+        Log::info('Taichung staff byhand', [
+            'userId' => $userId,
+            'activityType' => $activityType,
+            'businessDate' => $businessDate,
+            'result' => $result,
+        ]);
+
+        return redirect('classcard/byhand')->with(
+            'status',
+            '已補登 ' . $name . '「' . $label . '」' . $businessDate . '。'
+        );
     }
 
     public function balanceByUser($userId)

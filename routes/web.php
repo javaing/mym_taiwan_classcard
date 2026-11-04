@@ -52,6 +52,7 @@ Route::get('classcard/extend', 'ClassCardController@extendCard')->name('extend.c
 //手動蓋課卡
 Route::get('/classcard/byhand', 'AccountController@classByhand');
 Route::Post('/classcard/byhand', 'AccountController@registeclassByhand');
+Route::post('/classcard/byhand/taichung', 'AccountController@taichungByhand');
 //後台
 Route::get('/account/balance', 'AccountController@create');
 Route::Post('/account/balance', 'AccountController@balance');

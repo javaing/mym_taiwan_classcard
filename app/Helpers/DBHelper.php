@@ -62,6 +62,14 @@ class DBHelper
         return Carbon::parse($str);
     }
 
+    /**
+     * 查詢結束日採「含當天」：10-31 會查到 10-31 整天，而不是當天 00:00 以前。
+     */
+    public static function parseEndExclusive($to)
+    {
+        return Carbon::parse($to)->startOfDay()->addDay();
+    }
+
 
     //[Purchase]------------------------------------------------------------------
     public static function getValidCard($userId)
@@ -265,7 +273,7 @@ class DBHelper
         //get()出來就是array
         return DB::collection('Purchase')
             ->where('PaymentTime', '>=', DBHelper::parse($from))
-            ->where('PaymentTime', '<', DBHelper::parse($to))
+            ->where('PaymentTime', '<', DBHelper::parseEndExclusive($to))
             ->where('UserID', '<>', null)
             ->orderBy('PaymentTime')
             ->get();
@@ -659,7 +667,7 @@ class DBHelper
         //get()出來就是array
         return DB::collection('Consume')
             ->where('PointConsumeTime', '>=', DBHelper::parse($from))
-            ->where('PointConsumeTime', '<', DBHelper::parse($to))
+            ->where('PointConsumeTime', '<', DBHelper::parseEndExclusive($to))
             ->get();
     }
 

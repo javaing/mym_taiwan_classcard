@@ -296,7 +296,7 @@ static $OneClassFee = 300;
         //get()出來就是array
         return DB::collection(DBHelperOnline::$CollectPurchase)
             ->where('PaymentTime', '>=', DBHelper::parse($from))
-            ->where('PaymentTime', '<', DBHelper::parse($to))
+            ->where('PaymentTime', '<', DBHelper::parseEndExclusive($to))
             //->where('Payment', '>', 0)
             ->get();
     }
@@ -306,7 +306,7 @@ static $OneClassFee = 300;
         //get()出來就是array
         return DB::collection(DBHelperOnline::$CollectConsume)
             ->where('PointConsumeTime', '>=', DBHelper::parse($from))
-            ->where('PointConsumeTime', '<', DBHelper::parse($to))
+            ->where('PointConsumeTime', '<', DBHelper::parseEndExclusive($to))
             ->get();
     }
 
